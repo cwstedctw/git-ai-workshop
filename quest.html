@@ -116,8 +116,8 @@ footer{margin-top:60px;padding:20px;text-align:center;font-size:.84rem;color:var
     <p>1｜這頁請用<strong>講師給的網址</strong>在 <strong>Chrome 或 Edge</strong> 開（不要下載存檔再雙擊，讀資料夾的功能會失效）。Safari／Firefox 也能用，驗收改走「請 agent 檢查」按鈕，一樣能過關。</p>
     <p>2｜每一關都有一句「對 agent 說的話」，按複製、貼進 Antigravity 的對話框就好。<strong>句尾都帶著一行「寫收據」的指示</strong>——那是這一頁用來自動打勾的依據，別刪掉它。</p>
     <p>3｜先在上面輸入你的桌牌（姓氏拼音）。下半場的分支名會用到——共用 repo 裡，分支名就是你的桌子，撞名就是搶同一張桌子。</p>
-    <p>4｜練習用的兩個專案已經幫你設好，話術裡的網址直接可以用，不用做任何設定。</p>
-    <p>5｜真的卡死想叫講師過來：<button class="copybtn" data-copy="在共用 repo 開一個 issue，標題用【求救】加上我的桌牌和卡住的關數，內容貼上我最後看到的錯誤訊息。">複製求救話術</button>——貼給 agent，講師的雷達會亮。<span class="small">這個求救全班都看得到，互相支援本來就是設計的一部分；想低調，直接舉手也行。</span></p>
+    <p>4｜練習用的兩個專案已經幫你設好，每一關那句話裡的網址直接可以用，不用做任何設定。</p>
+    <p>5｜真的卡死想叫講師過來：<button class="copybtn" data-copy="在共用 repo 開一個 issue，標題用【求救】加上我的桌牌和卡住的關數，內容貼上我最後看到的錯誤訊息。">複製這句求救</button>——貼給 agent，講師的雷達會亮。<span class="small">這個求救全班都看得到，互相支援本來就是設計的一部分；想低調，直接舉手也行。</span></p>
     <p class="small">按「連接資料夾」時瀏覽器會跳出授權視窗問你「要允許讀取嗎」——按允許就好，這頁只讀不寫，你的檔案不會被動到。進度與桌牌只存在這台電腦的瀏覽器裡。</p>
   </div>
   <p style="text-align:center;margin:18px 0">
@@ -439,8 +439,8 @@ function renderTasks(){
         <button class="copybtn" data-copy="${t.say().replace(/"/g,'&quot;')}">複製</button></div>
       ${st!=='pass'&&t.hintFail&&dirHandle?`<div class="hint">${t.hintFail}</div>`:''}
       <p>
-        <button class="copybtn" data-copy="${verify.replace(/"/g,'&quot;')}">複製驗收話術（agent 驗）</button>
-        <button class="copybtn" data-copy="${rescue.replace(/"/g,'&quot;')}">卡住了？複製救援處方箋</button>
+        <button class="copybtn" data-copy="${verify.replace(/"/g,'&quot;')}">複製這句請 agent 檢查</button>
+        <button class="copybtn" data-copy="${rescue.replace(/"/g,'&quot;')}">卡住了？複製這句問 agent</button>
         ${st!=='pass'?`<button class="copybtn" data-manual="${t.n}">agent 說過關了 → 手動打勾</button>`:''}
       </p>
       <details class="help"><summary>這關在練什麼</summary><p class="small">${t.scene}。教材對應段落有完整劇情與幕後指令。</p></details>`;

@@ -164,7 +164,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <a href="#concepts">概念地圖</a>
   <a href="#story">十二幕劇本</a>
   <a href="#safety">安全紅線</a>
-  <a href="#phrases">話術表</a>
+  <a href="#phrases">怎麼說</a>
   <a href="#quiz">小測驗</a>
   <a href="#agenda">當天課表</a>
   <a href="#refs">參考資料</a>
@@ -368,9 +368,9 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   </div>
 </section>
 
-<!-- ═══════════ 話術對照表 ═══════════ -->
+<!-- ═══════════ 怎麼跟 agent 說 ═══════════ -->
 <section id="phrases">
-  <h2><span class="no">陸</span>給 agent 的話術對照表</h2>
+  <h2><span class="no">陸</span>怎麼跟 agent 說：13 句常用的話</h2>
   <p>13 句你真的會說的話。按「複製」可以直接貼進 agent 對話框試。</p>
   <p class="small">⚠️ 一個要小心的說法：「退回上一版」對 agent 是模糊的——它分不清你是「剛改還沒存」「存了想撤銷」還是「想砍掉最近三個版本」，解讀錯了可能把還沒存檔的東西弄丟。用下表的句型講清楚情境，或讓 agent 先覆述它的理解再放行。</p>
   <div class="tablewrap"><table id="phraseTable">
@@ -401,7 +401,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <tr><td>1:10–1:20</td><td>休息＋救援</td><td>落後者由講師與快手鄰座補到最低線</td><td>全員回到成敗線上</td></tr>
     <tr><td>1:20–1:45</td><td><strong>動手任務 7–11</strong><br><span class="small">（講師的共用 repo；闖關第 12 關是回家作業）</span></td><td>任務7 開一條<strong>帶自己名字</strong>的分支，例如 robustness-check-lin（幕7；共用 repo 裡分支名就是你的桌牌，撞名＝搶同一張桌子）→ 任務8 在分支上改檔並存版本（幕7）→ 任務9 推上去開 PR（幕9）→ 任務10 兩人一組到對方 PR 留一句審查意見——就是審稿人意見 → 任務11 merge 後「回主線、拉大家的最新進度」（幕8・6），看到<strong>別人的段落出現在自己電腦裡</strong>。（闖關頁第 12 關「從零開一本」是回家作業，課堂不做）</td><td><strong>開出一條分支＋一個 PR</strong>；merge 與互評是加碼、全組到齊就走完</td></tr>
     <tr><td>1:45–1:55</td><td><strong>安全紅線</strong></td><td>監督三原則＋兩條資料紅線＋Word 誠實限制；演練一次攔停（「幫我強制覆蓋遠端」）</td><td>說得出三原則其中兩條</td></tr>
-    <tr><td>1:55–2:00</td><td><strong>帶走包</strong></td><td>紙本話術表、本教材網址、quiz、三段自學路徑</td><td>帶走 cheat sheet 與網址</td></tr>
+    <tr><td>1:55–2:00</td><td><strong>帶走包</strong></td><td>紙本對照表、本教材網址、quiz、三段自學路徑</td><td>帶走 cheat sheet 與網址</td></tr>
   </table></div>
   <p class="small"><strong>課堂沒動手、由教材與示範扛的幕次：</strong>幕1（init，回家照教材補）、幕4（restore，加碼二）、幕10（tag／.gitignore，講師示範）、幕11（worktree，講師示範——「AI agent 的日常」最有感的一幕，別省）、幕12（收尾＝安全段）。<br>
   <strong>翻車備援：</strong>個別 agent 或網路出狀況 → 該學員降級 GitHub 網頁版流程（網頁改檔＋commit on web），概念不減量；全場性故障 → 講師投影單機示範，老師在紙本劇本上勾流程。</p>
@@ -736,7 +736,7 @@ function go(i){
 }
 go(0);
 
-/* ───────── 話術表 ───────── */
+/* ───────── 怎麼跟 agent 說 ───────── */
 const PHRASES=[
 ["幫我把這個資料夾管起來，以後改了都有紀錄","建立版本庫、寫好 .gitignore、做第一次提交","repository、.gitignore、commit"],
 ["今天改的先存起來，註明是改了文獻回顧","把今天的修改打包成一個提交，寫上你給的說明","commit"],
