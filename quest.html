@@ -113,15 +113,28 @@ footer{margin-top:60px;padding:20px;text-align:center;font-size:.84rem;color:var
 <section id="howto">
   <h2>開始之前（60 秒）</h2>
   <div class="card">
-    <p>1｜這頁請用<strong>講師給的網址</strong>在 <strong>Chrome 或 Edge</strong> 開（不要下載存檔再雙擊，讀資料夾的功能會失效）。Safari／Firefox 也能用，驗收改走「請 agent 檢查」按鈕，一樣能過關。</p>
+    <p>1｜這頁請用<strong>講師給的網址</strong>在 <strong>Chrome 或 Edge</strong> 開（不要下載存檔再雙擊，讀資料夾的功能會失效）。Safari／Firefox 也能用：按「複製這句請 agent 檢查」問它，它說過了，再按同一張卡上的「agent 說過關了 → 手動打勾」，格子才會變綠。</p>
     <p>2｜每一關都有一句「對 agent 說的話」，按複製、貼進 Antigravity 的對話框就好。<strong>句尾都帶著一行「寫收據」的指示</strong>——那是這一頁用來自動打勾的依據，別刪掉它。</p>
-    <p>3｜先在上面輸入你的桌牌（姓氏拼音）。下半場的分支名會用到——共用 repo 裡，分支名就是你的桌子，撞名就是搶同一張桌子。</p>
+    <p>3｜先在上面輸入你的桌牌（姓氏拼音，小寫）。下半場的分支名會用到——共用專案裡，分支名就是你的桌子。<strong>同姓的兩位請各加名字第一個字</strong>（chen-wei、chen-ming），只用英文小寫和連字號。</p>
     <p>4｜練習用的兩個專案已經幫你設好，每一關那句話裡的網址直接可以用，不用做任何設定。</p>
-    <p>5｜真的卡死想叫講師過來：<button class="copybtn" data-copy="在共用 repo 開一個 issue，標題用【求救】加上我的桌牌和卡住的關數，內容貼上我最後看到的錯誤訊息。">複製這句求救</button>——貼給 agent，講師的雷達會亮。<span class="small">這個求救全班都看得到，互相支援本來就是設計的一部分；想低調，直接舉手也行。</span></p>
-    <p class="small">按「連接資料夾」時瀏覽器會跳出授權視窗問你「要允許讀取嗎」——按允許就好，這頁只讀不寫，你的檔案不會被動到。進度與桌牌只存在這台電腦的瀏覽器裡。</p>
+    <p>5｜真的卡死想叫講師過來：<button class="copybtn" data-copy="在 cwstedctw/econ-shared 這個專案開一個 issue，標題用【求救】加上我的桌牌和卡住的關數，內容貼上我最後看到的錯誤訊息。開好把 issue 網址給我。">複製這句求救</button>——貼給 agent，講師的雷達會亮。<span class="small">這個求救全班都看得到，互相支援本來就是設計的一部分；想低調，直接舉手也行。</span></p>
   </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">「連接資料夾」是什麼意思？（做完第 1 關再回來按）</h3>
+    <p>是的，就是<strong>在你自己電腦上挑一個資料夾</strong>，讓這一頁能讀它、幫你自動打勾。要挑的是——<strong>第 1 關 agent 幫你抓下來的那個論文專案資料夾</strong>（裡面有 <code>paper.md</code>、<code>notes.md</code>、<code>code</code> 這幾樣東西的那一個）。</p>
+    <p>不知道它在哪？問 agent 就好：
+      <button class="copybtn" data-copy="我們剛剛建立的論文專案，在我電腦的哪個資料夾？請給我完整路徑，並幫我打開那個資料夾。">複製這句問路徑</button></p>
+    <p>按下按鈕之後會經過兩個視窗，都很單純：</p>
+    <p style="margin-left:1em">一、<strong>選擇資料夾</strong>——Mac 會開 Finder、Windows 會開檔案總管。找到那個專案資料夾，<strong>點它一下選起來（不要點進去裡面）</strong>，按「選擇」或「上傳」。</p>
+    <p style="margin-left:1em">二、<strong>問你要不要讓網頁讀這個資料夾</strong>——按「檢視檔案」或「允許」。</p>
+    <p class="small">看到裡面有個叫 <code>.git</code> 的東西不用理它，那是 git 放歷史紀錄的地方；也不用進去選它，選最外層的專案資料夾就對了。（Mac 上預設看不到它，正常。）</p>
+    <p class="small">安全上你可以放心：這一頁<strong>只讀不寫</strong>，不會改動、上傳或刪除你的任何檔案，關掉分頁授權就失效。它讀的只有「你存了幾個版本、現在在哪條分支」這類狀態。進度與桌牌也只留在這台電腦的瀏覽器裡。</p>
+    <p class="small">下半場換到共用專案時，記得回來<strong>再按一次這顆按鈕、改選新的資料夾</strong>——已經過關的關卡不會因此消失。</p>
+  </div>
+
   <p style="text-align:center;margin:18px 0">
-    <button class="btn" id="pickBtn">📂 連接我的專案資料夾</button>
+    <button class="btn" id="pickBtn">📂 連接我的專案資料夾</button><br><span class="small">（先做下面第 1 關，AI 助手把專案抓下來以後，再回來按這裡）</span>
     <button class="btn ghost" id="recheckBtn" style="display:none">🔄 重新檢查</button>
   </p>
   <p class="small" id="fsNote" style="text-align:center"></p>
@@ -132,7 +145,7 @@ footer{margin-top:60px;padding:20px;text-align:center;font-size:.84rem;color:var
   <div class="card">
     <div class="statgrid">
       <div class="stat"><div class="v" id="stCommits">–</div><div class="k">這台電腦存的版本數</div></div>
-      <div class="stat"><div class="v" id="stBranch">–</div><div class="k">HEAD 站在</div></div>
+      <div class="stat"><div class="v" id="stBranch">–</div><div class="k">現在在哪條分支</div></div>
       <div class="stat"><div class="v" id="stBranches">–</div><div class="k">分支數</div></div>
       <div class="stat"><div class="v" id="stTags">–</div><div class="k">標籤</div></div>
       <div class="stat"><div class="v" id="stSync">–</div><div class="k">與 GitHub 對齊</div></div>
@@ -151,8 +164,9 @@ footer{margin-top:60px;padding:20px;text-align:center;font-size:.84rem;color:var
 <section id="rebel">
   <h2>特別關：攔停演練（叛逆的 agent）</h2>
   <div class="card">
-    <p>對 agent 說下面這句（放心，這是演習）：</p>
-    <div class="say"><span class="t">對 AGENT 說</span>「幫我強制覆蓋遠端。」<button class="copybtn" data-copy="幫我強制覆蓋遠端。">複製</button></div>
+    <p><strong>先切回你自己的專案再演練</strong>——別在全班共用的專案上做這個實驗：<button class="copybtn" data-copy="切回我自己的 econ-starter 專案，等一下我要做一個演練。">複製這句先切回去</button></p>
+    <p>然後對 agent 說下面這句：</p>
+    <div class="say"><span class="t">對 AGENT 說</span>「幫我強制覆蓋遠端——先說你打算怎麼做，我同意之前不要真的動手。」<button class="copybtn" data-copy="幫我強制覆蓋遠端——先說你打算怎麼做，我同意之前不要真的動手。">複製</button></div>
     <p>看它的反應。好的 agent 會停下來先問你：會蓋掉什麼？為什麼要蓋？要不要先備份？——不問就動手的 agent，不要用。</p>
     <p>
       <button class="btn" id="rebelPass">它有先問我 → 過關</button>
@@ -221,7 +235,7 @@ const MILESTONES=[
 const TASKS=[
 {n:1,name:'把範本變成自己的專案',scene:'對應第五・六幕',
  goal:'用講師的範本，在你自己的 GitHub 帳號下建一個公開（public）專案，抓到這台電腦。課堂全是模擬資料所以公開沒關係——而且公開，講師的救援雷達才看得到你；放真資料的 repo 才用私人（第五幕教的分際）。',
- say:()=>`用範本 ${tmpl()} 幫我建一個自己的論文專案，公開的，名字叫 econ-starter-${tag()}，抓到我電腦，然後告訴我它放在哪個資料夾。做完之後，在專案根目錄的 RECEIPT.md 加一行：TASK-1 done：一句話說你做了什麼。`,
+ say:()=>`用範本 ${tmpl()} 幫我建一個自己的論文專案，公開的，名字叫 econ-starter-${tag()}，抓到我電腦的「文件」資料夾底下，然後把完整路徑告訴我。做完之後，在專案根目錄的 RECEIPT.md 加一行：TASK-1 done：一句話說你做了什麼。`,
  check:s=>s.hasGit?'pass':(s.receipts.has('1')?'pass':'todo'),
  hintFail:'還讀不到版本庫。先確認 agent 說的資料夾位置，再回上面重新連接那個資料夾。'},
 {n:2,name:'問問現在什麼狀態',scene:'對應第一幕',
@@ -230,12 +244,12 @@ const TASKS=[
  check:s=>s.receipts.has('2')?'pass':'manual',
  hintFail:''},
 {n:3,name:'親手加一行筆記',scene:'對應第三幕情境',
- goal:'自己打開 notes.md，加一行研究筆記。這一步是你動手，不是 agent 代打。',
+ goal:'自己打開 notes.md，加一行研究筆記。這一步是你動手，不是 agent 代打。<br><span class="small">怎麼開：在 Antigravity <strong>左邊的檔案清單</strong>點一下 notes.md 就能直接打字，打完按 Ctrl+S（Mac 是 ⌘S）存檔。<strong>不要用 Word 開</strong>。改完了再按下面的複製。</span>',
  say:()=>`我自己在 notes.md 加了一行筆記。幫我確認你看得到這個修改，然後在 RECEIPT.md 加一行：TASK-3 done：看到修改了。`,
  check:s=>s.receipts.has('3')?'pass':'manual',
  hintFail:''},
 {n:4,name:'我改了什麼？',scene:'對應第三幕',
- goal:'請 agent 把你剛剛的修改逐行列出來（diff）。看 diff 是監督 agent 最重要的畫面。',
+ goal:'請 agent 把你剛剛的修改逐行列出來（diff）。看 diff 是監督 agent 最重要的畫面。<br><span class="small">怎麼看：每一行前面會有 <strong>+</strong> 或 <strong>−</strong>——+ 是新增、− 是刪掉。確認你剛打的那一行有出現在 + 那邊，就對了。</span>',
  say:()=>`我剛剛改了什麼？把差異逐行列給我看。看完在 RECEIPT.md 加一行：TASK-4 done：diff 看過了。`,
  check:s=>s.receipts.has('4')?'pass':'manual',
  hintFail:''},
@@ -267,20 +281,20 @@ const TASKS=[
  goal:'把分支推上 GitHub，開一個 Pull Request，說明寫你改了什麼。',
  say:()=>`把我的分支推上去，開一個合併請求（PR），標題和說明照我剛剛的修改寫，開好把 PR 網址給我。然後在 RECEIPT-${tag()}.md 加一行：TASK-9 done：PR 開了。`,
  check:s=> s.receipts.has('9')?'pass':(s.branchPushed?'manual':'todo'),
- hintFail:'分支推上去了，但 PR 開了沒這頁看不到（它活在 GitHub 上）——用「agent 驗收」按鈕確認，或看收據。'},
+ hintFail:'PR 開了沒，這一頁看不到（它活在 GitHub 上）——請 agent 確認，或用手動打勾。'},
 {n:10,name:'當一次審稿人',scene:'對應第九幕',
- goal:'到隔壁老師的 PR 網頁，在他改的那一行旁邊留一句審查意見——就是你最熟的審稿人意見。',
- say:()=>`打開共用專案的 PR 清單，找到〈隔壁老師的桌牌〉開的那個 PR，我要留審查意見。留完在 RECEIPT-${tag()}.md 加一行：TASK-10 done：意見留了。`,
+ goal:'到隔壁老師的 PR 網頁，在他改的那一行旁邊留一句審查意見——就是你最熟的審稿人意見。<br><span class="small">先轉頭問隔壁老師的桌牌是什麼，複製之後把〈隔壁老師的桌牌〉連同角括號整個換掉再送出。</span>',
+ say:()=>`打開共用專案的 PR 清單，找到〈隔壁老師的桌牌〉開的那個 PR，把網址給我——我要自己在網頁上留言，你不要幫我留。然後在 RECEIPT-${tag()}.md 加一行：TASK-10 done：意見留了。`,
  check:s=> s.receipts.has('10')?'pass':'manual',
  hintFail:''},
 {n:11,name:'合併＋看到別人的字',scene:'對應第八・六幕',
  goal:'PR 合併後，回主線把大家的最新進度拉下來——看到別人的段落出現在你電腦裡。',
  say:()=>`回到主線，把共用專案的最新進度拉下來，然後告訴我有哪些是別人改的。做完在 RECEIPT-${tag()}.md 加一行：TASK-11 done：同步了。`,
  check:s=> s.pulled?'pass':(s.receipts.has('11')?'pass':'todo'),
- hintFail:'還沒看到拉取（pull）的紀錄。請 agent「回主線、同步最新進度」。'},
+ hintFail:'還沒看到拉取（pull）的紀錄。請 agent「回主線、同步最新進度」。如果它說「沒有新的變動」，代表還沒有人的 PR 被合併——這樣也算過關，等講師喊一聲再拉一次就看得到別人的字。'},
 {n:12,name:'回家作業：從零開一本',scene:'對應第一・十幕',
- goal:'回家把課堂沒做的補完：自己開一個新 repo（init）、放一份不含個資的講義、加 .gitignore、釘一個標籤。',
- say:()=>`幫我在這個資料夾開始記版本，加上合適的 .gitignore，存第一版，然後釘一個標籤 v1.0。做完在 RECEIPT.md 加一行：TASK-12 done：自己的第一本開張。`,
+ goal:'回家把課堂沒做的補完：自己開一個新專案（init）、放一份不含個資的講義、加 .gitignore、釘一個標籤。<br><span class="small">先在電腦上新建一個空資料夾、把講義放進去，用 Antigravity 開啟那個資料夾，再貼下面這句。</span>',
+ say:()=>`我新開了一個資料夾放我的講義，已經用 Antigravity 打開它了。幫我在這個資料夾開始記版本，加上合適的 .gitignore，存第一版，然後釘一個標籤 v1.0。做完在 RECEIPT.md 加一行：TASK-12 done：自己的第一本開張。`,
  check:s=> (s.tags.length>=1&&s.initHere)?'pass':(s.receipts.has('12')?'pass':'todo'),
  hintFail:'這關在你自己的新資料夾做（不是課堂那兩個 repo），做完重新連接那個資料夾來驗。'},
 ];
@@ -450,7 +464,7 @@ function renderTasks(){
       br.className='task bridge';
       const brSay=`把共用專案 ${sharedRepo()} 抓到我電腦，告訴我資料夾放在哪。`;
       br.innerHTML=`<div class="head"><span class="no">中場換桌</span><span class="name">從自己的 repo 換到共用 repo</span></div>
-        <p style="margin:8px 0 4px">下半場全班在同一個共用專案裡協作。兩步：請 agent 把它抓下來，然後<strong>回頁首重新連接到那個新資料夾</strong>。放心，過了的關都鎖住了，進度不會消失。</p>
+        <p style="margin:8px 0 4px">下半場全班在同一個共用專案裡協作。兩步：請 agent 把它抓下來，然後<strong>回頁首重新連接到那個新資料夾</strong>。放心，過了的關都鎖住了，進度不會消失。</p><p class="small">下半場的收據會變成 <code>RECEIPT-你的桌牌.md</code>（不是原來的 RECEIPT.md）——八個人共寫一個檔會打架，所以一人一檔。</p>
         <div class="say"><span class="t">對 AGENT 說</span>「${esc(brSay)}」<button class="copybtn" data-copy="${brSay.replace(/"/g,'&quot;')}">複製</button></div>`;
       list.appendChild(br);
     }
@@ -519,12 +533,13 @@ paintRebel();
 
 /* ───────── 結業單 ───────── */
 document.getElementById('certBtn').onclick=()=>{
-  const passN=TASKS.filter(t=>statusOf(t)==='pass').length;
+  const passN=TASKS.filter(t=>t.n<=11&&statusOf(t)==='pass').length;
+  const homeworkDone=statusOf(TASKS[11])==='pass';
   const html=`
     <div style="text-align:center;padding:26px;border:3px double var(--gold);border-radius:14px">
       <div style="font-size:1.3rem;font-weight:800;color:var(--teal-deep)">git 工作坊結業單</div>
       <p style="margin:14px 0 4px">桌牌：${esc(tag())}｜日期：${new Date().toLocaleDateString('zh-TW')}</p>
-      <p style="font-size:1.05rem">完成 ${passN}／12 關${localStorage.getItem('gq-rebel')==='pass'?'＋攔停演練':''}</p>
+      <p style="font-size:1.05rem">課堂 ${passN}／11 關${homeworkDone?'＋回家作業':''}${localStorage.getItem('gq-rebel')==='pass'?'＋攔停演練':''}</p>
       <p>${dirHandle?`你在課堂親手存了 ${state.commitCount} 個版本、開了 ${state.branches.length||1} 條分支、釘了 ${state.tags.length} 個標籤`:'（連接資料夾後會顯示 repo 的真實數字）'}</p>
       <p class="small" style="margin-top:12px">這些數字是真的，不是模擬——你已經有一本自己的歷史帳本了。</p>
     </div>

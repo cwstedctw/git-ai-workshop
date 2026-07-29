@@ -216,8 +216,8 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 
 <!-- ═══════════ 行前準備 ═══════════ -->
 <section id="prep">
-  <h2><span class="no">貳</span>行前準備包（課前一週完成，約 50 分鐘）</h2>
-  <p>勾選狀態會存在你的瀏覽器裡，關掉再開還在（<span class="small">進度只留在這台電腦的這個瀏覽器</span>）。目前完成：<span id="checkProgress">0 / 7</span>　<button id="clearProg" class="copybtn">清除進度</button></p>
+  <h2><span class="no">貳</span>行前準備包（請留兩個晚上，別排在開課前一天）</h2>
+  <p>第 1、2 項約 30 分鐘；第 3–6 項要下載安裝，視網速可能要一小時以上。<br><strong>這些勾只給你自己看，講師看不到</strong>——要回報請按第 7 項的表單。（勾選狀態存在這台電腦的瀏覽器裡，關掉再開還在。）目前完成：<span id="checkProgress">0 / 8</span>　<button id="clearProg" class="copybtn">清除進度</button></p>
 
   <div class="card" id="checklist">
     <div class="check" data-k="c1"><input type="checkbox" aria-label="完成第 1 項">
@@ -226,29 +226,32 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
       <span class="small">完成判準：能登入、能看到自己的個人頁。</span></div></div>
     <div class="check" data-k="c2"><input type="checkbox" aria-label="完成第 2 項">
       <div class="t"><strong>2｜兩步驟驗證（two-factor authentication, 2FA）</strong> <span class="done-mark">✓ 完成</span><br>
-      <strong>用驗證器 App</strong>（Google Authenticator 或 Microsoft Authenticator），<strong>不要選簡訊</strong>；設定完把備援碼（recovery codes）存進密碼管理工具或列印收好。<br>
-      <span class="small">完成判準：Settings → Password and authentication 顯示 2FA 已啟用。當天請帶著設定 2FA 的那支手機。</span></div></div>
+      先到手機的 App Store／Play 商店搜尋「Google Authenticator」裝起來（<strong>不要選簡訊</strong>）。然後在 GitHub 網頁<strong>右上角點你的頭像 → Settings → Password and authentication</strong>，找 Two-factor authentication 按 Enable。網頁會出現一個方格圖案（QR code）：打開手機那支 App 按「＋」掃它，再把手機上跳出的六位數字打回網頁。最後畫面會給你一串<strong>備援碼</strong>（recovery codes）——手機掉了要靠它，請存進密碼管理工具或列印收好。<br>
+      <span class="small">完成判準：那一頁顯示 2FA 已啟用。當天請帶著這支手機。</span></div></div>
     <div class="check" data-k="c3"><input type="checkbox" aria-label="完成第 3 項">
       <div class="t"><strong>3｜裝 Antigravity（我們的 AI 工作環境）</strong> <span class="done-mark">✓ 完成</span><br>
-      Google 的 AI 開發環境，編輯器和 AI 助手合在一起，免費。下載連結以行前信為準；裝好後用 Google 帳號登入——<strong>先試學校信箱（@gms.ndhu.edu.tw）</strong>，若被擋改用個人 Gmail，並在檢核表註明。<br>
-      <span class="small">完成判準：打得開、登入成功、看得到 AI 助手面板。</span></div></div>
+      Google 出的 AI 工作環境（編輯器和 AI 助手合在一起），免費。到 <a href="https://antigravity.google" target="_blank" rel="noopener">antigravity.google</a> 下載——<strong>網址列開頭是 antigravity.google 才是官方的</strong>，別點搜尋結果裡其他長得像的網站。<br>裝好打開，用 Google 帳號登入：<strong>先試學校信箱 @gms.ndhu.edu.tw</strong>，被擋就改用個人 Gmail，並在第 7 項註明。<br><strong>AI 助手面板在哪：</strong>畫面通常是深色的，AI 對話欄在<strong>右側</strong>（或側邊圖示點開後滑出來），下方有一個可以打字的輸入框——那就是你之後所有指令要打的地方。如果它一開始要你先「開啟一個資料夾」，在桌面隨便新建一個空資料夾開起來就好。<br>
+      <span class="small">完成判準：打得開、登入成功、找得到那個可以打字的輸入框。找不到就照第 7 項回報，別自己耗。</span></div></div>
     <div class="check" data-k="c4"><input type="checkbox" aria-label="完成第 4 項">
       <div class="t"><strong>4｜裝 git 本體</strong> <span class="done-mark">✓ 完成</span><br>
-      Windows：到 <a href="https://git-scm.com" target="_blank" rel="noopener">git-scm.com</a> 裝 Git for Windows，一路預設值。Mac：終端機打 <code>git --version</code>，跳出安裝提示就按安裝。<br>
-      <span class="small">完成判準：終端機打 <code>git --version</code> 有版本號。</span></div></div>
+      <strong>Windows：</strong>到 <a href="https://git-scm.com" target="_blank" rel="noopener">git-scm.com</a> 下載 Git for Windows，安裝時一路按「下一步」用預設值就好。<br><strong>Mac：</strong>先做第 5 項的見面測試，AI 助手會告訴你裝了沒；沒裝的話它會引導你，畫面可能跳出一個寫著「Xcode 命令列工具」的視窗——沒錯，git 就在裡面，按「安裝」，約 5–10 分鐘。<br>
+      <span class="small">完成判準：做完第 5 項，AI 助手回覆看得到 git 的版本號。<strong>本課全程你不必自己開終端機</strong>——那是 AI 助手的工具，不是你的。</span></div></div>
     <div class="check" data-k="c5"><input type="checkbox" aria-label="完成第 5 項">
       <div class="t"><strong>5｜跟 AI 助手打第一聲招呼（見面測試）</strong> <span class="done-mark">✓ 完成</span><br>
-      打開 Antigravity 的 AI 助手面板，對它說——<br>
-      「<strong>你好，請確認這台電腦的 git 裝好了嗎？</strong>」把它的回答截圖回傳。<br>
-      <span class="small">這句話同時測了工具、登入、網路三件事。</span></div></div>
+      打開 Antigravity，在第 3 項找到的那個<strong>輸入框</strong>裡打（或複製貼上）這句話，按 Enter：<br>「<strong>你好，請確認這台電腦的 git 裝好了嗎？版本幾號？</strong>」<br>它會回你一段話。把這段回答截圖，第 7 項要用。<br>
+      <span class="small">這句話同時測了三件事：工具會不會動、登入成不成功、網路通不通。截圖方法：Windows 按 Win＋Shift＋S 框選，Mac 按 Shift＋⌘＋4 框選，圖會存到桌面；直接用手機拍螢幕也可以。</span></div></div>
     <div class="check" data-k="c6"><input type="checkbox" aria-label="完成第 6 項">
       <div class="t"><strong>6｜GitHub 登入（讓 agent 之後推得上去）</strong> <span class="done-mark">✓ 完成</span><br>
-      這步讓 agent 陪你做：對它說「<strong>幫我裝 GitHub CLI（gh），並登入我的 GitHub 帳號</strong>」，跟著它的指示在瀏覽器完成授權（會用到第 2 項設定 2FA 的那支手機）。<br>
-      <span class="small">完成判準：終端機打 <code>gh auth status</code> 顯示已登入；把這個畫面截圖，跟檢核表一起回傳。少了這步，當天第一次上傳就會全場卡住。</span></div></div>
+      這步讓 AI 助手陪你做。在輸入框打這句：<br>「<strong>幫我裝 GitHub CLI（gh），並登入我的 GitHub 帳號。請一步一步告訴我要做什麼。</strong>」<br>接下來會經過三步，都很單純：<br><span style="display:block;margin-left:1em">一、它會給你一組<strong>八碼</strong>（長得像 A1B2-C3D4），請先複製起來。</span><span style="display:block;margin-left:1em">二、瀏覽器會自動打開 github.com/login/device（沒自動開就自己貼這個網址）：把八碼貼進去，按 Continue。</span><span style="display:block;margin-left:1em">三、按綠色的 Authorize，可能要輸入 GitHub 密碼與手機上的六位數字。完成後回到 Antigravity，會看到 Logged in as 你的帳號。</span>最後對它說「<strong>幫我確認 GitHub 登入好了沒</strong>」，把回答截圖。<br>
+      <span class="small">完成判準：它回覆你已經登入、看得到你的帳號名。⚠️ 如果卡住、或畫面要你輸入這台電腦的系統管理員密碼，<strong>停下來照第 7 項回報</strong>，當天現場救——這步沒完成，當天第一次上傳會卡住。</span></div></div>
     <div class="check" data-k="c7"><input type="checkbox" aria-label="完成第 7 項">
       <div class="t"><strong>7｜回填檢核表</strong> <span class="done-mark">✓ 完成</span><br>
-      回報：作業系統、<strong>你的 GitHub 帳號名（個人頁網址）</strong>、第 1–6 項各自成功或卡在哪一步。<strong>裝不了、卡住了也請照實回報</strong>——這不是考試，回報了現場才救得到你。<br>
-      <span class="small">開課三天前收齊。講師收到帳號名就會發共用 repo 的協作邀請，請到信箱或 GitHub 通知按「接受」。</span></div></div>
+      <strong>上面那些勾只給你自己看，講師看不到。</strong>請到這裡回報：<strong>〔講師填入 Google 表單網址或信箱〕</strong><br>要填的內容：作業系統（Windows／Mac）、<strong>你的 GitHub 帳號名</strong>（登入後右上角頭像 → Your profile，網址列最後那一段就是）、第 1–6 項各自成功或卡在哪一步、加上第 5、6 項那兩張截圖。<br>
+      <span class="small"><strong>裝不了、卡住了也請照實回報</strong>——這不是考試，回報了現場才救得到你。開課三天前收齊。</span></div></div>
+    <div class="check" data-k="c8"><input type="checkbox" aria-label="完成第 8 項">
+      <div class="t"><strong>8｜接受共用專案的邀請</strong>（回報後幾天內會收到）<span class="done-mark">✓ 完成</span><br>
+      講師收到你的帳號名後會寄一封 GitHub 的邀請信（英文的，別當廣告刪掉）。按信裡綠色的 <strong>Accept invitation</strong>；也可以直接到 <a href="https://github.com/cwstedctw/econ-shared" target="_blank" rel="noopener">github.com/cwstedctw/econ-shared</a> 按接受。<br>
+      <span class="small">完成判準：打得開上面那個網頁、不是 404。沒接受的話，下半場的協作練習做不了。</span></div></div>
   </div>
 
   <div class="callout warn">
@@ -280,10 +283,13 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   </div>
 
   <h3>術語總表：這門課出現過的每一個詞</h3>
-  <p class="small">標 ◆ 的詞只在幕後指令或圖裡出現，看得懂就好、不用會用。幕次可以點，直接跳到那一幕。</p>
+  <p class="small">標 ◆ 的詞看得懂就好、不用會用。幕次可以點，直接跳到那一幕。</p>
   <div class="tablewrap"><table>
     <tr><th>詞</th><th>英文</th><th>一句話</th><th>哪裡出場</th></tr>
-    <tr><td>版本庫</td><td>repository</td><td>資料夾＋它的完整修改紀錄</td><td><a href="#story" onclick="go(0)">第一幕</a></td></tr>
+    <tr><td>AI 助手 ◆</td><td>agent</td><td>Antigravity 裡那個替你跑指令的 AI；本教材「AI 助手」與「agent」混用，是同一件事</td><td>全程</td></tr>
+    <tr><td>終端機 ◆</td><td>terminal</td><td>打指令的那個黑底視窗——本課由 AI 助手代打，你不必自己開</td><td>幕後</td></tr>
+    <tr><td>Markdown</td><td>.md</td><td>純文字檔，打開就能改；格式只有「標題前加 #」這種程度</td><td><a href="#story" onclick="go(0)">第一幕</a></td></tr>
+    <tr><td>版本庫</td><td>repository（常簡稱 repo）</td><td>資料夾＋它的完整修改紀錄</td><td><a href="#story" onclick="go(0)">第一幕</a></td></tr>
     <tr><td>主線 ◆</td><td>main</td><td>預設的那條正式版本線</td><td><a href="#story" onclick="go(0)">第一幕</a>幕後</td></tr>
     <tr><td>提交</td><td>commit</td><td>有註記的存檔點</td><td><a href="#story" onclick="go(1)">第二幕</a></td></tr>
     <tr><td>暫存區 ◆</td><td>staging area</td><td>commit 前的「準備上場區」，agent 用 add 把檔案放進去</td><td><a href="#story" onclick="go(1)">第二幕</a>幕後</td></tr>
@@ -292,7 +298,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <tr><td>歷史</td><td>log</td><td>存檔點的時間軸</td><td><a href="#story" onclick="go(2)">第三幕</a></td></tr>
     <tr><td>blame ◆</td><td>blame</td><td>這一行是誰、哪天、為了什麼改的</td><td><a href="#story" onclick="go(2)">第三幕</a>彩蛋</td></tr>
     <tr><td>還原</td><td>restore</td><td>檔案退回某個存檔點的樣子</td><td><a href="#story" onclick="go(3)">第四幕</a></td></tr>
-    <tr><td>HEAD ◆</td><td>HEAD</td><td>「你現在站在哪」的指標，指向目前所在的分支與版本</td><td><a href="#story" onclick="go(11)">第十二幕</a>的圖</td></tr>
+    <tr><td>HEAD ◆</td><td>HEAD</td><td>「你現在站在哪」的指標，指向目前所在的分支與版本；闖關頁的狀態面板會顯示它</td><td>闖關頁</td></tr>
     <tr><td>遠端</td><td>remote／origin</td><td>GitHub 上的那一份；origin 是它的預設名字</td><td><a href="#story" onclick="go(4)">第五幕</a></td></tr>
     <tr><td>推送</td><td>push</td><td>把本機的歷史上傳到遠端</td><td><a href="#story" onclick="go(4)">第五幕</a></td></tr>
     <tr><td>拉取</td><td>pull</td><td>把遠端的新東西抓下來對齊</td><td><a href="#story" onclick="go(5)">第六幕</a></td></tr>
@@ -337,10 +343,10 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <p>十二幕裡林老師運氣好，合併都沒撞出衝突。真實協作遲早遇到：兩個人改了同一行。這是 git 唯一會停下來說「我不敢決定」的時刻——也是 agent 幫不了你拍板的一步。</p>
   <div class="card">
     <p><span class="small" style="color:var(--teal);font-weight:700">情境</span><br>
-    林老師和陳老師都改了 notes.md 的同一句結論。陳老師的版本先進了主線，林老師這邊一說「併回去」，agent 停下來了。</p>
-    <div class="bubble agent"><span class="who">AGENT</span>合併時撞到衝突（conflict）：notes.md 第 12 行，兩邊都改了。左邊是你的版本「觀光支出的所得彈性大於一」，右邊是陳老師已合併的版本「觀光支出的所得彈性接近一」。git 不會替你們選，<strong>要你決定留哪一句、或是重寫一句</strong>。你說了算，我來收尾。</div>
+    林老師和陳老師都改了 paper.md 的同一句結論。陳老師的版本先進了主線，林老師這邊一說「併回去」，agent 停下來了。</p>
+    <div class="bubble agent"><span class="who">AGENT</span>合併時撞到衝突（conflict）：paper.md 第 12 行，兩邊都改了。左邊是你的版本「觀光支出的所得彈性大於一」，右邊是陳老師已合併的版本「觀光支出的所得彈性接近一」。git 不會替你們選，<strong>要你決定留哪一句、或是重寫一句</strong>。你說了算，我來收尾。</div>
     <p>裁決三步：一、請 agent 把兩邊版本並排念出來；二、你決定——留一邊、或口述一句新的給它；三、agent 完成合併並提交，衝突解除。就這樣，衝突不是故障，是兩位作者的意見被攤開來等人裁決。</p>
-    <p class="small">課堂上時間允許的話，講師會故意安排兩人改同一行，當場引爆、全班圍觀裁決一次（時間不夠就割愛，這頁自己看完也夠用）。看過一次，以後自己遇到就不慌。</p>
+    <p class="small">如果你自己打開那個檔案，會看到 <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> 和 <code>=======</code> 把兩個版本框起來——那不是檔案壞掉，是 git 把兩邊並排攤給你看。<br>課堂上時間允許的話，講師會故意安排兩人改同一行，當場引爆、全班圍觀裁決一次（時間不夠就割愛，這頁自己看完也夠用）。看過一次，以後自己遇到就不慌。</p>
   </div>
 </section>
 
@@ -360,7 +366,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   </div>
   <div class="card">
     <h3 style="margin-top:0">急救箱：誤把敏感檔存進去了怎麼辦</h3>
-    <p>一喊停：先別做任何事，尤其別 push。二確認：問 agent「那個檔進了版本庫嗎？推上 GitHub 了嗎？」三處理：還沒 push 的話，請 agent 先確認「它進過哪幾個提交」、把沿路每一個都清乾淨再驗一次（只清最後一筆常常清不乾淨），然後把檔名加進 .gitignore；已經 push 的話，當成外洩處理——改掉裡面的密碼、通知相關的人，再找懂的人協助清歷史（清得掉自己這份，清不掉別人已經抓走的）。</p>
+    <p>一喊停：先別做任何事，尤其別 push。二確認：問 agent「那個檔進了版本庫嗎？推上 GitHub 了嗎？」三處理：還沒 push 的話，把這句話貼給 AI 助手——「<strong>那個檔案進過哪幾個 commit？請每一個都清掉、把檔名加進 .gitignore，清完再驗一次給我看，先不要 push。</strong>」（只清最後一筆常常清不乾淨，所以要它全部檢查）；已經 push 的話，當成外洩處理——改掉裡面的密碼、通知相關的人，再找懂的人協助清歷史（清得掉自己這份，清不掉別人已經抓走的）。</p>
     <p class="small">開新 repo 時順手確認兩件事：可見性選 Private——含任何學生資料的一律私人；要公開分享的教材記得選一個授權條款（license），別人才知道能不能用。</p>
   </div>
   <div class="callout">
@@ -543,7 +549,7 @@ const CONCEPTS=[
 ["提交","commit","把目前的修改打包成一個存檔點，附上時間和一句說明。","改完一節論文，在頁緣註記「改了文獻回顧，因為審查人要求」，日後隨時翻得回來。回覆審稿意見時最好用：<strong>一個審稿意見＝一個 commit</strong>，哪條意見改了什麼一目了然。","agent 每做完一個段落的工作就提交一次、自己寫說明；你讀那些說明，就知道它做了什麼。"],
 ["差異","diff","把兩個版本逐行比對，明白列出哪行加了、哪行刪了。","Word 的追蹤修訂，但任何兩個版本之間都能比，不限「上一版對這一版」。","agent 改完稿，你先看 diff 再點頭。這是監督 agent 最重要的一個畫面。"],
 ["歷史","log","所有存檔點由新到舊排成一條時間軸：誰、何時、改了什麼。","論文從初稿到刊出的大事記，連當初為什麼改都查得到。","你問「上週我們到底改了什麼」，agent 就是翻 log 回答你。"],
-["還原","restore","把檔案退回某個存檔點的樣子，改壞了不用怕。","跟共同作者說「第三節還是用上個月那版」，一句話就退回去，不必翻信箱找舊附件。","agent 改壞了、或你不滿意，說一聲「還原」它就退回去。這是你手上最大的後悔藥。"],
+["還原","restore","把檔案退回某個存檔點的樣子。存過檔的版本永遠救得回來；還沒存檔的修改一還原就沒了——所以先存再試。","跟共同作者說「第三節還是用上個月那版」，一句話就退回去，不必翻信箱找舊附件。","agent 改壞了、或你不滿意，說一聲「還原」它就退回去。這是你手上最大的後悔藥。"],
 ["遠端與推送","remote／push／pull","遠端是放在 GitHub 上的同一份版本庫；push 把你的存檔送上去，pull 把別人的新東西抓下來。","辦公室的稿子跟雲端的稿子對齊：寄出是 push，收信是 pull。","agent 開工前先 pull 拿共同作者的最新版；做完會問你「要不要推上 GitHub」。"],
 ["複製","clone","把 GitHub 上的整個版本庫，連同全部歷史，抓一份到自己電腦。","下載期刊的 replication package 整包回來自己重跑；或新共同作者加入，稿件連修改史一次拿走。","你丟一個 GitHub 網址說「幫我看看這個」，agent 的第一步就是 clone。"],
 ["分支","branch","從目前的版本岔出一條平行線試東西，原稿不動；試成了再併回來。","被 A 期刊拒稿，想大改投 B 期刊。另開一條線改 B 版，A 版原封不動放著。","agent 做有風險的修改前會先開分支；失敗就整條丟掉，主線毫髮無傷。"],
@@ -567,14 +573,14 @@ const SCENES=[
 {t:"第一幕　開一本歷史帳本",
  ctx:"林老師的論文資料夾裡躺著 paper_v2_final_really.docx 的慘痛回憶。這次新論文他決定換個方式管版本。",
  say:"我這篇花蓮觀光的論文，幫我開始記版本，以後改壞了才有得救。",
- agent:"我打算在這個資料夾建立一個版本庫（repository），你的檔案完全不會被改動，只是旁邊多一本看不見的歷史帳本。另外建議草稿用 Markdown 純文字寫——Word 檔存得進來，但看不到逐行差異。<br><em>（做完）</em>版本庫建好了。目前三個檔案都還是「未追蹤」狀態，也就是帳本是空的，還沒記任何一頁。",
+ agent:"我打算在這個資料夾建立一個版本庫（repository），你的檔案完全不會被改動，只是旁邊多一本看不見的歷史帳本。另外建議草稿用 Markdown（.md）寫——那就是純文字檔，用記事本或 Antigravity 打開就能改，格式只有「標題前面加 #」這種程度。Word 檔照樣存得進版本庫，只是看不到逐行差異。<br><em>（做完）</em>版本庫建好了。目前三個檔案還沒被納入管理（git 說它們「未追蹤」，跟 Word 的追蹤修訂是兩回事），也就是帳本是空的，還沒記任何一頁。",
  cmd:"git init -b main\ngit status",
  concept:"版本庫＝資料夾旁多出一本隱形的歷史帳本；建立它不會動到任何現有檔案。",
  state:{c:0,cap:"版本庫剛建立：0 個 commit，paper.md、code/analysis.R、data/README.md 都是未追蹤。"}},
 {t:"第二幕　存下第一版",
  ctx:"初稿的骨架齊了：草稿、分析程式、資料說明各就各位。",
  say:"現在這樣就當第一版，幫我存起來。",
- agent:"我會把三個檔案放進這次快照，訊息寫「論文初稿：草稿、分析程式、資料說明」，讓未來的你一眼看懂這版是什麼。<br><em>（做完）</em>第一個提交（commit）完成，這一刻的三個檔案已經永久留底。",
+ agent:"我先把要收進這一版的三個檔案放上「準備上場區」（暫存區），再一起按快門——快照拍的是你挑進去的那些。訊息我寫「論文初稿：草稿、分析程式、資料說明」，讓未來的你一眼看懂這版是什麼。<br><em>（做完）</em>第一個提交（commit）完成，這一刻的三個檔案已經永久留底。",
  cmd:"git add paper.md code/analysis.R data/README.md\ngit commit -m \"論文初稿：草稿、分析程式、資料說明\"",
  concept:"commit＝按快門存一張全專案快照；訊息寫「為什麼改」，是寫給三個月後的自己看的。",
  state:{c:1,cap:"main 1 個 commit（初稿快照）。"}},
@@ -582,13 +588,13 @@ const SCENES=[
  ctx:"隔天林老師重寫了引言，改到後來自己也記不清楚動了哪幾段。",
  say:"我剛改了引言，幫我看一下我到底改了哪些地方？",
  agent:"我先比對目前檔案和上一版快照的差異（diff）。<br><em>（回報）</em>只動了 paper.md：研究動機加了兩段、刪了一句過時的統計數字，其他檔案沒動。要不要把這版存起來？<br><em>（老師點頭後）</em>已提交，訊息是「改寫引言：補研究動機與資料來源說明」。歷史清單（log）現在有兩筆。",
- cmd:"git diff\ngit commit -am \"改寫引言：補研究動機與資料來源說明\"\ngit log --oneline",
+ cmd:"git diff\ngit commit -am \"改寫引言：補研究動機與資料來源說明\"   # -a＝已經在版本庫裡的檔案，改了就直接一起收，不必再挑一次\ngit log --oneline",
  concept:"diff 給你逐行對照、log 給你時間軸——「改了什麼、何時改的」從此不用靠記憶。彩蛋一句：還有個指令叫 blame，能告訴你「這一行是誰、哪天、為了什麼改的」，對合寫論文的人最有感。",
  state:{c:2,cap:"main 2 個 commit。"}},
 {t:"第四幕　表 2 改壞了，回上一版",
  ctx:"今早改表 2 的迴歸結果敘述，越改越亂，還沒存版本，想整個放棄重來。",
  say:"慘了，表 2 被我越改越亂，幫我把 paper.md 整個退回昨天存的那一版。",
- agent:"我先列出會被丟棄的修改給你看：今天早上動的 14 行，全部在表 2 那一節。<strong>這些修改還沒存過檔，丟棄之後就救不回來了</strong>，確定要退回嗎？<br><em>（老師確認後）</em>已還原，paper.md 回到昨天「改寫引言」那一版的狀態，工作目錄乾淨。順帶一提——就算你已經 commit 了壞版本，也能指定退回更早的快照；存進帳本的版本都指得回來（只要別碰第伍節那些紅線動詞）。",
+ agent:"我先列出會被丟棄的修改給你看：今天早上動的 14 行，全部在表 2 那一節。<strong>這些修改還沒存過檔，丟棄之後就救不回來了</strong>，確定要退回嗎？<br><em>（老師確認後）</em>已還原，paper.md 回到昨天「改寫引言」那一版的狀態，你的檔案跟那個存檔點一模一樣了、沒有未存的修改。順帶一提——就算你已經 commit 了壞版本，也能指定退回更早的快照；存進帳本的版本都指得回來（只要別碰第伍節那些紅線動詞）。",
  cmd:"git diff paper.md\ngit restore paper.md\ngit status",
  concept:"restore 就是時光機：還沒存的失手可以整檔丟棄；存過的版本，只要不碰第伍節的紅線動詞，都找得回來。",
  state:{c:2,note:"工作目錄已還原",cap:"main 仍是 2 個 commit；表 2 回到第 2 個 commit 的狀態。注意 agent 主動先問——這就是「破壞性動作必先問」。"}},
@@ -616,15 +622,15 @@ const SCENES=[
 {t:"第八幕　IV 不錯，併回主線",
  ctx:"試了幾天，分支上累積 2 個 commit，IV 的第一階段 F 值漂亮，結果也穩。林老師決定讓它轉正。",
  say:"IV 的結果不錯，把它併回正式版吧。",
- agent:"我的計畫：切回 main、把 iv-model 的 2 個 commit 合併（merge）進來，再上傳。因為這段期間 main 沒有別的變動，會是一次「快轉」（fast-forward）——歷史仍是一直線，不會多出岔路。<br><em>（做完）</em>合併完成，main 來到 5 個 commit；分支任務結束，我把 iv-model 這條線收掉了，它的歷史都已在 main 裡。",
+ agent:"我的計畫：切回 main、把 iv-model 的 2 個 commit 合併（merge）進來，再上傳。因為這段期間 main 沒有別的變動，會是一次「快轉」（fast-forward）——歷史仍是一直線，不會多出岔路。<br><em>（做完）</em>合併完成，main 來到 5 個 commit。iv-model 的內容都已經在 main 裡了，<strong>這條分支要不要我收掉？</strong>（刪分支是不可逆的動作，我不會自己決定。）<em>——老師點頭後：</em>收掉了。",
  cmd:"git switch main\ngit merge iv-model\ngit push\ngit branch -d iv-model",
- concept:"merge 把分支的成果收回主線；主線沒動過時就是快轉，乾淨俐落。",
+ concept:"merge 把分支的成果收回主線。主線沒動過就是「快轉」、歷史一直線；主線也動過就會多留一個合併點（第九、十一幕那樣）。兩種都不會弄丟任何 commit 說明，誰為什麼改照樣查得到。",
  state:{c:5,remote:true,cap:"main 快轉到 5 個 commit；iv-model 已刪除、雲端同步。"}},
 {t:"第九幕　邀共同作者，她的修改先看過再收",
  ctx:"林老師邀陳老師合寫政策意涵那一節。三天後，陳老師的第一批修改送到了。",
  say:"幫我邀陳老師進來一起寫；以後她改的東西，我都要先看過才收。",
- agent:"我已送出協作者（collaborator）邀請，她接受後就能讀寫這個私人版本庫。我也會提醒她：改動請開 Pull Request（PR），不要直接改 main。<br><em>（三天後）</em>陳老師開了 PR #1「政策意涵初稿」。我看過差異：新增 42 行、都在第 5 節，沒動你的模型和表格。摘要給你了，你說收我才收。<br><em>（老師看過說好）</em>已合併進 main，並留下一筆合併紀錄，歷史上看得出這段是她的貢獻。",
- cmd:"gh api -X PUT repos/lin-econ/hualien-tourism/collaborators/chen-econ\ngh pr diff 1\ngh pr merge 1 --merge",
+ agent:"我已送出協作者（collaborator）邀請，她接受後就能讀寫這個私人版本庫。我也會提醒她：改動請開 Pull Request（PR），不要直接改 main。<br><em>（三天後）</em>陳老師開了 PR #1「政策意涵初稿」。我看過差異：新增 42 行、都在第 5 節，沒動你的模型和表格。摘要給你了，你說收我才收。你也可以直接打開那個 PR 網頁，點某一行左邊的加號留意見，就像在稿子上眉批。<br><em>（老師看過說好）</em>已合併進 main，並留下一筆合併紀錄，歷史上看得出這段是她的貢獻。",
+ cmd:"gh api -X PUT repos/lin-econ/hualien-tourism/collaborators/chen-econ   # 等於在 GitHub 專案設定裡按「加入協作者」\ngh pr diff 1\ngh pr merge 1 --merge",
  concept:"Pull Request＝「我改好了，請你過目」的正式提案；先看 diff 再收，共同作者不再互相蓋稿。",
  state:{c:7,remote:true,merge:true,cap:"main 7 個 commit（陳老師的修改＋合併紀錄）；協作者 1 位。"}},
 {t:"第十幕　投稿打包 replication package",
@@ -637,7 +643,7 @@ const SCENES=[
 {t:"第十一幕　幕後彩蛋：agent 的兩張書桌",
  ctx:"截稿前一天，摘要要重寫、審稿人要的穩健性檢查也要跑。兩件事都急。",
  say:"幫我改摘要，順便把穩健性檢查跑一跑——兩件一起做，來得及嗎？",
- agent:"來得及，我用工作樹（worktree）：同一個版本庫擺出第二張書桌——另開一個資料夾、掛在 robustness 分支上跑檢查，主書桌同時改摘要，兩邊互不干擾。這其實是我們 AI agent 的日常，平行任務都這樣排。<br><em>（做完）</em>兩邊都完成：摘要改好提交在 main、穩健性結果提交在分支，我已把分支併回（這次兩線都有新東西，所以多一筆合併紀錄），第二張書桌也收走了。",
+ agent:"來得及，我用工作樹（worktree）：同一個版本庫擺出第二張書桌——另開一個資料夾、掛在 robustness 分支上跑檢查，主書桌同時改摘要，兩邊互不干擾。這其實是我們 AI agent 的日常，平行任務都這樣排。<br><em>（做完）</em>兩邊都完成：摘要改好提交在 main、穩健性結果提交在分支，我已把分支併回（這次兩線都有新東西，所以多一筆合併紀錄）。第二張書桌和 robustness 這條分支要不要一起收掉？<em>——老師說好：</em>都收乾淨了。",
  cmd:"git worktree add -b robustness ../hualien-tourism-robustness\n# 副書桌跑檢查並 commit；主書桌同時改摘要並 commit\ngit merge robustness -m \"併回穩健性檢查結果\"\ngit worktree remove ../hualien-tourism-robustness\ngit branch -d robustness",
  concept:"worktree＝同一本歷史帳本、兩張書桌，平行做事不打架——你不必會用它，但要知道 agent 靠它同時替你做好幾件事。",
  state:{c:11,remote:true,tag:"v1.0-submission",worktree:true,cap:"一度同時存在兩張書桌；併回後 main 11 個 commit，書桌收走。"}},
