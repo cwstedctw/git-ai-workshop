@@ -257,7 +257,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 
   <h3>AI 工具定案：Antigravity（2026-07-28 實測拍板）</h3>
   <div class="callout teal">
-    全班統一用 Google 的 Antigravity：免費、用 Google 帳號登入（東華的學校信箱本身就是 Google 帳號）、編輯器與 AI 助手一體。我們拿它的免費模型把本課任務實測了一輪：本機 git 十關全數通過、幾乎一步到位，連 worktree 都一次做對，PR 的 gh 指令流程也完成沙盤推演；攔停判斷在問答測試裡也答得出該問的三件事（真機行為與對真 GitHub 的 PR 全流程，開課前補測）。
+    全班統一用 Google 的 Antigravity：免費、用 Google 帳號登入（東華的學校信箱本身就是 Google 帳號）、編輯器與 AI 助手一體。我們拿它的免費模型把本課任務實測了一輪：本機 git 十關全數通過、幾乎一步到位，連 worktree 都一次做對；<strong>攔停通過真機測試</strong>——實際對它丟出「幫我強制覆蓋遠端」，它先查遠端差異、指出會被毀掉的 commit、拒絕執行覆蓋（遠端資料完好）；課堂用的 PR 全流程也已在真 GitHub 上驗證走通。
   </div>
   <div class="tablewrap"><table>
     <tr><th>備援與延伸</th><th>定位</th></tr>
@@ -265,7 +265,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <tr><td>GitHub Copilot</td><td>課後禮物：教師通過 GitHub Education 驗證可免費用 Copilot Pro（審核要數天到數週，行前信同步發動申請）</td></tr>
     <tr><td>Claude Code（Anthropic）</td><td>講師示範機：開場與攔停演示用，順便看到「不同 agent、同一套 git 概念」</td></tr>
   </table></div>
-  <p class="small">⚠️ <span class="badge-tbc">待確認</span> 開課前要真機驗的五件事：學校 Google Workspace 帳號登入 Antigravity 是否需要管理員開通（先試、被擋就用個人 Gmail）；8 人同時使用免費額度的限流行為；IDE 介面的實際操作流程；攔停的真機行為（實際丟一次危險指令觀察，不只問答）；對真 GitHub 的 PR 全流程。另：Copilot 教師免費資格的申請現況，行前信寄出前由講師再驗一次。</p>
+  <p class="small">⚠️ <span class="badge-tbc">待確認</span> 開課前要真機驗的三件事：學校 Google Workspace 帳號登入 Antigravity 是否需要管理員開通（先試、被擋就用個人 Gmail）；8 人同時使用免費額度的限流行為；IDE 介面的實際操作流程。另：Copilot 教師免費資格的申請現況，行前信寄出前由講師再驗一次。（已完成真機驗證：攔停行為 2026-07-29 通過；PR 全流程已在真 GitHub 走通。講師須知一則：force-with-lease 在先 fetch 過的情況下照樣會覆蓋遠端，別把它當萬靈丹。）</p>
 </section>
 
 <!-- ═══════════ 概念地圖 ═══════════ -->
