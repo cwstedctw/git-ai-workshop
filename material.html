@@ -346,22 +346,24 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <section id="concepts">
   
   <figure class="dia">
-    <svg viewBox="0 0 640 210" role="img" aria-label="diff 畫面示意：綠色加號是新增的行、紅色減號是刪掉的行">
-      <rect x="10" y="10" width="620" height="150" rx="8" fill="#10201f"/>
-      <text x="26" y="34" font-size="12" fill="#8fb3af" font-family="ui-monospace,monospace">paper.md</text>
-      <text x="26" y="58" font-size="13" fill="#9aa8a6" font-family="ui-monospace,monospace">  ## 1. 研究動機</text>
-      <rect x="18" y="66" width="604" height="22" fill="#2e7d32" opacity=".28"/>
-      <text x="26" y="82" font-size="13" fill="#7ee08a" font-family="ui-monospace,monospace">+ 觀光支出對在地就業的影響，過去文獻著墨不多。</text>
-      <rect x="18" y="90" width="604" height="22" fill="#2e7d32" opacity=".28"/>
-      <text x="26" y="106" font-size="13" fill="#7ee08a" font-family="ui-monospace,monospace">+ 本文以花蓮為例，補上這一塊。</text>
-      <rect x="18" y="114" width="604" height="22" fill="#b3441e" opacity=".28"/>
-      <text x="26" y="130" font-size="13" fill="#f0937a" font-family="ui-monospace,monospace">− 根據 2019 年的統計，觀光人次為……</text>
-      <text x="26" y="152" font-size="13" fill="#9aa8a6" font-family="ui-monospace,monospace">  ## 2. 資料與方法</text>
-      <text x="150" y="186" font-size="13" fill="var(--ok)" font-weight="700">＋ 綠色＝你新增的</text>
-      <text x="390" y="186" font-size="13" fill="var(--bad)" font-weight="700">− 紅色＝被刪掉的</text>
-      <text x="320" y="204" font-size="11.5" text-anchor="middle" fill="currentColor" opacity=".7">沒有記號的行代表沒動過，只是拿來對照位置</text>
+    <svg viewBox="0 0 640 230" role="img" aria-label="diff 畫面：紅色減號是刪掉的舊數字那行，綠色加號是新的行">
+      <rect x="10" y="10" width="620" height="170" rx="8" fill="#10201f"/>
+      <text x="26" y="34" font-size="12" fill="#8fb3af" font-family="ui-monospace,monospace">notes.md</text>
+      <text x="26" y="58" font-size="12.5" fill="#9aa8a6" font-family="ui-monospace,monospace">  ## 進度</text>
+      <text x="26" y="78" font-size="12.5" fill="#9aa8a6" font-family="ui-monospace,monospace">  - 2026-07-01 開檔。</text>
+      <rect x="18" y="86" width="604" height="22" fill="#b3441e" opacity=".28"/>
+      <text x="26" y="102" font-size="12.5" fill="#f0937a" font-family="ui-monospace,monospace">− - 2026-07-15 跑完主要迴歸。所得彈性估計值 0.98。</text>
+      <rect x="18" y="110" width="604" height="22" fill="#2e7d32" opacity=".28"/>
+      <text x="26" y="126" font-size="12.5" fill="#7ee08a" font-family="ui-monospace,monospace">+ - 2026-07-15 跑完主要迴歸。所得彈性估計值 0.96。</text>
+      <rect x="18" y="134" width="604" height="22" fill="#2e7d32" opacity=".28"/>
+      <text x="26" y="150" font-size="12.5" fill="#7ee08a" font-family="ui-monospace,monospace">+ - 2026-07-29 換穩健標準誤重跑，文中要說明。</text>
+      <text x="26" y="172" font-size="12.5" fill="#9aa8a6" font-family="ui-monospace,monospace">  &lt;!-- 課堂第 3 關的說明 --&gt;</text>
+      <text x="150" y="206" font-size="13" fill="var(--ok)" font-weight="700">＋ 綠色＝新增的</text>
+      <text x="390" y="206" font-size="13" fill="var(--bad)" font-weight="700">− 紅色＝刪掉的</text>
+      <text x="320" y="224" font-size="11.5" text-anchor="middle" fill="currentColor" opacity=".7">沒有記號的行代表沒動過，只是拿來對照位置</text>
     </svg>
-    <figcaption>agent 給你看 diff 的時候，畫面大致長這樣。你要確認的只有一件事：<strong>你打算改的那幾行，有沒有出現在對的顏色那邊。</strong></figcaption>
+    <figcaption>這就是課堂第 4 關會看到的東西——內容取自練習範本 <code>notes.md</code> 的真實差異：
+    你把 0.98 訂正成 0.96，git 就用一紅一綠把「原本長怎樣、現在長怎樣」攤開給你看。</figcaption>
   </figure>
 
   <h2><span class="no">參</span>概念地圖：12 張概念卡</h2>
