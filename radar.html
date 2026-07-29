@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>救援雷達：git 工作坊講師儀表板</title>
+<style>
+:root{
+  --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441; --gold-soft:#F3E3C3;
+  --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --ok:#2e7d32; --warn:#c77700; --bad:#b3441e;
+  --r:12px; --shadow:0 2px 10px rgba(26,26,26,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+    --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+    --gold-soft:#3a3220; --shadow:0 2px 10px rgba(0,0,0,.35); }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:16px;line-height:1.6;padding:0 0 40px}
+main{max-width:1000px;margin:0 auto;padding:0 18px}
+h1{font-size:1.3rem;color:var(--teal-deep);margin:20px 0 4px}
+h2{font-size:1.05rem;margin:26px 0 6px;color:var(--teal-deep)}
+.small{font-size:.84rem;color:var(--ink-soft)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px 18px;box-shadow:var(--shadow);margin:12px 0}
+input,textarea{font-family:inherit;font-size:.9rem;border:1px solid var(--line);
+  border-radius:8px;padding:8px 10px;background:var(--bg);color:var(--ink);width:100%}
+textarea{min-height:110px}
+button{background:var(--teal);color:#fff;border:none;border-radius:9px;
+  padding:8px 16px;font-size:.92rem;cursor:pointer;font-family:inherit;margin:4px 6px 0 0}
+button.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.funnel{display:flex;gap:12px;margin:10px 0;flex-wrap:wrap}
+.fstat{flex:1;min-width:110px;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:10px;text-align:center;box-shadow:var(--shadow)}
+.fstat .v{font-size:1.6rem;font-weight:800;color:var(--teal)}
+.fstat .k{font-size:.78rem;color:var(--ink-soft)}
+.row{display:grid;grid-template-columns:110px 1fr 130px;gap:10px;align-items:center;
+  padding:10px 8px;border-bottom:1px dashed var(--line)}
+.row.header{font-weight:700;font-size:.82rem;color:var(--ink-soft);border-bottom:2px solid var(--line)}
+.row.stuck{background:rgba(179,68,30,.08);border-radius:8px}
+.lamps{display:flex;gap:6px;flex-wrap:wrap}
+.lamp{padding:3px 10px;border-radius:999px;font-size:.78rem;border:1px solid var(--line);color:var(--ink-soft)}
+.lamp.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.lamp.half{background:var(--gold);border-color:var(--gold);color:#1A1A1A}
+.age{font-size:.85rem;text-align:right}
+.age.warn{color:var(--warn);font-weight:700}
+.age.bad{color:var(--bad);font-weight:800}
+.alert{border-left:5px solid var(--bad);background:var(--card);padding:10px 14px;
+  border-radius:0 10px 10px 0;margin:10px 0;font-size:.92rem}
+.alert.green{border-left-color:var(--ok)}
+#meta{position:fixed;right:12px;top:10px;font-size:.75rem;color:var(--ink-soft);text-align:right}
+.pill{display:inline-block;background:var(--gold-soft);border-radius:999px;padding:2px 10px;font-size:.78rem;margin-left:6px}
+</style>
+</head>
+<body>
+<div id="meta"></div>
+<main>
+  <h1>救援雷達 <span class="pill">只給講師看，不投影</span></h1>
+  <p class="small">用途：知道誰卡最久、先去救誰。排序永遠是「最久沒動靜的在最上面」。看不到的東西要心裡有數：老師還沒 push 的本機狀態這裡看不見，靠巡場和求救 issue 補。</p>
+
+  <div class="card" id="setup">
+    <h2 style="margin-top:0">設定（開場貼一次）</h2>
+    <p class="small">GitHub token 兩種建法擇一：classic token <strong>不勾任何 scope</strong>（只能讀公開資源、額度 5,000 次／小時）；或 fine-grained 選「Public repositories (read-only)」。學員的工作坊 repo 與共用 repo 都建成<strong>公開</strong>（課堂全是模擬資料），一顆唯讀 token 就全讀得到。⚠️ 跨帳號讀取行為開課前務必用兩個真實學員帳號測通一次。token 設今天過期、<strong>只存在這個分頁的記憶體，關掉就消失</strong>——順便示範「token 不進版本控制」。</p>
+    <input id="tokenIn" type="password" placeholder="github_pat_...">
+    <p class="small" style="margin-top:10px">共用 repo（owner/name）：</p>
+    <input id="sharedIn" placeholder="cwstedctw/econ-shared">
+    <p class="small" style="margin-top:10px">學員清單（一行一位：桌牌,owner/repo）：</p>
+    <textarea id="teachersIn" placeholder="lin,lin-econ/econ-starter-lin
+chen,chen-econ/econ-starter-chen"></textarea>
+    <button id="startBtn">開始監看</button>
+    <button class="ghost" id="demoBtn">先看示範資料</button>
+    <span class="small" id="setupNote"></span>
+  </div>
+
+  <div id="board" style="display:none">
+    <div class="funnel">
+      <div class="fstat"><div class="v" id="fReady">–</div><div class="k">報到（repo 在）</div></div>
+      <div class="fstat"><div class="v" id="fActive">–</div><div class="k">動手（有 commit）</div></div>
+      <div class="fstat"><div class="v" id="fBranch">–</div><div class="k">開了桌牌分支</div></div>
+      <div class="fstat"><div class="v" id="fPR">–</div><div class="k">開了 PR</div></div>
+      <div class="fstat"><div class="v" id="fMerged">–</div><div class="k">PR 已合併</div></div>
+    </div>
+    <div id="alerts"></div>
+    <div class="card">
+      <div class="row header"><div>桌牌</div><div>里程碑</div><div style="text-align:right">最後動靜</div></div>
+      <div id="rows"></div>
+    </div>
+    <p style="margin:8px 0"><button class="ghost" id="stageBtn">階段：上半場（紅燈門檻 25 分鐘）</button></p>
+    <p class="small">燈號規則：綠＝完成、金＝進行中。「最後動靜」轉橘轉紅的，優先過去看。注意：上半場（第 2–5 關）本來就不會 push，這裡看不到本機進度——上半場紅燈只代表「還沒推過東西」，以巡場和求救警報為主；進入下半場記得按上面的按鈕切換門檻。求救 issue（標題含【求救】）會出現在上方警報區。</p>
+  </div>
+</main>
+
+<script>
+let token='',shared='',teachers=[],timer=null,demo=false,pollMs=30000;
+const prevCommits={};
+const $=id=>document.getElementById(id);
+
+function parseTeachers(txt){
+  return txt.trim().split('\n').map(l=>{
+    const [tag,repo]=l.split(',').map(s=>s.trim());
+    return tag&&repo?{tag,repo}:null;
+  }).filter(Boolean);
+}
+
+async function gh(path){
+  const r=await fetch('https://api.github.com'+path,{
+    headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'}});
+  const remain=r.headers.get('X-RateLimit-Remaining');
+  if(remain!==null){
+    $('meta').innerHTML='API 剩餘額度 '+remain+'<br>每 '+(pollMs/1000)+' 秒更新';
+    if(+remain<200&&pollMs<120000){pollMs=120000;restartTimer();}
+  }
+  if(!r.ok) throw new Error(path+' → '+r.status);
+  return r.json();
+}
+
+let stage='first'; /* 上半場（第 2–5 關）本來就沒有 push，紅燈門檻要放寬，否則全板誤報 */
+function ageText(iso){
+  if(!iso) return {t:'還沒動過',cls:''};
+  const min=Math.round((Date.now()-new Date(iso).getTime())/60000);
+  const [w,b]=stage==='first'?[15,25]:[6,10];
+  const cls=min>=b?'bad':min>=w?'warn':'';
+  return {t:min<1?'剛剛':min+' 分鐘前',cls};
+}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+async function pollOnce(){
+  const data=[];
+  let sharedBranches=[],sharedPRs=[],helpIssues=[],forcePushes=[];
+  try{
+    if(!demo){
+      sharedBranches=await gh('/repos/'+shared+'/branches?per_page=100');
+      sharedPRs=await gh('/repos/'+shared+'/pulls?state=all&per_page=50');
+      const issues=await gh('/repos/'+shared+'/issues?state=open&per_page=50');
+      helpIssues=issues.filter(i=>i.title.includes('【求救】'));
+      try{
+        const act=await gh('/repos/'+shared+'/activity?per_page=30');
+        forcePushes=act.filter(a=>a.activity_type==='force_push');
+      }catch(e){/* activity 端點沒權限就略過 */}
+    }
+    for(const t of teachers){
+      let commits=0,last=null,hasRepo=false;
+      if(demo){
+        const fake=DEMO[t.tag]||{};
+        Object.assign(t,fake);data.push(t);continue;
+      }
+      try{
+        const c=await gh('/repos/'+t.repo+'/commits?per_page=5');
+        hasRepo=true;commits=c.length;last=c[0]?.commit?.committer?.date||null;
+      }catch(e){hasRepo=false}
+      const myBranch=sharedBranches.find(b=>b.name==='robustness-check-'+t.tag);
+      const myPR=sharedPRs.find(p=>p.head?.ref==='robustness-check-'+t.tag);
+      const prLast=myPR?.updated_at;
+      if(prLast&&(!last||prLast>last)) last=prLast;
+      if(myBranch){ /* 桌牌分支上 push 了但還沒開 PR 的那段，也算「有動靜」 */
+        try{
+          const bc=await gh('/repos/'+shared+'/commits?sha='+encodeURIComponent(myBranch.name)+'&per_page=1');
+          const bt=bc[0]?.commit?.committer?.date;
+          if(bt&&(!last||bt>last)) last=bt;
+        }catch(e){}
+      }
+      Object.assign(t,{hasRepo,commits,last,
+        hasBranch:!!myBranch,hasPR:!!myPR,merged:!!(myPR&&myPR.merged_at)});
+      data.push(t);
+    }
+  }catch(e){
+    $('setupNote').textContent='讀取出錯：'+e.message+'（token 權限或 repo 名稱？）';
+    return;
+  }
+  render(data,helpIssues,forcePushes);
+}
+
+function render(data,helpIssues,forcePushes){
+  $('board').style.display='block';
+  $('fReady').textContent=data.filter(t=>t.hasRepo).length+'/'+data.length;
+  $('fActive').textContent=data.filter(t=>t.commits>1).length+'/'+data.length; /* 範本自帶 1 個 initial commit，>1 才算真的動手 */
+  $('fBranch').textContent=data.filter(t=>t.hasBranch).length+'/'+data.length;
+  $('fPR').textContent=data.filter(t=>t.hasPR).length+'/'+data.length;
+  $('fMerged').textContent=data.filter(t=>t.merged).length+'/'+data.length;
+  const al=$('alerts');al.innerHTML='';
+  helpIssues.forEach(i=>{ /* 標題來自學員端，一律跳脫再插入（頁面記憶體裡有 token） */
+    al.innerHTML+=`<div class="alert">🚨 求救：${esc(i.title)}（${ageText(i.created_at).t}）—— <a href="${esc(i.html_url)}" target="_blank" rel="noopener">看 issue</a></div>`;
+  });
+  forcePushes.forEach(f=>{
+    al.innerHTML+=`<div class="alert">⚠️ 共用 repo 出現 force push（${esc(f.ref)}，${ageText(f.timestamp).t}）——先弄清楚是誰的 agent 做的。</div>`;
+  });
+  data.forEach(t=>{ /* 正向綠事件：第一次真的 commit，可當場點名稱讚 */
+    if(prevCommits[t.tag]!==undefined&&prevCommits[t.tag]<=1&&t.commits>1){
+      al.innerHTML+=`<div class="alert green">🎉 ${esc(t.tag)} 剛完成第一次 commit——點個名稱讚一下。</div>`;
+    }
+    prevCommits[t.tag]=t.commits;
+  });
+  const stuckN=data.filter(t=>ageText(t.last).cls==='bad').length;
+  if(stuckN>=3){
+    al.innerHTML+=`<div class="alert">⚠️ ${stuckN} 人同時卡住——大概不是個人問題：先查教室網路和 GitHub 狀態，別逐桌救。</div>`;
+  }
+  const rows=$('rows');rows.innerHTML='';
+  data.sort((a,b)=>{
+    const ta=a.last?new Date(a.last).getTime():0, tb=b.last?new Date(b.last).getTime():0;
+    return ta-tb; // 最久沒動的在上面
+  });
+  data.forEach(t=>{
+    const age=ageText(t.last);
+    const div=document.createElement('div');
+    div.className='row'+(age.cls==='bad'?' stuck':'');
+    div.innerHTML=`
+      <div style="font-weight:800">${esc(t.tag)}</div>
+      <div class="lamps">
+        <span class="lamp ${t.hasRepo?'on':''}">報到</span>
+        <span class="lamp ${t.commits>1?'on':(t.hasRepo?'half':'')}">commit</span>
+        <span class="lamp ${t.hasBranch?'on':''}">桌牌分支</span>
+        <span class="lamp ${t.hasPR?'on':''}">PR</span>
+        <span class="lamp ${t.merged?'on':(t.hasPR?'half':'')}">合併</span>
+      </div>
+      <div class="age ${age.cls}">${age.t}</div>`;
+    rows.appendChild(div);
+  });
+}
+
+/* 示範資料：讓講師先看懂畫面 */
+const DEMO={
+  lin:{hasRepo:true,commits:3,last:new Date(Date.now()-2*60000).toISOString(),hasBranch:true,hasPR:true,merged:false},
+  chen:{hasRepo:true,commits:5,last:new Date(Date.now()-1*60000).toISOString(),hasBranch:true,hasPR:true,merged:true},
+  wang:{hasRepo:true,commits:1,last:new Date(Date.now()-12*60000).toISOString(),hasBranch:false,hasPR:false,merged:false},
+  chang:{hasRepo:false,commits:0,last:null,hasBranch:false,hasPR:false,merged:false},
+};
+
+function restartTimer(){
+  if(timer)clearInterval(timer);
+  timer=setInterval(pollOnce,pollMs);
+}
+$('startBtn').onclick=()=>{
+  token=$('tokenIn').value.trim();
+  shared=$('sharedIn').value.trim();
+  teachers=parseTeachers($('teachersIn').value);
+  if(!token||!shared||!teachers.length){$('setupNote').textContent='三個欄位都要填。';return}
+  sessionStorage.setItem('radar-shared',shared);
+  localStorage.setItem('radar-teachers',$('teachersIn').value);
+  demo=false;$('setupNote').textContent='監看中。';
+  pollOnce();restartTimer();
+};
+$('demoBtn').onclick=()=>{
+  demo=true;
+  teachers=[{tag:'lin'},{tag:'chen'},{tag:'wang'},{tag:'chang'}];
+  $('meta').innerHTML='示範資料模式';
+  pollOnce();
+};
+$('sharedIn').value=sessionStorage.getItem('radar-shared')||'';
+$('teachersIn').value=localStorage.getItem('radar-teachers')||'';
+$('stageBtn').onclick=()=>{
+  stage=stage==='first'?'second':'first';
+  $('stageBtn').textContent=stage==='first'?'階段：上半場（紅燈門檻 25 分鐘）':'階段：下半場（紅燈門檻 10 分鐘）';
+  pollOnce();
+};
+</script>
+</body>
+</html>

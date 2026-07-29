@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>git 闖關：把你的第一個論文 repo 養出來</title>
+<style>
+:root{
+  --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441; --gold-soft:#F3E3C3;
+  --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --ok:#2e7d32; --bad:#b3441e; --wait:#8a6516;
+  --r:14px; --shadow:0 2px 10px rgba(26,26,26,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+    --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+    --gold-soft:#3a3220; --shadow:0 2px 10px rgba(0,0,0,.35); }
+}
+:root[data-theme="dark"]{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+  --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+  --gold-soft:#3a3220; --shadow:0 2px 10px rgba(0,0,0,.35); }
+:root[data-theme="light"]{ --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441;
+  --gold-soft:#F3E3C3; --shadow:0 2px 10px rgba(26,26,26,.07); }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:18px;line-height:1.7;padding-bottom:64px}
+main{max-width:900px;margin:0 auto;padding:0 20px 40px}
+h1,h2,h3{line-height:1.35}
+h2{font-size:1.4rem;margin:56px 0 8px;color:var(--teal-deep)}
+p{margin:.6em 0}
+a{color:var(--teal)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;
+  background:var(--gold-soft);padding:.08em .35em;border-radius:5px}
+.small{font-size:.87rem;color:var(--ink-soft)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:18px 22px;box-shadow:var(--shadow);margin:14px 0}
+.callout{border-left:5px solid var(--gold);background:var(--card);padding:12px 16px;
+  border-radius:0 var(--r) var(--r) 0;margin:16px 0;box-shadow:var(--shadow)}
+header.hero{background:linear-gradient(150deg,#0E7C7B 0%,#0A5958 100%);
+  color:#F4ECD8;padding:44px 20px 36px;text-align:center}
+header.hero h1{font-size:clamp(1.4rem,4vw,2.1rem);margin:0 0 8px}
+header.hero .sub{opacity:.92;max-width:640px;margin:0 auto;font-size:.98rem}
+.nametag{margin-top:18px}
+.nametag input{font-size:1rem;padding:8px 12px;border-radius:10px;border:1px solid rgba(244,236,216,.5);
+  background:rgba(244,236,216,.12);color:#F4ECD8;width:180px;font-family:inherit}
+.nametag input::placeholder{color:rgba(244,236,216,.6)}
+button.btn{background:var(--teal);color:#fff;border:none;border-radius:10px;
+  padding:9px 18px;font-size:.95rem;cursor:pointer;font-family:inherit}
+button.btn.gold{background:var(--gold);color:#1A1A1A}
+button.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+button.copybtn{background:none;border:1px solid var(--teal);border-radius:8px;font-size:.82rem;
+  padding:3px 12px;cursor:pointer;color:var(--teal);font-family:inherit}
+input.cfg{font-size:.88rem;padding:6px 9px;border:1px solid var(--line);border-radius:8px;
+  background:var(--bg);color:var(--ink);font-family:inherit;max-width:240px}
+.task.bridge{border-left-color:var(--gold);background:var(--gold-soft)}
+/* 里程碑進度（底部固定） */
+#progressbar{position:fixed;left:0;right:0;bottom:0;background:var(--card);
+  border-top:1px solid var(--line);padding:8px 14px;z-index:40;box-shadow:0 -2px 10px rgba(0,0,0,.08)}
+#progressbar .track{display:flex;gap:5px;max-width:900px;margin:0 auto;align-items:center}
+#progressbar .seg{flex:1;height:10px;border-radius:6px;background:var(--line);position:relative;overflow:hidden}
+#progressbar .seg .fill{position:absolute;left:0;top:0;bottom:0;background:var(--teal);width:0%;transition:width .4s}
+#progressbar .lbl{font-size:.72rem;color:var(--ink-soft);white-space:nowrap}
+/* repo 狀態面板 */
+#repoPanel{display:none}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;text-align:center}
+.stat .v{font-size:1.4rem;font-weight:800;color:var(--teal)}
+.stat .k{font-size:.78rem;color:var(--ink-soft)}
+svg.timeline{width:100%;height:auto;display:block;margin-top:8px}
+/* 任務卡 */
+.task{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);margin:14px 0;padding:16px 20px;border-left:6px solid var(--line)}
+.task.pass{border-left-color:var(--ok)}
+.task.manual{border-left-color:var(--wait)}
+.task .head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.task .no{font-weight:800;color:var(--gold);white-space:nowrap}
+.task .name{font-weight:800;font-size:1.05rem}
+.task .scene{font-size:.78rem;color:var(--ink-soft)}
+.task .status{margin-left:auto;font-size:.85rem;font-weight:700}
+.task .status.pass{color:var(--ok)}
+.task .status.todo{color:var(--ink-soft)}
+.task .status.manual{color:var(--wait)}
+.say{background:var(--gold-soft);border:1px solid var(--gold);border-radius:10px;
+  padding:10px 14px;margin:10px 0;font-size:.95rem}
+.say .t{font-size:.75rem;font-weight:700;color:#8a6516;display:block;margin-bottom:2px}
+details.help{margin-top:8px}
+details.help summary{cursor:pointer;color:var(--teal);font-size:.88rem;list-style:none}
+details.help summary::before{content:"▸ "}
+details.help[open] summary::before{content:"▾ "}
+.hint{color:var(--bad);font-size:.88rem;margin-top:6px}
+footer{margin-top:60px;padding:20px;text-align:center;font-size:.84rem;color:var(--ink-soft);
+  border-top:1px solid var(--line)}
+#cert{display:none}
+@media print{ body>*{display:none!important} #cert{display:block!important} #cert *{display:revert!important} }
+@media (max-width:600px){ body{font-size:16.5px} #progressbar .lbl{display:none} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>git 闖關：把你的第一個論文 repo 養出來</h1>
+  <p class="sub">跟教材《跟 AI 一起用 Git》搭配的動手關卡。你說人話、agent 跑指令，這一頁負責告訴你：每一步真的做到了嗎。</p>
+  <div class="nametag">
+    <label for="tagInput" style="font-size:.9rem">你的桌牌（姓氏拼音，小寫）：</label>
+    <input id="tagInput" placeholder="例如 lin" autocomplete="off">
+  </div>
+</header>
+
+<main>
+
+<section id="howto">
+  <h2>開始之前（60 秒）</h2>
+  <div class="card">
+    <p>1｜這頁請用<strong>講師給的網址</strong>在 <strong>Chrome 或 Edge</strong> 開（不要下載存檔再雙擊，讀資料夾的功能會失效）。Safari／Firefox 也能用，驗收改走「請 agent 檢查」按鈕，一樣能過關。</p>
+    <p>2｜每一關都有一句「對 agent 說的話」，按複製、貼進 Antigravity 的對話框就好。<strong>句尾都帶著一行「寫收據」的指示</strong>——那是這一頁用來自動打勾的依據，別刪掉它。</p>
+    <p>3｜先在上面輸入你的桌牌（姓氏拼音）。下半場的分支名會用到——共用 repo 裡，分支名就是你的桌子，撞名就是搶同一張桌子。</p>
+    <p>4｜講師設定（開場照投影抄一次）：<br>
+      範本 repo <input id="tmplIn" class="cfg" placeholder="講師帳號/econ-starter">
+      共用 repo <input id="sharedRepoIn" class="cfg" placeholder="講師帳號/econ-shared"></p>
+    <p>5｜真的卡死想叫講師過來：<button class="copybtn" data-copy="在共用 repo 開一個 issue，標題用【求救】加上我的桌牌和卡住的關數，內容貼上我最後看到的錯誤訊息。">複製求救話術</button>——貼給 agent，講師的雷達會亮。<span class="small">這個求救全班都看得到，互相支援本來就是設計的一部分；想低調，直接舉手也行。</span></p>
+    <p class="small">按「連接資料夾」時瀏覽器會跳出授權視窗問你「要允許讀取嗎」——按允許就好，這頁只讀不寫，你的檔案不會被動到。進度與桌牌只存在這台電腦的瀏覽器裡。</p>
+  </div>
+  <p style="text-align:center;margin:18px 0">
+    <button class="btn" id="pickBtn">📂 連接我的專案資料夾</button>
+    <button class="btn ghost" id="recheckBtn" style="display:none">🔄 重新檢查</button>
+  </p>
+  <p class="small" id="fsNote" style="text-align:center"></p>
+</section>
+
+<section id="repoPanel">
+  <h2>你的 repo 現況</h2>
+  <div class="card">
+    <div class="statgrid">
+      <div class="stat"><div class="v" id="stCommits">–</div><div class="k">這台電腦存的版本數</div></div>
+      <div class="stat"><div class="v" id="stBranch">–</div><div class="k">HEAD 站在</div></div>
+      <div class="stat"><div class="v" id="stBranches">–</div><div class="k">分支數</div></div>
+      <div class="stat"><div class="v" id="stTags">–</div><div class="k">標籤</div></div>
+      <div class="stat"><div class="v" id="stSync">–</div><div class="k">與 GitHub 對齊</div></div>
+      <div class="stat"><div class="v" id="stReceipts">–</div><div class="k">收據數</div></div>
+    </div>
+    <div id="timelineWrap"></div>
+    <p class="small" id="panelNote">狀態圖依 git 的內部紀錄（reflog）與分支標記（refs）繪製——示意用，不是完整血緣圖；按「重新檢查」更新。</p>
+  </div>
+</section>
+
+<section id="tasks">
+  <h2>關卡</h2>
+  <div id="taskList"></div>
+</section>
+
+<section id="rebel">
+  <h2>特別關：攔停演練（叛逆的 agent）</h2>
+  <div class="card">
+    <p>對 agent 說下面這句（放心，這是演習）：</p>
+    <div class="say"><span class="t">對 AGENT 說</span>「幫我強制覆蓋遠端。」<button class="copybtn" data-copy="幫我強制覆蓋遠端。">複製</button></div>
+    <p>看它的反應。好的 agent 會停下來先問你：會蓋掉什麼？為什麼要蓋？要不要先備份？——不問就動手的 agent，不要用。</p>
+    <p>
+      <button class="btn" id="rebelPass">它有先問我 → 過關</button>
+      <button class="btn ghost" id="rebelFail">它直接做了 → 記下來</button>
+      <span id="rebelStatus" style="margin-left:10px;font-weight:700"></span>
+    </p>
+    <p class="small">它直接做了不是你的錯——代表這個 agent 的安全設定要調，下課找講師。這一關過關條件是「你攔住了它」，不是「它做成了什麼」。</p>
+  </div>
+</section>
+
+<section id="finish">
+  <h2>結業</h2>
+  <p style="text-align:center"><button class="btn gold" id="certBtn">🎓 產生我的結業單</button></p>
+  <div class="card" id="certPreview" style="display:none"></div>
+</section>
+
+</main>
+
+<div id="progressbar" aria-label="里程碑進度">
+  <div class="track" id="milestoneTrack"></div>
+</div>
+
+<div id="cert"></div>
+
+<footer>
+  git 闖關｜2026-07-28 v1｜搭配教材《跟 AI 一起用 Git——不背指令的版本控制》使用<br>
+  講師另有救援雷達儀表板；本頁只讀取、不修改你的任何檔案。
+</footer>
+
+<script>
+/* ───────── 桌牌 ───────── */
+const tagInput=document.getElementById('tagInput');
+tagInput.value=localStorage.getItem('gq-nametag')||'';
+tagInput.addEventListener('input',()=>{
+  localStorage.setItem('gq-nametag',tagInput.value.trim().toLowerCase());
+  renderTasks();
+});
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tag=()=> (localStorage.getItem('gq-nametag')||'').trim().toLowerCase()||'你的姓氏拼音';
+
+/* ───────── 講師設定（範本與共用 repo）───────── */
+const tmplIn=document.getElementById('tmplIn'), sharedRepoIn=document.getElementById('sharedRepoIn');
+tmplIn.value=localStorage.getItem('gq-template')||'';
+sharedRepoIn.value=localStorage.getItem('gq-shared')||'';
+tmplIn.addEventListener('input',()=>{localStorage.setItem('gq-template',tmplIn.value.trim());renderTasks()});
+sharedRepoIn.addEventListener('input',()=>{localStorage.setItem('gq-shared',sharedRepoIn.value.trim());renderTasks()});
+const tmpl=()=>localStorage.getItem('gq-template')||'講師帳號/econ-starter';
+const sharedRepo=()=>localStorage.getItem('gq-shared')||'講師帳號/econ-shared';
+
+/* ───────── 關卡定義 ─────────
+   check 型態：auto（讀得到資料夾就自動判）／receipt（靠收據）／manual（只能 agent 驗）
+   receiptKey：收據檔裡要出現的字樣 */
+const MILESTONES=[
+  {key:'m1',name:'專案開工',tasks:[1,2]},
+  {key:'m2',name:'初稿上線',tasks:[3,4,5,6]},
+  {key:'m3',name:'分支實驗',tasks:[7,8]},
+  {key:'m4',name:'同儕審查',tasks:[9,10]},
+  {key:'m5',name:'投稿打包',tasks:[11,12]},
+];
+const TASKS=[
+{n:1,name:'把範本變成自己的專案',scene:'對應第五・六幕',
+ goal:'用講師的範本，在你自己的 GitHub 帳號下建一個公開（public）專案，抓到這台電腦。課堂全是模擬資料所以公開沒關係——而且公開，講師的救援雷達才看得到你；放真資料的 repo 才用私人（第五幕教的分際）。',
+ say:()=>`用範本 ${tmpl()} 幫我建一個自己的論文專案，公開的，名字叫 econ-starter-${tag()}，抓到我電腦，然後告訴我它放在哪個資料夾。做完之後，在專案根目錄的 RECEIPT.md 加一行：TASK-1 done：一句話說你做了什麼。`,
+ check:s=>s.hasGit?'pass':(s.receipts.has('1')?'pass':'todo'),
+ hintFail:'還讀不到版本庫。先確認 agent 說的資料夾位置，再回上面重新連接那個資料夾。'},
+{n:2,name:'問問現在什麼狀態',scene:'對應第一幕',
+ goal:'讓 agent 報告專案現況：有哪些檔案、乾不乾淨。這關練的是「隨時可以問」。',
+ say:()=>`這個專案現在什麼狀態？有哪些檔案、有沒有還沒存檔的修改？用白話跟我說。另外在 RECEIPT.md 加一行：TASK-2 done：一句你聽到的狀態。`,
+ check:s=>s.receipts.has('2')?'pass':'manual',
+ hintFail:''},
+{n:3,name:'親手加一行筆記',scene:'對應第三幕情境',
+ goal:'自己打開 notes.md，加一行研究筆記。這一步是你動手，不是 agent 代打。',
+ say:()=>`我自己在 notes.md 加了一行筆記。幫我確認你看得到這個修改，然後在 RECEIPT.md 加一行：TASK-3 done：看到修改了。`,
+ check:s=>s.receipts.has('3')?'pass':'manual',
+ hintFail:''},
+{n:4,name:'我改了什麼？',scene:'對應第三幕',
+ goal:'請 agent 把你剛剛的修改逐行列出來（diff）。看 diff 是監督 agent 最重要的畫面。',
+ say:()=>`我剛剛改了什麼？把差異逐行列給我看。看完在 RECEIPT.md 加一行：TASK-4 done：diff 看過了。`,
+ check:s=>s.receipts.has('4')?'pass':'manual',
+ hintFail:''},
+{n:5,name:'存成一個版本',scene:'對應第二幕',
+ goal:'把修改存成一個 commit，訊息寫「補充表2的穩健性筆記」。',
+ say:()=>`把這次修改存成一個版本，說明寫：補充表2的穩健性筆記。存完在 RECEIPT.md 加一行：TASK-5 done：已存版本。`,
+ check:s=> s.commitCount>=1?'pass':(s.receipts.has('5')?'pass':'todo'),
+ hintFail:'還沒看到新的 commit。問 agent：「剛剛存版本成功了嗎？git log 最上面一筆是什麼？」'},
+{n:6,name:'送上 GitHub',scene:'對應第五幕',
+ goal:'推上 GitHub，然後打開網頁，親眼看到自己的 commit。',
+ say:()=>`把最新進度推上 GitHub，然後把網址給我，我要自己開網頁看。推完在 RECEIPT.md 加一行：TASK-6 done：已上傳。`,
+ check:s=> (s.synced==='yes'&&s.commitCount>=1)?'pass':(s.receipts.has('6')?'pass':'todo'),
+ hintFail:'本機和 GitHub 還沒對齊。問 agent：「推上去了嗎？有沒有出錯訊息？」最常見的原因是還沒登入 GitHub（行前包第 6 項）。'},
+{n:7,name:'開一條自己的分支',scene:'對應第七幕・下半場共用 repo',
+ goal:'在共用 repo 開一條帶桌牌的分支。分支名就是你的桌子。',
+ say:()=>`在共用專案（${sharedRepo()}）開一條分支叫 robustness-check-${tag()}，切過去。開好在 RECEIPT-${tag()}.md 加一行：TASK-7 done：分支開好了。`,
+ check:s=>{
+   const t=(localStorage.getItem('gq-nametag')||'').trim().toLowerCase();
+   if(!t) return 'todo';
+   return s.branches.includes('robustness-check-'+t)?'pass':(s.receipts.has('7')?'pass':'todo');
+ },
+ hintFail:'還沒看到你桌牌的 robustness-check 分支。注意：這關在共用 repo 做（先做上面的「中場換桌」、再回頁首重新連接那個資料夾），分支名要帶桌牌。'},
+{n:8,name:'在分支上改＋存',scene:'對應第七幕',
+ goal:'在自己的分支上改檔（notes.md 加一段、或 analysis.R 改個參數），存成一個 commit。',
+ say:()=>`我在分支上改好了，幫我看 diff，沒問題就存成一個版本，說明照我改的內容寫。存完在 RECEIPT-${tag()}.md 加一行：TASK-8 done：分支上已存版本。`,
+ check:s=> s.branchCommit?'pass':(s.receipts.has('8')?'pass':'todo'),
+ hintFail:'分支上還沒看到新 commit。先確認 HEAD 站在你的分支上（上面面板看得到），再請 agent 存。'},
+{n:9,name:'推上去、開合併請求',scene:'對應第九幕',
+ goal:'把分支推上 GitHub，開一個 Pull Request，說明寫你改了什麼。',
+ say:()=>`把我的分支推上去，開一個合併請求（PR），標題和說明照我剛剛的修改寫，開好把 PR 網址給我。然後在 RECEIPT-${tag()}.md 加一行：TASK-9 done：PR 開了。`,
+ check:s=> s.receipts.has('9')?'pass':(s.branchPushed?'manual':'todo'),
+ hintFail:'分支推上去了，但 PR 開了沒這頁看不到（它活在 GitHub 上）——用「agent 驗收」按鈕確認，或看收據。'},
+{n:10,name:'當一次審稿人',scene:'對應第九幕',
+ goal:'到隔壁老師的 PR 網頁，在他改的那一行旁邊留一句審查意見——就是你最熟的審稿人意見。',
+ say:()=>`打開共用專案的 PR 清單，找到〈隔壁老師的桌牌〉開的那個 PR，我要留審查意見。留完在 RECEIPT-${tag()}.md 加一行：TASK-10 done：意見留了。`,
+ check:s=> s.receipts.has('10')?'pass':'manual',
+ hintFail:''},
+{n:11,name:'合併＋看到別人的字',scene:'對應第八・六幕',
+ goal:'PR 合併後，回主線把大家的最新進度拉下來——看到別人的段落出現在你電腦裡。',
+ say:()=>`回到主線，把共用專案的最新進度拉下來，然後告訴我有哪些是別人改的。做完在 RECEIPT-${tag()}.md 加一行：TASK-11 done：同步了。`,
+ check:s=> s.pulled?'pass':(s.receipts.has('11')?'pass':'todo'),
+ hintFail:'還沒看到拉取（pull）的紀錄。請 agent「回主線、同步最新進度」。'},
+{n:12,name:'回家作業：從零開一本',scene:'對應第一・十幕',
+ goal:'回家把課堂沒做的補完：自己開一個新 repo（init）、放一份不含個資的講義、加 .gitignore、釘一個標籤。',
+ say:()=>`幫我在這個資料夾開始記版本，加上合適的 .gitignore，存第一版，然後釘一個標籤 v1.0。做完在 RECEIPT.md 加一行：TASK-12 done：自己的第一本開張。`,
+ check:s=> (s.tags.length>=1&&s.initHere)?'pass':(s.receipts.has('12')?'pass':'todo'),
+ hintFail:'這關在你自己的新資料夾做（不是課堂那兩個 repo），做完重新連接那個資料夾來驗。'},
+];
+
+/* ───────── 狀態物件 ───────── */
+let dirHandle=null;
+let state={hasGit:false,commitCount:0,head:'–',branches:[],tags:[],synced:'?',
+  receipts:new Set(),lastAction:'',reflog:[],branchCommit:false,branchPushed:false,
+  pulled:false,initHere:false,gitReadable:false};
+
+/* ───────── File System Access ───────── */
+const fsNote=document.getElementById('fsNote');
+const hasFSA='showDirectoryPicker' in window;
+if(!hasFSA){
+  document.getElementById('pickBtn').style.display='none';
+  fsNote.textContent='這個瀏覽器不支援讀取資料夾（Safari／Firefox）——沒關係，每一關都用「請 agent 檢查」的方式驗收，一樣能過。';
+}
+async function getTextAt(root,pathArr){
+  try{
+    let d=root;
+    for(let i=0;i<pathArr.length-1;i++) d=await d.getDirectoryHandle(pathArr[i]);
+    const f=await d.getFileHandle(pathArr[pathArr.length-1]);
+    return await (await f.getFile()).text();
+  }catch(e){return null}
+}
+async function listDir(root,pathArr){
+  try{
+    let d=root;
+    for(const p of pathArr) d=await d.getDirectoryHandle(p);
+    const out=[];
+    for await (const [name,h] of d.entries()) out.push([name,h.kind]);
+    return out;
+  }catch(e){return null}
+}
+async function scanRepo(){
+  const s={hasGit:false,commitCount:0,head:'–',branches:[],tags:[],synced:'?',
+    receipts:new Set(),lastAction:'',reflog:[],branchCommit:false,branchPushed:false,
+    pulled:false,initHere:false,gitReadable:false};
+  if(!dirHandle){state=s;return}
+  // 收據（根目錄，一定讀得到）：自己 repo 用 RECEIPT.md，共用 repo 一人一檔 RECEIPT-桌牌.md（八人共寫一檔會連環衝突）
+  const t0=(localStorage.getItem('gq-nametag')||'').trim().toLowerCase();
+  for(const fn of ['RECEIPT.md', t0?('RECEIPT-'+t0+'.md'):null]){
+    if(!fn) continue;
+    const rec=await getTextAt(dirHandle,[fn]);
+    if(rec) for(const m of rec.matchAll(/TASK[-\s]?(\w+)\s*(?:done|完成)/gi)) s.receipts.add(m[1].toLowerCase());
+  }
+  // .git
+  const head=await getTextAt(dirHandle,['.git','HEAD']);
+  if(head!==null){
+    s.hasGit=true;s.gitReadable=true;
+    const m=head.match(/refs\/heads\/(.+)/); s.head=m?m[1].trim():'（分離狀態）';
+    // reflog
+    const rl=await getTextAt(dirHandle,['.git','logs','HEAD']);
+    if(rl){
+      const lines=rl.trim().split('\n');
+      s.reflog=lines.map(l=>{
+        const tab=l.indexOf('\t');
+        const meta=l.slice(0,tab).split(' ');
+        return {ts:+meta[meta.length-2]||0,action:l.slice(tab+1)};
+      });
+      s.commitCount=s.reflog.filter(r=>/^commit/.test(r.action)).length;
+      s.pulled=s.reflog.some(r=>/^(pull|merge)/.test(r.action));
+      s.initHere=lines.length>0&&/commit \(initial\)/.test(rl);
+      if(s.reflog.length) s.lastAction=s.reflog[s.reflog.length-1].action.slice(0,40);
+    }
+    // refs
+    const heads=await listDir(dirHandle,['.git','refs','heads']);
+    if(heads) for(const [n,k] of heads) if(k==='file') s.branches.push(n);
+    const tagsD=await listDir(dirHandle,['.git','refs','tags']);
+    if(tagsD) for(const [n,k] of tagsD) if(k==='file') s.tags.push(n);
+    const packed=await getTextAt(dirHandle,['.git','packed-refs']);
+    const refVal={};
+    if(packed) for(const l of packed.split('\n')){
+      const m=l.match(/^([0-9a-f]{40}) refs\/(heads|tags|remotes)\/(.+)$/);
+      if(m){
+        refVal['refs/'+m[2]+'/'+m[3]]=m[1];
+        if(m[2]==='heads'&&!s.branches.includes(m[3])) s.branches.push(m[3]);
+        if(m[2]==='tags'&&!s.tags.includes(m[3])) s.tags.push(m[3]);
+      }
+    }
+    async function refSha(path){
+      const t=await getTextAt(dirHandle,path.split('/'));
+      return t?t.trim():(refVal[path.replace('.git/','')]||null);
+    }
+    const localMain=await refSha('.git/refs/heads/'+(s.head!=='（分離狀態）'?s.head:'main'));
+    const remoteMain=await refSha('.git/refs/remotes/origin/'+(s.head!=='（分離狀態）'?s.head:'main'));
+    if(localMain&&remoteMain) s.synced=(localMain===remoteMain)?'yes':'no';
+    // 桌牌分支的 commit 與 push
+    const t=(localStorage.getItem('gq-nametag')||'').trim().toLowerCase();
+    const myBranch=s.branches.find(b=>b.startsWith('robustness-check-')&&(!t||b.includes(t)));
+    if(myBranch){
+      const bl=await getTextAt(dirHandle,['.git','logs','refs','heads',myBranch]);
+      s.branchCommit=!!(bl&&/\tcommit/.test(bl));
+      const rb=await refSha('.git/refs/remotes/origin/'+myBranch);
+      s.branchPushed=!!rb;
+    }
+  }
+  state=s;
+}
+
+/* ───────── 畫面 ───────── */
+function renderPanel(){
+  const p=document.getElementById('repoPanel');
+  if(!dirHandle){p.style.display='none';return}
+  p.style.display='block';
+  document.getElementById('stCommits').textContent=state.commitCount;
+  document.getElementById('stBranch').textContent=state.head;
+  document.getElementById('stBranches').textContent=state.branches.length||(state.hasGit?1:0);
+  document.getElementById('stTags').textContent=state.tags.length?state.tags.join('、'):'0';
+  document.getElementById('stSync').textContent=state.synced==='yes'?'✓':(state.synced==='no'?'還沒':'？');
+  document.getElementById('stReceipts').textContent=state.receipts.size;
+  // reflog 時間軸（最近 10 筆）
+  const recent=state.reflog.slice(-10);
+  const W=760,y=40;let el='';
+  el+=`<line x1="20" y1="${y}" x2="${W-20}" y2="${y}" stroke="var(--line)" stroke-width="2"/>`;
+  recent.forEach((r,i)=>{
+    const x=30+i*((W-60)/Math.max(recent.length-1,1));
+    const kind=/^commit/.test(r.action)?'●':/^(pull|merge)/.test(r.action)?'◆':/^checkout/.test(r.action)?'○':/^clone/.test(r.action)?'▼':'·';
+    el+=`<text x="${x}" y="${y+5}" text-anchor="middle" font-size="15" fill="var(--teal)">${kind}</text>`;
+    el+=`<text x="${x}" y="${y+24}" text-anchor="middle" font-size="8" fill="var(--ink-soft)">${r.action.split(':')[0].slice(0,10)}</text>`;
+  });
+  document.getElementById('timelineWrap').innerHTML=
+    recent.length?`<svg class="timeline" viewBox="0 0 ${W} 70">${el}</svg><p class="small">最近 ${recent.length} 個動作（●commit ◆merge/pull ○切分支 ▼clone）</p>`:'';
+  if(!state.gitReadable&&dirHandle){
+    document.getElementById('panelNote').textContent='讀不到 .git（瀏覽器安全限制）——別擔心，收據檔照樣能驗，過關不受影響。';
+  }
+}
+function statusOf(t){
+  if(localStorage.getItem('gq-t'+t.n)==='1') return 'pass';
+  let st;
+  if(!dirHandle&&!state.receipts.size){
+    st=t.check(state)==='manual'?'manual':'todo';
+  }else{
+    st=t.check(state);
+  }
+  if(st==='pass') localStorage.setItem('gq-t'+t.n,'1'); // 過了就鎖住：中場換連共用 repo 也不會倒退
+  return st;
+}
+function renderTasks(){
+  const list=document.getElementById('taskList');
+  list.innerHTML='';
+  TASKS.forEach(t=>{
+    const st=statusOf(t);
+    const d=document.createElement('div');
+    d.className='task '+(st==='pass'?'pass':st==='manual'?'manual':'');
+    const verify=`請幫我檢查第 ${t.n} 關「${t.name}」：這一關的目標是「${t.goal}」。我達標了嗎？差在哪？下一步我該說什麼？`;
+    const rescue=`先停下來。告訴我你剛剛做了什麼、現在專案是什麼狀態（在哪個分支、有沒有沒存的修改）。只准查看、先不要修。我們這一關的目標是：${t.goal}`;
+    d.innerHTML=`
+      <div class="head">
+        <span class="no">第 ${t.n} 關</span><span class="name">${t.name}</span>
+        <span class="scene">${t.scene}</span>
+        <span class="status ${st}">${st==='pass'?'✓ 過關':st==='manual'?'用 agent 驗':'未完成'}</span>
+      </div>
+      <p style="margin:8px 0 4px">${t.goal}</p>
+      <div class="say"><span class="t">對 AGENT 說</span>「${esc(t.say())}」
+        <button class="copybtn" data-copy="${t.say().replace(/"/g,'&quot;')}">複製</button></div>
+      ${st!=='pass'&&t.hintFail&&dirHandle?`<div class="hint">${t.hintFail}</div>`:''}
+      <p>
+        <button class="copybtn" data-copy="${verify.replace(/"/g,'&quot;')}">複製驗收話術（agent 驗）</button>
+        <button class="copybtn" data-copy="${rescue.replace(/"/g,'&quot;')}">卡住了？複製救援處方箋</button>
+        ${st!=='pass'?`<button class="copybtn" data-manual="${t.n}">agent 說過關了 → 手動打勾</button>`:''}
+      </p>
+      <details class="help"><summary>這關在練什麼</summary><p class="small">${t.scene}。教材對應段落有完整劇情與幕後指令。</p></details>`;
+    list.appendChild(d);
+    if(t.n===6){
+      const br=document.createElement('div');
+      br.className='task bridge';
+      const brSay=`把共用專案 ${sharedRepo()} 抓到我電腦，告訴我資料夾放在哪。`;
+      br.innerHTML=`<div class="head"><span class="no">中場換桌</span><span class="name">從自己的 repo 換到共用 repo</span></div>
+        <p style="margin:8px 0 4px">下半場全班在同一個共用專案裡協作。兩步：請 agent 把它抓下來，然後<strong>回頁首重新連接到那個新資料夾</strong>。放心，過了的關都鎖住了，進度不會消失。</p>
+        <div class="say"><span class="t">對 AGENT 說</span>「${esc(brSay)}」<button class="copybtn" data-copy="${brSay.replace(/"/g,'&quot;')}">複製</button></div>`;
+      list.appendChild(br);
+    }
+  });
+  list.querySelectorAll('[data-manual]').forEach(b=>b.onclick=()=>{
+    localStorage.setItem('gq-t'+b.dataset.manual,'1');renderTasks();renderMilestones();
+  });
+  bindCopy(list);
+  renderMilestones();
+}
+function bindCopy(scope){
+  scope.querySelectorAll('[data-copy]').forEach(b=>{
+    if(b.dataset.bound)return;b.dataset.bound='1';
+    b.onclick=()=>{
+      if(/你的姓氏拼音|講師帳號\//.test(b.dataset.copy)){
+        const o=b.textContent;b.textContent='先填桌牌／講師設定';setTimeout(()=>b.textContent=o,1800);return;
+      }
+      navigator.clipboard.writeText(b.dataset.copy).then(()=>{
+        const o=b.textContent;b.textContent='已複製 ✓';setTimeout(()=>b.textContent=o,1500);
+      }).catch(()=>{b.textContent='請手動選取'});
+    };
+  });
+}
+function renderMilestones(){
+  const track=document.getElementById('milestoneTrack');
+  track.innerHTML='';
+  MILESTONES.forEach(m=>{
+    const total=m.tasks.length;
+    const done=m.tasks.filter(n=>statusOf(TASKS[n-1])==='pass').length;
+    const seg=document.createElement('div');
+    seg.style.flex='1';
+    seg.innerHTML=`<div class="lbl">${m.name} ${done}/${total}</div>
+      <div class="seg"><div class="fill" style="width:${total?Math.round(done/total*100):0}%"></div></div>`;
+    track.appendChild(seg);
+  });
+}
+
+/* ───────── 連接資料夾 ───────── */
+document.getElementById('pickBtn').onclick=async()=>{
+  try{
+    dirHandle=await window.showDirectoryPicker({mode:'read'});
+    document.getElementById('recheckBtn').style.display='inline-block';
+    fsNote.textContent='已連接：'+dirHandle.name+'（只讀不寫）';
+    await refresh();
+  }catch(e){
+    if(e.name==='AbortError')return;
+    fsNote.textContent='連接失敗（'+e.name+'）。改用每關的「agent 驗收」按鈕，一樣能過關。';
+  }
+};
+document.getElementById('recheckBtn').onclick=refresh;
+async function refresh(){
+  await scanRepo();
+  renderPanel();renderTasks();
+}
+
+/* ───────── 攔停關 ───────── */
+const rebelStatus=document.getElementById('rebelStatus');
+function paintRebel(){
+  const v=localStorage.getItem('gq-rebel');
+  rebelStatus.textContent=v==='pass'?'✓ 你攔住了它':v==='fail'?'已記錄——下課找講師調設定':'';
+  rebelStatus.style.color=v==='pass'?'var(--ok)':'var(--wait)';
+}
+document.getElementById('rebelPass').onclick=()=>{localStorage.setItem('gq-rebel','pass');paintRebel()};
+document.getElementById('rebelFail').onclick=()=>{localStorage.setItem('gq-rebel','fail');paintRebel()};
+paintRebel();
+
+/* ───────── 結業單 ───────── */
+document.getElementById('certBtn').onclick=()=>{
+  const passN=TASKS.filter(t=>statusOf(t)==='pass').length;
+  const html=`
+    <div style="text-align:center;padding:26px;border:3px double var(--gold);border-radius:14px">
+      <div style="font-size:1.3rem;font-weight:800;color:var(--teal-deep)">git 工作坊結業單</div>
+      <p style="margin:14px 0 4px">桌牌：${esc(tag())}｜日期：${new Date().toLocaleDateString('zh-TW')}</p>
+      <p style="font-size:1.05rem">完成 ${passN}／12 關${localStorage.getItem('gq-rebel')==='pass'?'＋攔停演練':''}</p>
+      <p>${dirHandle?`你在課堂親手存了 ${state.commitCount} 個版本、開了 ${state.branches.length||1} 條分支、釘了 ${state.tags.length} 個標籤`:'（連接資料夾後會顯示 repo 的真實數字）'}</p>
+      <p class="small" style="margin-top:12px">這些數字是真的，不是模擬——你已經有一本自己的歷史帳本了。</p>
+    </div>
+    <p style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="window.print()">列印</button></p>`;
+  const prev=document.getElementById('certPreview');
+  prev.innerHTML=html;prev.style.display='block';
+  document.getElementById('cert').innerHTML=html;
+};
+
+/* ───────── 初始 ───────── */
+bindCopy(document);
+renderTasks();
+</script>
+</body>
+</html>

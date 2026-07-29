@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>跟 AI 一起用 Git——不背指令的版本控制</title>
+<style>
+:root{
+  --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441; --gold-soft:#F3E3C3;
+  --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --ok:#2e7d32; --bad:#b3441e;
+  --code-bg:#10201f; --code-ink:#d7ece9;
+  --r:14px; --shadow:0 2px 10px rgba(26,26,26,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+    --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+    --gold-soft:#3a3220; --shadow:0 2px 10px rgba(0,0,0,.35); }
+}
+:root[data-theme="dark"]{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+  --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+  --gold-soft:#3a3220; --shadow:0 2px 10px rgba(0,0,0,.35); }
+:root[data-theme="light"]{ --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441;
+  --gold-soft:#F3E3C3; --shadow:0 2px 10px rgba(26,26,26,.07); }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:18px;line-height:1.75;}
+main{max-width:900px;margin:0 auto;padding:0 20px 80px}
+h1,h2,h3{line-height:1.35}
+h2{font-size:1.55rem;margin:72px 0 8px;color:var(--teal-deep)}
+h2 .no{color:var(--gold);font-size:1rem;display:block;letter-spacing:.15em}
+h3{font-size:1.15rem;margin:28px 0 6px}
+p{margin:.6em 0}
+a{color:var(--teal)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;
+  background:var(--gold-soft);padding:.08em .35em;border-radius:5px}
+pre{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:10px;
+  overflow-x:auto;font-size:.88rem;line-height:1.6}
+pre code{background:none;padding:0;color:inherit}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--gold-soft);font-weight:700}
+.tablewrap{overflow-x:auto;border-radius:10px;box-shadow:var(--shadow)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px 24px;box-shadow:var(--shadow);margin:16px 0}
+.chip{display:inline-block;background:var(--teal);color:#fff;border-radius:999px;
+  padding:3px 14px;font-size:.85rem;margin:4px 6px 0 0}
+.chip.gold{background:var(--gold);color:#1A1A1A}
+.callout{border-left:5px solid var(--gold);background:var(--card);padding:14px 18px;
+  border-radius:0 var(--r) var(--r) 0;margin:18px 0;box-shadow:var(--shadow)}
+.callout.teal{border-left-color:var(--teal)}
+.warn{border-left:5px solid var(--bad)}
+.badge-tbc{background:var(--bad);color:#fff;border-radius:6px;padding:1px 8px;font-size:.78rem;white-space:nowrap}
+.small{font-size:.88rem;color:var(--ink-soft)}
+header.hero{background:linear-gradient(150deg,#0E7C7B 0%,#0A5958 100%);
+  color:#F4ECD8;padding:64px 20px 56px;text-align:center}
+header.hero h1{font-size:clamp(1.6rem,4.5vw,2.5rem);margin:0 0 10px}
+header.hero .sub{font-size:1.05rem;opacity:.92;max-width:640px;margin:0 auto}
+header.hero .keyline{display:inline-block;margin-top:22px;background:rgba(244,236,216,.14);
+  border:1px solid rgba(244,236,216,.4);border-radius:12px;padding:12px 22px;font-size:1.02rem}
+nav#topnav{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line);
+  overflow-x:auto;white-space:nowrap;padding:0 12px;box-shadow:var(--shadow);
+  display:flex;align-items:center}
+nav#topnav a{display:inline-block;flex:none;padding:11px 12px;color:var(--ink);text-decoration:none;font-size:.9rem}
+nav#topnav a:hover{color:var(--teal)}
+#themeToggle,#projBtn,#expandBtn{flex:none;margin:6px 4px;background:none;border:1px solid var(--line);
+  border-radius:8px;padding:4px 10px;cursor:pointer;color:var(--ink);font-size:.85rem}
+#expandBtn{margin-left:auto}
+:root.projector body{font-size:22px}
+:root.projector #scenebox{min-height:480px}
+:root.projector .small{font-size:1rem}
+/* 需求計分卡 */
+.scorecard .row{display:grid;grid-template-columns:1fr 84px 84px 84px;gap:6px;align-items:center;
+  padding:9px 4px;border-bottom:1px dashed var(--line);font-size:.94rem}
+.scorecard .row.head{font-weight:700;border-bottom:2px solid var(--line)}
+.scorecard .cell{text-align:center;font-size:1.05rem;min-height:28px}
+.scorecard .cell.pend{color:var(--ink-soft);font-size:.8rem}
+.scorecard button.reveal{background:var(--gold);border:none;border-radius:8px;padding:6px 10px;
+  cursor:pointer;font-family:inherit;font-size:.85rem}
+.scorecard button.reveal:disabled{opacity:.4;cursor:default}
+@media (max-width:600px){.scorecard .row{grid-template-columns:1fr 56px 56px 56px}}
+/* 概念卡 */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:20px 0}
+details.concept{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:0;overflow:hidden}
+details.concept summary{cursor:pointer;padding:14px 18px;font-weight:700;list-style:none;position:relative}
+details.concept summary::after{content:"＋";position:absolute;right:16px;color:var(--gold);font-weight:400}
+details.concept[open] summary::after{content:"－"}
+details.concept .body{padding:0 18px 16px;font-size:.93rem}
+details.concept .tagline{color:var(--teal);font-size:.85rem;font-weight:400}
+.concept .lbl{display:inline-block;background:var(--gold-soft);border-radius:6px;
+  padding:0 8px;font-size:.8rem;margin:8px 0 2px;font-weight:700}
+/* 行前 checklist */
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px 4px;border-bottom:1px dashed var(--line)}
+.check:last-child{border-bottom:none}
+.check input{width:22px;height:22px;margin-top:6px;accent-color:var(--teal);flex:none;cursor:pointer}
+.check .t{flex:1}
+.check .done-mark{color:var(--ok);font-size:.85rem;display:none}
+.check.checked .t{opacity:.6;text-decoration:line-through}
+.check.checked .done-mark{display:inline}
+#checkProgress{font-weight:700;color:var(--teal)}
+/* 劇本 stepper */
+#scenebox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:24px 26px;min-height:420px}
+.scene-title{font-size:1.25rem;font-weight:800;color:var(--teal-deep);margin:0 0 2px}
+.scene-ctx{font-style:italic;color:var(--ink-soft);margin:8px 0 16px}
+.bubble{max-width:92%;padding:12px 16px;border-radius:14px;margin:10px 0;font-size:.97rem}
+.bubble.teacher{background:var(--gold-soft);border:1px solid var(--gold);margin-left:auto;border-bottom-right-radius:4px}
+.bubble.agent{background:var(--bg);border:1px solid var(--teal);border-bottom-left-radius:4px}
+.bubble .who{font-size:.78rem;font-weight:700;letter-spacing:.06em;display:block;margin-bottom:3px}
+.bubble.teacher .who{color:#8a6516}
+.bubble.agent .who{color:var(--teal)}
+details.cmd{margin:14px 0}
+details.cmd summary{cursor:pointer;color:var(--teal);font-weight:700;font-size:.92rem;list-style:none}
+details.cmd summary::before{content:"▸ ";}
+details.cmd[open] summary::before{content:"▾ ";}
+.scene-concept{background:var(--teal);color:#F4ECD8;border-radius:10px;padding:10px 16px;
+  font-size:.95rem;margin:14px 0 4px}
+.scene-state{margin-top:14px;border-top:1px dashed var(--line);padding-top:10px}
+.scene-state .cap{font-size:.84rem;color:var(--ink-soft)}
+.stepnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0}
+.stepnav button{background:var(--teal);color:#fff;border:none;border-radius:10px;
+  padding:10px 22px;font-size:1rem;cursor:pointer;font-family:inherit}
+.stepnav button:disabled{opacity:.35;cursor:default}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dots button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);cursor:pointer;font-size:.8rem;padding:0}
+.dots button.cur{background:var(--gold);border-color:var(--gold);color:#1A1A1A;font-weight:700}
+.dots button.seen{border-color:var(--teal);color:var(--teal)}
+svg.graph{width:100%;height:auto;display:block;margin-top:6px}
+/* quiz */
+.q{margin:22px 0;padding:18px 20px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r);box-shadow:var(--shadow)}
+.q .stem{font-weight:700}
+.q .opts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.q .opts button{text-align:left;background:var(--bg);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px;font-size:.95rem;cursor:pointer;color:var(--ink);font-family:inherit;line-height:1.6}
+.q .opts button.right{background:var(--ok);color:#fff;border-color:var(--ok)}
+.q .opts button.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
+.q .expl{display:none;margin-top:10px;font-size:.9rem;border-top:1px dashed var(--line);padding-top:8px}
+.q.answered .expl{display:block}
+#quizScore{font-weight:800;color:var(--teal)}
+.copybtn{background:none;border:1px solid var(--line);border-radius:6px;font-size:.75rem;
+  padding:1px 8px;cursor:pointer;color:var(--teal);margin-left:6px}
+footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;color:var(--ink-soft);
+  border-top:1px solid var(--line)}
+@media (max-width:600px){ body{font-size:16.5px} #scenebox{padding:18px} .bubble{max-width:100%} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>跟 AI 一起用 Git<br>——不背指令的版本控制</h1>
+  <p class="sub">給經濟系老師的 2 小時動手工作坊｜8 人小場｜講述 3：動手 7</p>
+  <div class="keyline">你不用背任何指令，但要懂概念——<br>概念在你腦裡，指令交給 AI；<strong>你是它的指導教授，不是它的橡皮圖章。</strong></div>
+</header>
+
+<nav id="topnav">
+  <a href="#why">為什麼</a>
+  <a href="#prep">行前準備</a>
+  <a href="#concepts">概念地圖</a>
+  <a href="#story">十二幕劇本</a>
+  <a href="#safety">安全紅線</a>
+  <a href="#phrases">話術表</a>
+  <a href="#quiz">小測驗</a>
+  <a href="#agenda">當天課表</a>
+  <a href="#refs">參考資料</a>
+  <button id="expandBtn" title="展開全部收合內容，方便搜尋與列印">⊞ 全部展開</button>
+  <button id="projBtn" title="投影模式：放大字級，上課投影用">🔎 投影</button>
+  <button id="themeToggle" title="切換深淺色">🌗</button>
+</nav>
+
+<main>
+
+<!-- ═══════════ 為什麼 ═══════════ -->
+<section id="why">
+  <h2><span class="no">壹</span>為什麼經濟學者需要這門課</h2>
+
+  <div class="callout" style="font-size:1.1rem">
+    「這個係數三週前是 0.98，<strong>怎麼現在變 0.96 了？</strong>」<br>
+    <span class="small">——每個做實證的人都被這句話追殺過。（改寫自 Michael Stepner, <em>git vs. Dropbox</em>, CC-BY 4.0）</span>
+  </div>
+
+  <div class="card">
+    <h3>痛點一：版本災難</h3>
+    <p>資料夾裡躺著 <code>paper_v2_final_really.docx</code>、<code>final_v3_這次真的final.docx</code>。哪版能跑、哪版投過稿，只剩考古學能回答；「上個月那版其實比較好」找不回來。</p>
+  </div>
+  <div class="card">
+    <h3>痛點二：協作混亂</h3>
+    <p>共同作者靠 email 附件往返，兩人同時改同一版，誰蓋掉誰的段落沒人說得清；「你改了哪裡」要靠肉眼比對。</p>
+  </div>
+  <div class="card">
+    <h3>痛點三：期刊要求</h3>
+    <p>AEA 等期刊已把可重現的資料與程式（replication package）當投稿門檻。「投稿當下的完整狀態」得隨時指得回去——資料夾備份撐不起這件事。</p>
+  </div>
+
+  <h3>「我有 Dropbox 和 Word 追蹤修訂了，為什麼還要 git？」</h3>
+  <p>好問題。先列出做研究真正需要的五件事，然後<strong>你自己按按看</strong>，三個工具各做得到幾件：</p>
+  <div class="card scorecard" id="scorecard">
+    <div class="row head"><div>研究上真正需要的是……</div><div class="cell">Word<br>追蹤修訂</div><div class="cell">Dropbox</div><div class="cell">git</div></div>
+  </div>
+  <p class="small" id="scoreSummary"></p>
+  <div class="callout">
+    <strong>反過來也要誠實：</strong>git 不會自動存檔、自動同步——它要你（或你的 agent）主動說「存」。所以分工就好：<strong>大檔案與原始資料繼續放雲端硬碟，論文與程式的版本交給 git</strong>；但別把 git 版本庫放進 Dropbox 同步資料夾，兩套同步機制會打架。一句話記住差別：<strong>「git 存的是專案的版本，Dropbox 存的是檔案的版本。」</strong>
+  </div>
+
+  <div class="callout teal">
+    <h3 style="margin-top:0">那為什麼是現在、為什麼跟 AI 一起學？</h3>
+    <p>你們最近在用的 AI 工具（Claude Code、GitHub Copilot 這類），背後整天在跑 git——存檔、開分支、比差異，甚至同時開好幾張書桌（worktree）平行做事，都是它們的日常。AI agent 一次改十幾個檔案是常態；沒有 git 當安全網，你連「它剛才到底改了什麼」都說不清。</p>
+    <p>指令 AI 都會，你不必背；但它可能改錯檔案、動錯分支、把不該上傳的東西上傳。<strong>概念你不懂，就只能全盤照收；概念懂了，你才看得懂它的計畫、驗得了它的差異、攔得住它的危險動作。</strong>這門課教的是指揮與監督 AI 的語言。</p>
+  </div>
+</section>
+
+<!-- ═══════════ 行前準備 ═══════════ -->
+<section id="prep">
+  <h2><span class="no">貳</span>行前準備包（課前一週完成，約 50 分鐘）</h2>
+  <p>勾選狀態會存在你的瀏覽器裡，關掉再開還在（<span class="small">進度只留在這台電腦的這個瀏覽器</span>）。目前完成：<span id="checkProgress">0 / 7</span>　<button id="clearProg" class="copybtn">清除進度</button></p>
+
+  <div class="card" id="checklist">
+    <div class="check" data-k="c1"><input type="checkbox" aria-label="完成第 1 項">
+      <div class="t"><strong>1｜GitHub 帳號</strong> <span class="done-mark">✓ 完成</span><br>
+      到 <a href="https://github.com" target="_blank" rel="noopener">github.com</a> 註冊，<strong>用學校信箱</strong>（之後申請教育方案用得上），完成信箱驗證。<br>
+      <span class="small">完成判準：能登入、能看到自己的個人頁。</span></div></div>
+    <div class="check" data-k="c2"><input type="checkbox" aria-label="完成第 2 項">
+      <div class="t"><strong>2｜兩步驟驗證（two-factor authentication, 2FA）</strong> <span class="done-mark">✓ 完成</span><br>
+      <strong>用驗證器 App</strong>（Google Authenticator 或 Microsoft Authenticator），<strong>不要選簡訊</strong>；設定完把備援碼（recovery codes）存進密碼管理工具或列印收好。<br>
+      <span class="small">完成判準：Settings → Password and authentication 顯示 2FA 已啟用。當天請帶著設定 2FA 的那支手機。</span></div></div>
+    <div class="check" data-k="c3"><input type="checkbox" aria-label="完成第 3 項">
+      <div class="t"><strong>3｜裝 Antigravity（我們的 AI 工作環境）</strong> <span class="done-mark">✓ 完成</span><br>
+      Google 的 AI 開發環境，編輯器和 AI 助手合在一起，免費。下載連結以行前信為準；裝好後用 Google 帳號登入——<strong>先試學校信箱（@gms.ndhu.edu.tw）</strong>，若被擋改用個人 Gmail，並在檢核表註明。<br>
+      <span class="small">完成判準：打得開、登入成功、看得到 AI 助手面板。</span></div></div>
+    <div class="check" data-k="c4"><input type="checkbox" aria-label="完成第 4 項">
+      <div class="t"><strong>4｜裝 git 本體</strong> <span class="done-mark">✓ 完成</span><br>
+      Windows：到 <a href="https://git-scm.com" target="_blank" rel="noopener">git-scm.com</a> 裝 Git for Windows，一路預設值。Mac：終端機打 <code>git --version</code>，跳出安裝提示就按安裝。<br>
+      <span class="small">完成判準：終端機打 <code>git --version</code> 有版本號。</span></div></div>
+    <div class="check" data-k="c5"><input type="checkbox" aria-label="完成第 5 項">
+      <div class="t"><strong>5｜跟 AI 助手打第一聲招呼（見面測試）</strong> <span class="done-mark">✓ 完成</span><br>
+      打開 Antigravity 的 AI 助手面板，對它說——<br>
+      「<strong>你好，請確認這台電腦的 git 裝好了嗎？</strong>」把它的回答截圖回傳。<br>
+      <span class="small">這句話同時測了工具、登入、網路三件事。</span></div></div>
+    <div class="check" data-k="c6"><input type="checkbox" aria-label="完成第 6 項">
+      <div class="t"><strong>6｜GitHub 登入（讓 agent 之後推得上去）</strong> <span class="done-mark">✓ 完成</span><br>
+      這步讓 agent 陪你做：對它說「<strong>幫我裝 GitHub CLI（gh），並登入我的 GitHub 帳號</strong>」，跟著它的指示在瀏覽器完成授權（會用到第 2 項設定 2FA 的那支手機）。<br>
+      <span class="small">完成判準：終端機打 <code>gh auth status</code> 顯示已登入；把這個畫面截圖，跟檢核表一起回傳。少了這步，當天第一次上傳就會全場卡住。</span></div></div>
+    <div class="check" data-k="c7"><input type="checkbox" aria-label="完成第 7 項">
+      <div class="t"><strong>7｜回填檢核表</strong> <span class="done-mark">✓ 完成</span><br>
+      回報：作業系統、<strong>你的 GitHub 帳號名（個人頁網址）</strong>、第 1–6 項各自成功或卡在哪一步。<strong>裝不了、卡住了也請照實回報</strong>——這不是考試，回報了現場才救得到你。<br>
+      <span class="small">開課三天前收齊。講師收到帳號名就會發共用 repo 的協作邀請，請到信箱或 GitHub 通知按「接受」。</span></div></div>
+  </div>
+
+  <div class="callout warn">
+    <strong>紅線先講：</strong>課程全程用講師提供的模擬資料，<strong>請勿把學生個資、成績、未公開研究資料帶進課堂或上傳</strong>。
+  </div>
+
+  <h3>AI 工具定案：Antigravity（2026-07-28 實測拍板）</h3>
+  <div class="callout teal">
+    全班統一用 Google 的 Antigravity：免費、用 Google 帳號登入（東華的學校信箱本身就是 Google 帳號）、編輯器與 AI 助手一體。我們拿它的免費模型把本課任務實測了一輪：本機 git 十關全數通過、幾乎一步到位，連 worktree 都一次做對，PR 的 gh 指令流程也完成沙盤推演；攔停判斷在問答測試裡也答得出該問的三件事（真機行為與對真 GitHub 的 PR 全流程，開課前補測）。
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>備援與延伸</th><th>定位</th></tr>
+    <tr><td>Gemini CLI（Google）</td><td>備援：同一個 Google 帳號可用的命令列版；Antigravity 裝不起來的人用它</td></tr>
+    <tr><td>GitHub Copilot</td><td>課後禮物：教師通過 GitHub Education 驗證可免費用 Copilot Pro（審核要數天到數週，行前信同步發動申請）</td></tr>
+    <tr><td>Claude Code（Anthropic）</td><td>講師示範機：開場與攔停演示用，順便看到「不同 agent、同一套 git 概念」</td></tr>
+  </table></div>
+  <p class="small">⚠️ <span class="badge-tbc">待確認</span> 開課前要真機驗的五件事：學校 Google Workspace 帳號登入 Antigravity 是否需要管理員開通（先試、被擋就用個人 Gmail）；8 人同時使用免費額度的限流行為；IDE 介面的實際操作流程；攔停的真機行為（實際丟一次危險指令觀察，不只問答）；對真 GitHub 的 PR 全流程。另：Copilot 教師免費資格的申請現況，行前信寄出前由講師再驗一次。</p>
+</section>
+
+<!-- ═══════════ 概念地圖 ═══════════ -->
+<section id="concepts">
+  <h2><span class="no">參</span>概念地圖：12 張概念卡</h2>
+  <p>每張卡三句話：白話是什麼、用論文日常打比方、AI agent 什麼時候用它。點卡片展開。順序就是第肆節十二幕的出場順序。</p>
+  <div class="cards" id="conceptCards"></div>
+  <div class="card">
+    <h3 style="margin-top:0">附兩個半張</h3>
+    <p><strong>標籤（tag）</strong>：替某個存檔點釘上好記的名字，例如 <code>v1.0-submission</code>。投稿那天在書脊貼標籤，半年後審稿意見回來，一句話翻回投稿當下的完整狀態。</p>
+    <p><strong>fork</strong>：把別人 GitHub 上的版本庫複製一份到你自己帳號底下自由修改；改得有價值，再用 Pull Request 送回去給原作者。</p>
+  </div>
+
+  <h3>術語總表：這門課出現過的每一個詞</h3>
+  <p class="small">標 ◆ 的詞只在幕後指令或圖裡出現，看得懂就好、不用會用。幕次可以點，直接跳到那一幕。</p>
+  <div class="tablewrap"><table>
+    <tr><th>詞</th><th>英文</th><th>一句話</th><th>哪裡出場</th></tr>
+    <tr><td>版本庫</td><td>repository</td><td>資料夾＋它的完整修改紀錄</td><td><a href="#story" onclick="go(0)">第一幕</a></td></tr>
+    <tr><td>主線 ◆</td><td>main</td><td>預設的那條正式版本線</td><td><a href="#story" onclick="go(0)">第一幕</a>幕後</td></tr>
+    <tr><td>提交</td><td>commit</td><td>有註記的存檔點</td><td><a href="#story" onclick="go(1)">第二幕</a></td></tr>
+    <tr><td>暫存區 ◆</td><td>staging area</td><td>commit 前的「準備上場區」，agent 用 add 把檔案放進去</td><td><a href="#story" onclick="go(1)">第二幕</a>幕後</td></tr>
+    <tr><td>工作目錄 ◆</td><td>working directory</td><td>你實際正在編輯的那份檔案</td><td>全程</td></tr>
+    <tr><td>差異</td><td>diff</td><td>兩版之間逐行比對</td><td><a href="#story" onclick="go(2)">第三幕</a></td></tr>
+    <tr><td>歷史</td><td>log</td><td>存檔點的時間軸</td><td><a href="#story" onclick="go(2)">第三幕</a></td></tr>
+    <tr><td>blame ◆</td><td>blame</td><td>這一行是誰、哪天、為了什麼改的</td><td><a href="#story" onclick="go(2)">第三幕</a>彩蛋</td></tr>
+    <tr><td>還原</td><td>restore</td><td>檔案退回某個存檔點的樣子</td><td><a href="#story" onclick="go(3)">第四幕</a></td></tr>
+    <tr><td>HEAD ◆</td><td>HEAD</td><td>「你現在站在哪」的指標，指向目前所在的分支與版本</td><td><a href="#story" onclick="go(11)">第十二幕</a>的圖</td></tr>
+    <tr><td>遠端</td><td>remote／origin</td><td>GitHub 上的那一份；origin 是它的預設名字</td><td><a href="#story" onclick="go(4)">第五幕</a></td></tr>
+    <tr><td>推送</td><td>push</td><td>把本機的歷史上傳到遠端</td><td><a href="#story" onclick="go(4)">第五幕</a></td></tr>
+    <tr><td>拉取</td><td>pull</td><td>把遠端的新東西抓下來對齊</td><td><a href="#story" onclick="go(5)">第六幕</a></td></tr>
+    <tr><td>複製</td><td>clone</td><td>整個版本庫連歷史抓一份到自己電腦</td><td><a href="#story" onclick="go(5)">第六幕</a></td></tr>
+    <tr><td>分支</td><td>branch</td><td>平行的草稿線，試東西不動正稿</td><td><a href="#story" onclick="go(6)">第七幕</a></td></tr>
+    <tr><td>合併</td><td>merge</td><td>把分支成果併回主線</td><td><a href="#story" onclick="go(7)">第八幕</a></td></tr>
+    <tr><td>快轉 ◆</td><td>fast-forward</td><td>主線沒動過時的直線合併，不留岔路</td><td><a href="#story" onclick="go(7)">第八幕</a></td></tr>
+    <tr><td>衝突</td><td>conflict</td><td>兩邊改到同一行，git 停下來要人裁決</td><td><a href="#conflict">加演場</a></td></tr>
+    <tr><td>Pull Request</td><td>PR</td><td>「我改好了，請你看過再併入」的正式提案</td><td><a href="#story" onclick="go(8)">第九幕</a></td></tr>
+    <tr><td>審查</td><td>review</td><td>在 PR 的對應行上留意見</td><td><a href="#story" onclick="go(8)">第九幕</a></td></tr>
+    <tr><td>協作者</td><td>collaborator</td><td>被你授權讀寫 repo 的人</td><td><a href="#story" onclick="go(8)">第九幕</a></td></tr>
+    <tr><td>.gitignore</td><td>—</td><td>「這些檔案不進版本庫」的清單</td><td><a href="#story" onclick="go(9)">第十幕</a></td></tr>
+    <tr><td>標籤</td><td>tag</td><td>替重要存檔點釘上好記的名字</td><td><a href="#story" onclick="go(9)">第十幕</a></td></tr>
+    <tr><td>replication package</td><td>—</td><td>期刊要求的可重現資料與程式包</td><td><a href="#story" onclick="go(9)">第十幕</a></td></tr>
+    <tr><td>工作樹</td><td>worktree</td><td>同一個版本庫的第二張書桌，agent 平行做事用</td><td><a href="#story" onclick="go(10)">第十一幕</a></td></tr>
+    <tr><td>fork</td><td>fork</td><td>把別人的 repo 複製到自己帳號下改</td><td>概念卡附註</td></tr>
+    <tr><td>範本 ◆</td><td>template repo</td><td>可一鍵複製成自己 repo 的樣板</td><td><a href="#agenda">課表</a></td></tr>
+    <tr><td>gh ◆</td><td>GitHub CLI</td><td>讓 agent 操作 GitHub 用的工具</td><td><a href="#prep">行前包</a></td></tr>
+    <tr><td>兩步驟驗證</td><td>2FA</td><td>登入除了密碼還要手機驗證碼</td><td><a href="#prep">行前包</a></td></tr>
+  </table></div>
+</section>
+
+<!-- ═══════════ 十二幕劇本 ═══════════ -->
+<section id="story">
+  <h2><span class="no">肆</span>十二幕劇本：林老師的一篇論文</h2>
+  <p>主角：<strong>林老師</strong>（經濟系）、共同作者<strong>陳老師</strong>、還有替他們跑 git 的 <strong>agent</strong>。範例專案 <code>hualien-tourism</code>《花蓮觀光的經濟分析》：<code>paper.md</code>（論文草稿）、<code>code/analysis.R</code>（分析程式）、<code>data/README.md</code>（資料說明）。</p>
+  <p class="small">「幕後指令」預設收合——你不必背，但展開就看得到 agent 到底做了什麼。所有指令都在乾淨的測試環境完整重播驗證過。<strong>誠實提醒：</strong>Word／Excel 檔也存得進 git，但看不到逐行差異，所以整齣戲用純文字檔示範（原因見第拾節）。</p>
+
+  <div class="dots" id="sceneDots"></div>
+  <div class="stepnav">
+    <button id="prevBtn">← 上一幕</button>
+    <div id="sceneCounter" class="small" style="font-weight:700"></div>
+    <button id="nextBtn">下一幕 →</button>
+  </div>
+  <div id="scenebox" aria-live="polite"></div>
+  <p class="small" style="text-align:center">也可以用鍵盤 ← → 換幕</p>
+</section>
+
+<!-- ═══════════ 加演場：衝突 ═══════════ -->
+<section id="conflict">
+  <h2><span class="no">肆之二</span>加演場：衝突來了怎麼辦</h2>
+  <p>十二幕裡林老師運氣好，合併都沒撞出衝突。真實協作遲早遇到：兩個人改了同一行。這是 git 唯一會停下來說「我不敢決定」的時刻——也是 agent 幫不了你拍板的一步。</p>
+  <div class="card">
+    <p><span class="small" style="color:var(--teal);font-weight:700">情境</span><br>
+    林老師和陳老師都改了 notes.md 的同一句結論。陳老師的版本先進了主線，林老師這邊一說「併回去」，agent 停下來了。</p>
+    <div class="bubble agent"><span class="who">AGENT</span>合併時撞到衝突（conflict）：notes.md 第 12 行，兩邊都改了。左邊是你的版本「觀光支出的所得彈性大於一」，右邊是陳老師已合併的版本「觀光支出的所得彈性接近一」。git 不會替你們選，<strong>要你決定留哪一句、或是重寫一句</strong>。你說了算，我來收尾。</div>
+    <p>裁決三步：一、請 agent 把兩邊版本並排念出來；二、你決定——留一邊、或口述一句新的給它；三、agent 完成合併並提交，衝突解除。就這樣，衝突不是故障，是兩位作者的意見被攤開來等人裁決。</p>
+    <p class="small">課堂上時間允許的話，講師會故意安排兩人改同一行，當場引爆、全班圍觀裁決一次（時間不夠就割愛，這頁自己看完也夠用）。看過一次，以後自己遇到就不慌。</p>
+  </div>
+</section>
+
+<!-- ═══════════ 安全紅線 ═══════════ -->
+<section id="safety">
+  <h2><span class="no">伍</span>安全紅線與監督三原則</h2>
+  <div class="card">
+    <h3 style="margin-top:0">監督三原則</h3>
+    <p><strong>一、動手前看計畫。</strong>agent 動手前會先說「我打算怎麼做、為什麼」；沒看懂那段話，先問——<strong>聽得懂才放行</strong>，解釋不通就不准做。</p>
+    <p><strong>二、動手後看 diff。</strong>agent 說做完了不算數，逐行差異你掃過一眼才算數。就當審自己學生的修改稿。</p>
+    <p><strong>三、破壞性動作，agent 必須先問你。</strong>紅線動詞清單：強制推送（force push）、硬重設（<code>reset --hard</code>）、改寫歷史（rebase）、刪除檔案或分支、覆蓋遠端。看到這些動詞一律喊停，先問「會不會弄丟東西？有沒有更安全的做法？」<strong>它沒問就做了，換掉它的設定或換掉它。</strong></p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">兩條資料紅線（跟技術無關，跟你的責任有關）</h3>
+    <p><strong>四、學生個資與未發表資料，不進公開 repo。</strong>成績單、名冊、還在審的稿子，公開版本庫一律不放；要協作就用私人 repo，而且上傳前先看一眼 .gitignore。</p>
+    <p><strong>五、私人 repo 也不放帳密。</strong>密碼、API 金鑰（API key）一旦提交過就留在歷史裡，事後刪檔案也挖得出來。放在版本庫外面，讓 .gitignore 擋住。</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">急救箱：誤把敏感檔存進去了怎麼辦</h3>
+    <p>一喊停：先別做任何事，尤其別 push。二確認：問 agent「那個檔進了版本庫嗎？推上 GitHub 了嗎？」三處理：還沒 push 的話，請 agent 先確認「它進過哪幾個提交」、把沿路每一個都清乾淨再驗一次（只清最後一筆常常清不乾淨），然後把檔名加進 .gitignore；已經 push 的話，當成外洩處理——改掉裡面的密碼、通知相關的人，再找懂的人協助清歷史（清得掉自己這份，清不掉別人已經抓走的）。</p>
+    <p class="small">開新 repo 時順手確認兩件事：可見性選 Private——含任何學生資料的一律私人；要公開分享的教材記得選一個授權條款（license），別人才知道能不能用。</p>
+  </div>
+  <div class="callout">
+    <strong>現場演練：</strong>對 agent 說「幫我強制覆蓋遠端」，觀察它怎麼回。好的 agent 會停下來問你為什麼、有什麼會被覆蓋；不問就動手的，就是第三條說的那種。
+  </div>
+</section>
+
+<!-- ═══════════ 話術對照表 ═══════════ -->
+<section id="phrases">
+  <h2><span class="no">陸</span>給 agent 的話術對照表</h2>
+  <p>13 句你真的會說的話。按「複製」可以直接貼進 agent 對話框試。</p>
+  <p class="small">⚠️ 一個要小心的說法：「退回上一版」對 agent 是模糊的——它分不清你是「剛改還沒存」「存了想撤銷」還是「想砍掉最近三個版本」，解讀錯了可能把還沒存檔的東西弄丟。用下表的句型講清楚情境，或讓 agent 先覆述它的理解再放行。</p>
+  <div class="tablewrap"><table id="phraseTable">
+    <tr><th style="width:38%">你這樣說</th><th>agent 會做什麼</th><th style="width:22%">背後概念</th></tr>
+  </table></div>
+</section>
+
+<!-- ═══════════ Quiz ═══════════ -->
+<section id="quiz">
+  <h2><span class="no">柒</span>小測驗：考概念與監督判斷，不考指令背誦</h2>
+  <p>目前得分：<span id="quizScore">0 / 8</span></p>
+  <div id="quizBox"></div>
+</section>
+
+<!-- ═══════════ 課表 ═══════════ -->
+<section id="agenda">
+  <h2><span class="no">捌</span>當天 2 小時課表</h2>
+  <div class="callout teal">
+    <strong>故事線與動手線的關係：</strong>十二幕劇本是林老師從零開始的完整故事；課堂動手為了兩小時內人人走完「commit＋push＋PR」，順序跟故事不同——老師不從零 init，而是從範本 <code>econ-starter</code>（結構跟 <code>hualien-tourism</code> 相同）起步。每個動手任務都標了對應幕次，回家看教材能接回故事線。<br>
+    <span class="small">範本機制：econ-starter 設為 GitHub 範本（template）repo，上半場每位老師由 agent 在<strong>自己帳號</strong>下建公開副本（課堂全是模擬資料，公開沒關係；公開，講師的救援雷達才看得到進度）；下半場換到講師事先把 8 人都加為協作者的共用 repo。協作邀請在行前信收齊帳號名後就發出，開課三天前確認 8 位都按過「接受」。</span>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>時間</th><th>環節</th><th>老師在做什麼</th><th>最低完成線</th></tr>
+    <tr><td>0:00–0:10</td><td><strong>開場痛點</strong></td><td>final_v2 之痛、AEA 一句、「你們在用的 AI 工具背後整天在跑 git——今天學指揮它的語言」；舉手分享自己的版本災難一則</td><td>暖場</td></tr>
+    <tr><td>0:10–0:20</td><td><strong>概念地圖</strong></td><td>一張圖五個詞：版本庫／提交／推送・拉取／差異；對照紙本 cheat sheet 找位置。分支下半場再講</td><td>能用一句話說出 commit 是什麼</td></tr>
+    <tr><td>0:20–0:35</td><td><strong>agent 見面禮</strong></td><td>每人跟 agent 說第一句話：「你好，請確認這台電腦的 git 裝好了嗎？」再問「等一下我要管理論文專案的版本，你會怎麼幫我？」第三句：「幫我看一下 GitHub 登入還活著嗎？」（行前第 6 項的複檢）</td><td>agent 有回話、git 與 GitHub 登入都確認成功</td></tr>
+    <tr><td>0:35–1:10</td><td><strong>動手任務 1–6</strong><br><span class="small">（自己帳號的 econ-starter）</span></td><td>任務1 用範本建自己的專案並抓下來（幕5・6）→ 任務2 問狀態（幕1）→ 任務3 <strong>親手</strong>在 notes.md 加一行筆記（幕3 情境）→ 任務4 「我改了什麼？」（幕3 diff）→ 任務5 存版本（幕2 commit）→ 任務6 送上 GitHub（幕5 push），到網頁<strong>親眼看到自己的 commit 和 diff</strong></td><td><strong>1 commit＋1 push＋網頁看得到（全場成敗線）</strong><br>加碼一：再改再存，請 agent 念兩版差異<br>加碼二：故意改亂→「退回上一版」（幕4）</td></tr>
+    <tr><td>1:10–1:20</td><td>休息＋救援</td><td>落後者由講師與快手鄰座補到最低線</td><td>全員回到成敗線上</td></tr>
+    <tr><td>1:20–1:45</td><td><strong>動手任務 7–11</strong><br><span class="small">（講師的共用 repo；闖關第 12 關是回家作業）</span></td><td>任務7 開一條<strong>帶自己名字</strong>的分支，例如 robustness-check-lin（幕7；共用 repo 裡分支名就是你的桌牌，撞名＝搶同一張桌子）→ 任務8 在分支上改檔並存版本（幕7）→ 任務9 推上去開 PR（幕9）→ 任務10 兩人一組到對方 PR 留一句審查意見——就是審稿人意見 → 任務11 merge 後「回主線、拉大家的最新進度」（幕8・6），看到<strong>別人的段落出現在自己電腦裡</strong>。（闖關頁第 12 關「從零開一本」是回家作業，課堂不做）</td><td><strong>開出一條分支＋一個 PR</strong>；merge 與互評是加碼、全組到齊就走完</td></tr>
+    <tr><td>1:45–1:55</td><td><strong>安全紅線</strong></td><td>監督三原則＋兩條資料紅線＋Word 誠實限制；演練一次攔停（「幫我強制覆蓋遠端」）</td><td>說得出三原則其中兩條</td></tr>
+    <tr><td>1:55–2:00</td><td><strong>帶走包</strong></td><td>紙本話術表、本教材網址、quiz、三段自學路徑</td><td>帶走 cheat sheet 與網址</td></tr>
+  </table></div>
+  <p class="small"><strong>課堂沒動手、由教材與示範扛的幕次：</strong>幕1（init，回家照教材補）、幕4（restore，加碼二）、幕10（tag／.gitignore，講師示範）、幕11（worktree，講師示範——「AI agent 的日常」最有感的一幕，別省）、幕12（收尾＝安全段）。<br>
+  <strong>翻車備援：</strong>個別 agent 或網路出狀況 → 該學員降級 GitHub 網頁版流程（網頁改檔＋commit on web），概念不減量；全場性故障 → 講師投影單機示範，老師在紙本劇本上勾流程。</p>
+  <h3>課後三段自學路徑</h3>
+  <p>①當天回家：照本教材把十二幕從第一幕走一次——課堂沒做的 init 從這裡補。②一週內：開自己的私人 repo，放不含個資的講義或筆記，連三天請 agent 各存一版。③一個月內：找共同作者真的走一次 Pull Request。</p>
+</section>
+
+<!-- ═══════════ 參考資料 ═══════════ -->
+<section id="refs">
+  <h2><span class="no">玖</span>參考資料</h2>
+  <p>2026-07-28 我們把市面上 18 門 git 課程實際盤過一輪之後選出來的。每一條都寫了「從哪裡開始讀」，因為你有 agent 代打指令，很多章可以直接跳過。</p>
+  <div class="tablewrap"><table>
+    <tr><th>你是誰</th><th>推薦</th><th>從哪開始</th></tr>
+    <tr><td rowspan="2">想用中文複習概念</td><td>猴子都能懂的 Git 入門（nulab.com/zh-tw/learn/software-development/git-tutorial/）</td><td>第一部分讀到「還原變更」就停；操作篇整段跳過（那是給自己打指令的人）；卡住再翻故障排除</td></tr>
+    <tr><td>為你自己學 Git（gitbook.tw）</td><td>跳過安裝與終端機三章，從「工作區、暫存區與儲存庫」進；狀況題群當出事時的急救箱</td></tr>
+    <tr><td rowspan="2">寫 R 或 Stata 做實證</td><td>EC 607 Lecture 2（github.com/uo-ec607/lectures 的 02-git）</td><td>經濟學家寫給經濟學家的課綱；從 RStudio 的 Git 面板那段開始</td></tr>
+    <tr><td>Software Carpentry git-novice（swcarpentry.github.io/git-novice）</td><td>研究者取向；Open Science／Licensing／Citation 那四集別的課沒有</td></tr>
+    <tr><td rowspan="2">想有系統或拿認證</td><td>Microsoft Learn：GitHub Foundations 繁中版（learn.microsoft.com/zh-tw/training/paths/github-foundations/）</td><td>免費讀完就有完整系統；認證考試無中文、要錢，一般不必真考。注意它用微軟譯名（存放庫＝repo、提取要求＝PR）</td></tr>
+    <tr><td>edX IBM: Git and GitHub Basics</td><td>旁聽免費、全程瀏覽器實驗室、期末產出一個公開 repo</td></tr>
+    <tr><td rowspan="2">想深入原理</td><td>MIT Missing Semester 版本控制講（missing.csail.mit.edu/2020/version-control/）</td><td>從「資料模型」那節讀起——先懂心智模型，指令就不用背</td></tr>
+    <tr><td>Learn Git Branching 繁中版（learngitbranching.js.org/?locale=zh_TW）</td><td>只做基礎篇四關就收手，後面的關卡用不到</td></tr>
+  </table></div>
+  <div class="card">
+    <p><strong>經濟系背景讀物</strong>：Michael Stepner《git vs. Dropbox》（michaelstepner.com/blog/git-vs-dropbox，最適合當課前讀物）｜Frank Pinter《Git: A Guide for Economists》｜Arthur Turrell《Coding for Economists》｜AEA Data &amp; Code Policy（aeaweb.org/journals/data）與 AEA Data Editor 指引（aeadataeditor.github.io/aea-de-guidance）。</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">這些可以先不學</h3>
+    <p>stash、rebase、amend、fork 工作流、GitHub Actions、git 內部原理——研究者課程的共識是入門階段全部跳過，我們跟進。理由一句話：需要它們的時候，你的 agent 會用，而你只要看得懂它的計畫。這張「可以不學」清單跟前面「該學」的一樣重要——有它，兩小時的範圍才站得住腳。</p>
+  </div>
+  <p class="small">⚠️ 連結在教材付印前要逐一點開再確認一次（網站會搬家）。</p>
+
+  <h2><span class="no">拾</span>三條誠實限制（不藏）</h2>
+  <div class="card">
+    <p><strong>一、Word 和 Excel 在 git 裡看不到逐行差異。</strong>它們不是純文字檔，diff 只會說「檔案變了」，不會說哪一行變了。git 對純文字檔（.md、.R、.do、.tex、.csv）才火力全開。Word 照樣可以放進版本庫備份與同步，只是「追蹤修訂」那種體驗要靠 Word 自己。</p>
+    <p><strong>二、GitHub 免費方案的私人 repo，協作人數沒有上限</strong>（早年的三人上限已取消；2026-07 查證官方文件）。但部分進階功能（如分支保護規則）要付費方案，細部以 GitHub 定價頁為準。</p>
+    <p><strong>三、agent 會犯錯，所以概念才要懂。</strong>它可能改錯檔案、寫錯說明、在你不想動的分支上動工。你不必背指令，但你得看得懂它的計畫和 diff——這十二張概念卡，是讓你有能力當它的指導教授，而不是它的橡皮圖章。</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  跟 AI 一起用 Git——不背指令的版本控制｜2026-07-28 v2（教材版；另有闖關版與講師儀表板）<br>
+  工具費用與方案會變動，開課前請以各官方頁面現況為準。
+</footer>
+
+<script>
+/* ───────── 主題切換 ───────── */
+const themeBtn=document.getElementById('themeToggle');
+const savedTheme=localStorage.getItem('gw-theme');
+if(savedTheme)document.documentElement.dataset.theme=savedTheme;
+themeBtn.onclick=()=>{
+  const cur=document.documentElement.dataset.theme||
+    (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=next;
+  localStorage.setItem('gw-theme',next);
+};
+
+/* ───────── 行前 checklist（localStorage）───────── */
+const checks=[...document.querySelectorAll('.check')];
+const prog=document.getElementById('checkProgress');
+function refreshChecks(){
+  let done=0;
+  checks.forEach(c=>{
+    const on=localStorage.getItem('gw-'+c.dataset.k)==='1';
+    c.querySelector('input').checked=on;
+    c.classList.toggle('checked',on);
+    if(on)done++;
+  });
+  prog.textContent=done+' / '+checks.length+(done===checks.length?'　🎉 行前準備完成！':'');
+}
+checks.forEach(c=>{
+  c.querySelector('input').addEventListener('change',e=>{
+    localStorage.setItem('gw-'+c.dataset.k,e.target.checked?'1':'0');
+    refreshChecks();
+  });
+});
+refreshChecks();
+document.getElementById('clearProg').onclick=()=>{
+  checks.forEach(c=>localStorage.removeItem('gw-'+c.dataset.k));
+  refreshChecks();
+};
+
+/* ───────── 投影模式與全部展開 ───────── */
+const projBtn=document.getElementById('projBtn');
+projBtn.onclick=()=>{
+  const on=document.documentElement.classList.toggle('projector');
+  projBtn.textContent=on?'🔎 投影中':'🔎 投影';
+};
+const expandBtn=document.getElementById('expandBtn');
+let allOpen=false;
+expandBtn.onclick=()=>{
+  allOpen=!allOpen;
+  document.querySelectorAll('details').forEach(d=>d.open=allOpen);
+  expandBtn.textContent=allOpen?'⊟ 全部收起':'⊞ 全部展開';
+};
+
+/* ───────── 需求計分卡 ───────── */
+const SCORE=[
+["回到任何一個歷史版本（不只最近幾版）","✗","△","✓","Word 只有目前這輪修訂；Dropbox 版本保留有天數限制、而且以單一檔案為單位"],
+["每個版本都附一句「為什麼改」的說明","✗","✗","✓","Dropbox 只給你 Version 18、19、20……"],
+["任兩個版本之間逐行比對","△","✗","✓","追蹤修訂只涵蓋目前這輪；要比任兩版得先留著兩份檔案再用「比較文件」，而留兩份檔案正是 final_v2 地獄的起點"],
+["平行試一條新路，失敗無痛丟掉、正稿不動","✗","✗","✓","這就是分支（branch）"],
+["兩人改到同一行時，明確指出衝突讓人裁決","△","✗","✓","Word 要手動「合併文件」很痛；Dropbox 只會默默留下兩份衝突副本"]
+];
+const sc=document.getElementById('scorecard');
+let revealed=0;
+SCORE.forEach((r,ri)=>{
+  const row=document.createElement('div');row.className='row';
+  row.innerHTML=`<div>${r[0]}<br><span class="small" style="display:none">${r[4]}</span></div>
+    <div class="cell"><button class="reveal" aria-label="揭曉本列">？</button></div>
+    <div class="cell pend">？</div><div class="cell pend">？</div>`;
+  const doReveal=function(){
+    if(row.dataset.done)return;
+    row.dataset.done='1';
+    const cells=row.querySelectorAll('.cell');
+    const sym=(s)=>s==='✓'?`<span style="color:var(--ok);font-weight:800">✓</span>`
+      :s==='✗'?`<span style="color:var(--bad);font-weight:800">✗</span>`
+      :`<span style="color:var(--gold);font-weight:800">△</span>`;
+    cells[0].innerHTML=sym(r[1]);cells[1].innerHTML=sym(r[2]);cells[2].innerHTML=sym(r[3]);
+    cells[1].classList.remove('pend');cells[2].classList.remove('pend');
+    row.querySelector('.small').style.display='inline';
+    revealed++;
+    if(revealed===SCORE.length){
+      document.getElementById('scoreSummary').innerHTML=
+        '五項需求按完了：Word 追蹤修訂 <strong>0 個 ✓</strong>、Dropbox <strong>0 個 ✓</strong>、git <strong>5 個 ✓</strong>——結論是你自己按出來的。（△＝勉強做得到一部分）';
+    }
+  };
+  row.querySelector('.reveal').onclick=e=>{e.stopPropagation();doReveal();};
+  row.style.cursor='pointer';
+  row.onclick=doReveal;
+  sc.appendChild(row);
+});
+
+/* ───────── 概念卡 ───────── */
+const CONCEPTS=[
+["版本庫","repository","一個資料夾，外加它從頭到尾的完整修改紀錄，全部收在一起。","一篇論文的所有版本都收在同一個檔案夾，再也不用取名 final_v2_really_final.docx。","agent 接手任何專案，第一件事就是確認「這個資料夾有沒有版本庫」；沒有，它會先幫你建一個。"],
+["提交","commit","把目前的修改打包成一個存檔點，附上時間和一句說明。","改完一節論文，在頁緣註記「改了文獻回顧，因為審查人要求」，日後隨時翻得回來。回覆審稿意見時最好用：<strong>一個審稿意見＝一個 commit</strong>，哪條意見改了什麼一目了然。","agent 每做完一個段落的工作就提交一次、自己寫說明；你讀那些說明，就知道它做了什麼。"],
+["差異","diff","把兩個版本逐行比對，明白列出哪行加了、哪行刪了。","Word 的追蹤修訂，但任何兩個版本之間都能比，不限「上一版對這一版」。","agent 改完稿，你先看 diff 再點頭。這是監督 agent 最重要的一個畫面。"],
+["歷史","log","所有存檔點由新到舊排成一條時間軸：誰、何時、改了什麼。","論文從初稿到刊出的大事記，連當初為什麼改都查得到。","你問「上週我們到底改了什麼」，agent 就是翻 log 回答你。"],
+["還原","restore","把檔案退回某個存檔點的樣子，改壞了不用怕。","跟共同作者說「第三節還是用上個月那版」，一句話就退回去，不必翻信箱找舊附件。","agent 改壞了、或你不滿意，說一聲「還原」它就退回去。這是你手上最大的後悔藥。"],
+["遠端與推送","remote／push／pull","遠端是放在 GitHub 上的同一份版本庫；push 把你的存檔送上去，pull 把別人的新東西抓下來。","辦公室的稿子跟雲端的稿子對齊：寄出是 push，收信是 pull。","agent 開工前先 pull 拿共同作者的最新版；做完會問你「要不要推上 GitHub」。"],
+["複製","clone","把 GitHub 上的整個版本庫，連同全部歷史，抓一份到自己電腦。","下載期刊的 replication package 整包回來自己重跑；或新共同作者加入，稿件連修改史一次拿走。","你丟一個 GitHub 網址說「幫我看看這個」，agent 的第一步就是 clone。"],
+["分支","branch","從目前的版本岔出一條平行線試東西，原稿不動；試成了再併回來。","被 A 期刊拒稿，想大改投 B 期刊。另開一條線改 B 版，A 版原封不動放著。","agent 做有風險的修改前會先開分支；失敗就整條丟掉，主線毫髮無傷。"],
+["合併","merge","把分支上的修改併回主線——合併點就是一個「有兩個爸爸」的存檔點。兩邊改到同一行時，git 會停下來要人裁決，這叫衝突（conflict）。","兩位共同作者各改一份稿，最後合成一份定稿；同一句話兩人都動過，就得當面喬。","agent 能替你執行合併，衝突也會列出來給你看，但「這句話留誰的」要你拍板。"],
+["Pull Request","PR","「我改好了，請你看過再併入」的正式邀請，附完整 diff 和討論串。","共同作者寄修改稿來說「你看過沒問題我再合進主檔」，審稿意見還能直接寫在對應那一行旁邊。","agent 可以替你開 PR，也可以先幫你摘要別人的 PR 改了什麼；按下同意的人是你。"],
+[".gitignore","不上傳清單","一張清單，寫明「這些檔案不要進版本庫」。","交 replication package 時決定哪些不交：暫存檔、幾 GB 的原始資料、含個資的名冊。","agent 建新專案時通常會先寫好 .gitignore；你要檢查的是「個資檔在不在清單上」。"],
+["工作樹","worktree","讓同一個版本庫同時展開成好幾個資料夾，各自站在不同分支，互不干擾。","桌上同時攤開論文的兩個版本各自改，改完都收回同一本修改紀錄。","這是 AI agent 的日常：同時派幾個 agent 各在一個 worktree 裡做不同任務，彼此不打架。"]
+];
+document.getElementById('conceptCards').innerHTML=CONCEPTS.map((c,i)=>`
+<details class="concept">
+  <summary>${i+1}｜${c[0]} <span class="tagline">${c[1]}</span></summary>
+  <div class="body">
+    <span class="lbl">白話</span><br>${c[2]}<br>
+    <span class="lbl">論文日常</span><br>${c[3]}<br>
+    <span class="lbl">agent 什麼時候用它</span><br>${c[4]}
+  </div>
+</details>`).join('');
+
+/* ───────── 十二幕資料 ───────── */
+const SCENES=[
+{t:"第一幕　開一本歷史帳本",
+ ctx:"林老師的論文資料夾裡躺著 paper_v2_final_really.docx 的慘痛回憶。這次新論文他決定換個方式管版本。",
+ say:"我這篇花蓮觀光的論文，幫我開始記版本，以後改壞了才有得救。",
+ agent:"我打算在這個資料夾建立一個版本庫（repository），你的檔案完全不會被改動，只是旁邊多一本看不見的歷史帳本。另外建議草稿用 Markdown 純文字寫——Word 檔存得進來，但看不到逐行差異。<br><em>（做完）</em>版本庫建好了。目前三個檔案都還是「未追蹤」狀態，也就是帳本是空的，還沒記任何一頁。",
+ cmd:"git init -b main\ngit status",
+ concept:"版本庫＝資料夾旁多出一本隱形的歷史帳本；建立它不會動到任何現有檔案。",
+ state:{c:0,cap:"版本庫剛建立：0 個 commit，paper.md、code/analysis.R、data/README.md 都是未追蹤。"}},
+{t:"第二幕　存下第一版",
+ ctx:"初稿的骨架齊了：草稿、分析程式、資料說明各就各位。",
+ say:"現在這樣就當第一版，幫我存起來。",
+ agent:"我會把三個檔案放進這次快照，訊息寫「論文初稿：草稿、分析程式、資料說明」，讓未來的你一眼看懂這版是什麼。<br><em>（做完）</em>第一個提交（commit）完成，這一刻的三個檔案已經永久留底。",
+ cmd:"git add paper.md code/analysis.R data/README.md\ngit commit -m \"論文初稿：草稿、分析程式、資料說明\"",
+ concept:"commit＝按快門存一張全專案快照；訊息寫「為什麼改」，是寫給三個月後的自己看的。",
+ state:{c:1,cap:"main 1 個 commit（初稿快照）。"}},
+{t:"第三幕　我到底改了什麼",
+ ctx:"隔天林老師重寫了引言，改到後來自己也記不清楚動了哪幾段。",
+ say:"我剛改了引言，幫我看一下我到底改了哪些地方？",
+ agent:"我先比對目前檔案和上一版快照的差異（diff）。<br><em>（回報）</em>只動了 paper.md：研究動機加了兩段、刪了一句過時的統計數字，其他檔案沒動。要不要把這版存起來？<br><em>（老師點頭後）</em>已提交，訊息是「改寫引言：補研究動機與資料來源說明」。歷史清單（log）現在有兩筆。",
+ cmd:"git diff\ngit commit -am \"改寫引言：補研究動機與資料來源說明\"\ngit log --oneline",
+ concept:"diff 給你逐行對照、log 給你時間軸——「改了什麼、何時改的」從此不用靠記憶。彩蛋一句：還有個指令叫 blame，能告訴你「這一行是誰、哪天、為了什麼改的」，對合寫論文的人最有感。",
+ state:{c:2,cap:"main 2 個 commit。"}},
+{t:"第四幕　表 2 改壞了，回上一版",
+ ctx:"今早改表 2 的迴歸結果敘述，越改越亂，還沒存版本，想整個放棄重來。",
+ say:"慘了，表 2 被我越改越亂，幫我把 paper.md 整個退回昨天存的那一版。",
+ agent:"我先列出會被丟棄的修改給你看：今天早上動的 14 行，全部在表 2 那一節。<strong>這些修改還沒存過檔，丟棄之後就救不回來了</strong>，確定要退回嗎？<br><em>（老師確認後）</em>已還原，paper.md 回到昨天「改寫引言」那一版的狀態，工作目錄乾淨。順帶一提——就算你已經 commit 了壞版本，也能指定退回更早的快照；存進帳本的版本都指得回來（只要別碰第伍節那些紅線動詞）。",
+ cmd:"git diff paper.md\ngit restore paper.md\ngit status",
+ concept:"restore 就是時光機：還沒存的失手可以整檔丟棄；存過的版本，只要不碰第伍節的紅線動詞，都找得回來。",
+ state:{c:2,note:"工作目錄已還原",cap:"main 仍是 2 個 commit；表 2 回到第 2 個 commit 的狀態。注意 agent 主動先問——這就是「破壞性動作必先問」。"}},
+{t:"第五幕　放上 GitHub，兩台電腦同步",
+ ctx:"林老師在家用筆電、在研究室用桌機，以前靠隨身碟和 email 附件搬檔案，常搬到版本錯亂。",
+ say:"我想家裡和研究室都能改這篇，幫我放上 GitHub——但先不要讓別人看到。",
+ agent:"我會在 GitHub 上建一個<strong>私人</strong>（private）版本庫，只有你和你授權的人看得到，然後把目前的 2 個 commit 整套上傳（push）。<br><em>（做完）</em>上傳完成。你可以在 github.com/lin-econ/hualien-tourism 看到完整檔案和兩筆歷史；從現在起 GitHub 是雲端備份，本機才是你工作的地方。",
+ cmd:"gh repo create hualien-tourism --private --source=. --push\n# 這一行等於三件事：在 GitHub 建私人版本庫、\n# 把它設為本機的遠端 origin（網址是 https 還是 SSH\n# 依 gh 的 git_protocol 設定，預設 https）、\n# git push -u origin main",
+ concept:"push＝把本機的歷史帳本上傳到 GitHub 的遠端（remote）版本庫；private 表示非請勿入。",
+ state:{c:2,remote:true,cap:"GitHub 多了私人版本庫；本機 main＝遠端 main＝2 個 commit。"}},
+{t:"第六幕　研究室電腦抓下來繼續寫",
+ ctx:"林老師到了研究室，桌機上還沒有這個專案。下午想補文獻回顧。",
+ say:"我現在在研究室這台，幫我把論文抓下來，我要繼續改。",
+ agent:"我從你的 GitHub 把整個版本庫複製（clone）下來——不只最新檔案，連兩筆歷史一起帶回來。<br><em>（老師補完文獻回顧後）</em>已提交並上傳，main 現在 3 個 commit。明天回家那台記得先說一聲「同步一下」，我會用拉取（pull）把今天的進度拉下來，兩台就完全一致。",
+ cmd:"git clone https://github.com/lin-econ/hualien-tourism.git\n# 進入 hualien-tourism 資料夾後：\ngit commit -am \"補文獻回顧：新增三篇 2024 年後的觀光支出研究\"\ngit push\n# 隔天在家裡那台：git pull",
+ concept:"clone 是第一次整套搬下來、pull 是之後每次同步——兩台電腦共用同一條歷史，隨身碟退休。",
+ state:{c:3,remote:true,cap:"兩台電腦同步；main 3 個 commit。"}},
+{t:"第七幕　開分支試 IV 模型，不動正稿",
+ ctx:"審稿人大概會問內生性。林老師想試工具變數（IV）模型，但現在的 OLS 版本能跑、能看，他不想冒險改壞。",
+ say:"我想試試看 IV 模型，可是不要動到現在能跑的版本。",
+ agent:"我會開一條分支（branch）叫 iv-model——想像影印一份草稿到另一張桌上，你在影本上怎麼實驗，正稿都原封不動。<br><em>（試完第一輪）</em>IV 第一版的程式和表格改動已提交在分支上；main 那邊完全沒被碰到，隨時可以切回去看原版。",
+ cmd:"git switch -c iv-model\ngit commit -am \"IV 模型第一版：以交通中斷事件當工具變數\"",
+ concept:"分支＝平行的草稿線，實驗歸實驗、正稿歸正稿，切換自如。",
+ state:{c:3,remote:true,branch:{name:"iv-model",ahead:1},cap:"main 3 個 commit；分支 iv-model 領先 main 1 個 commit。"}},
+{t:"第八幕　IV 不錯，併回主線",
+ ctx:"試了幾天，分支上累積 2 個 commit，IV 的第一階段 F 值漂亮，結果也穩。林老師決定讓它轉正。",
+ say:"IV 的結果不錯，把它併回正式版吧。",
+ agent:"我的計畫：切回 main、把 iv-model 的 2 個 commit 合併（merge）進來，再上傳。因為這段期間 main 沒有別的變動，會是一次「快轉」（fast-forward）——歷史仍是一直線，不會多出岔路。<br><em>（做完）</em>合併完成，main 來到 5 個 commit；分支任務結束，我把 iv-model 這條線收掉了，它的歷史都已在 main 裡。",
+ cmd:"git switch main\ngit merge iv-model\ngit push\ngit branch -d iv-model",
+ concept:"merge 把分支的成果收回主線；主線沒動過時就是快轉，乾淨俐落。",
+ state:{c:5,remote:true,cap:"main 快轉到 5 個 commit；iv-model 已刪除、雲端同步。"}},
+{t:"第九幕　邀共同作者，她的修改先看過再收",
+ ctx:"林老師邀陳老師合寫政策意涵那一節。三天後，陳老師的第一批修改送到了。",
+ say:"幫我邀陳老師進來一起寫；以後她改的東西，我都要先看過才收。",
+ agent:"我已送出協作者（collaborator）邀請，她接受後就能讀寫這個私人版本庫。我也會提醒她：改動請開 Pull Request（PR），不要直接改 main。<br><em>（三天後）</em>陳老師開了 PR #1「政策意涵初稿」。我看過差異：新增 42 行、都在第 5 節，沒動你的模型和表格。摘要給你了，你說收我才收。<br><em>（老師看過說好）</em>已合併進 main，並留下一筆合併紀錄，歷史上看得出這段是她的貢獻。",
+ cmd:"gh api -X PUT repos/lin-econ/hualien-tourism/collaborators/chen-econ\ngh pr diff 1\ngh pr merge 1 --merge",
+ concept:"Pull Request＝「我改好了，請你過目」的正式提案；先看 diff 再收，共同作者不再互相蓋稿。",
+ state:{c:7,remote:true,merge:true,cap:"main 7 個 commit（陳老師的修改＋合併紀錄）；協作者 1 位。"}},
+{t:"第十幕　投稿打包 replication package",
+ ctx:"目標期刊要求附可重現的資料與程式。原始資料 1.8 GB，既不該也不能整包上傳。",
+ say:"期刊要 replication package，幫我把 repo 整理好——原始大檔不要上傳。",
+ agent:"三件事：一、在 .gitignore 加上 data/raw/，以後原始大檔永遠不會被收進歷史；二、README 補上「資料取得方式與重現步驟」；三、在這一版釘一個標籤（tag）v1.0-submission，半年後審稿意見回來，你一句話就能回到投稿當下的完整狀態。<br><em>（做完）</em>都完成並上傳了，標籤也推上 GitHub。",
+ cmd:"git pull   # 第九幕的 PR 是在 GitHub 上併的，先拉回來本機才同步\ngit add .gitignore README.md\ngit commit -m \"投稿打包：忽略原始大檔、README 補重現步驟\"\ngit tag -a v1.0-submission -m \"2026-07 投稿版\"\ngit push --follow-tags",
+ concept:".gitignore 決定什麼不進歷史，tag 替重要時刻釘名字——「投稿那一版」從此是一個永遠指得回去的座標。",
+ state:{c:8,remote:true,tag:"v1.0-submission",cap:"main 8 個 commit；標籤 v1.0-submission 釘在第 8 個 commit 上。"}},
+{t:"第十一幕　幕後彩蛋：agent 的兩張書桌",
+ ctx:"截稿前一天，摘要要重寫、審稿人要的穩健性檢查也要跑。兩件事都急。",
+ say:"幫我改摘要，順便把穩健性檢查跑一跑——兩件一起做，來得及嗎？",
+ agent:"來得及，我用工作樹（worktree）：同一個版本庫擺出第二張書桌——另開一個資料夾、掛在 robustness 分支上跑檢查，主書桌同時改摘要，兩邊互不干擾。這其實是我們 AI agent 的日常，平行任務都這樣排。<br><em>（做完）</em>兩邊都完成：摘要改好提交在 main、穩健性結果提交在分支，我已把分支併回（這次兩線都有新東西，所以多一筆合併紀錄），第二張書桌也收走了。",
+ cmd:"git worktree add -b robustness ../hualien-tourism-robustness\n# 副書桌跑檢查並 commit；主書桌同時改摘要並 commit\ngit merge robustness -m \"併回穩健性檢查結果\"\ngit worktree remove ../hualien-tourism-robustness\ngit branch -d robustness",
+ concept:"worktree＝同一本歷史帳本、兩張書桌，平行做事不打架——你不必會用它，但要知道 agent 靠它同時替你做好幾件事。",
+ state:{c:11,remote:true,tag:"v1.0-submission",worktree:true,cap:"一度同時存在兩張書桌；併回後 main 11 個 commit，書桌收走。"}},
+{t:"第十二幕　收尾：你是指揮，不是打字員",
+ ctx:"論文送出去了。林老師回頭問了一個好問題。",
+ say:"說真的——我怎麼知道你有沒有偷偷改壞我的東西？",
+ agent:"你不用背任何指令，但請守住三條監督原則：<strong>一、動手前看我的計畫</strong>——我每次都會先講要做什麼，聽起來不對就喊停；<strong>二、動手後看 diff</strong>——我改了哪幾行，逐行攤在你面前，git 讓我無從遮掩；<strong>三、破壞性動作我必須先問你</strong>——像第四幕的還原，不問就做的 agent 不要用。<br><em>（最後一次回報）</em>這是整趟旅程的歷史：11 個 commit、1 個標籤、2 位作者，從初稿到投稿每一步都可回溯。這本帳本是你的，我只是替你記帳的人。",
+ cmd:"git log --oneline --graph",
+ concept:"監督三原則——動手前看計畫、動手後看 diff、破壞性動作必先問；概念在你腦裡，指令交給 agent。",
+ state:{c:11,remote:true,tag:"v1.0-submission",final:true,cap:"終局：main 11 個 commit、1 個標籤、2 位作者，全程可回溯。"}}
+];
+
+/* ───────── commit 圖（SVG）───────── */
+function drawGraph(s){
+  const W=760,laneY=70,brY=26,r=9,x0=40,gap=Math.min(64,(W-120)/Math.max(s.c,1));
+  let el='';
+  const cs=getComputedStyle(document.documentElement);
+  const teal=cs.getPropertyValue('--teal').trim(),gold=cs.getPropertyValue('--gold').trim(),
+        line=cs.getPropertyValue('--line').trim(),ink=cs.getPropertyValue('--ink-soft').trim();
+  // main 線
+  el+=`<line x1="${x0-24}" y1="${laneY}" x2="${W-70}" y2="${laneY}" stroke="${line}" stroke-width="2"/>`;
+  el+=`<text x="${x0-24}" y="${laneY+26}" font-size="12" fill="${ink}">main</text>`;
+  if(s.c===0){
+    el+=`<rect x="${x0}" y="${laneY-16}" width="180" height="32" rx="8" fill="none" stroke="${gold}" stroke-dasharray="5 4"/>
+         <text x="${x0+90}" y="${laneY+5}" font-size="12" text-anchor="middle" fill="${ink}">帳本是空的（0 commit）</text>`;
+  }
+  for(let i=0;i<s.c;i++){
+    const x=x0+i*gap;
+    el+=`<circle cx="${x}" cy="${laneY}" r="${r}" fill="${teal}"/>`;
+    el+=`<text x="${x}" y="${laneY-16}" font-size="10" text-anchor="middle" fill="${ink}">${i+1}</text>`;
+  }
+  // 分支
+  if(s.branch){
+    const bx0=x0+(s.c-1)*gap;
+    for(let j=0;j<s.branch.ahead;j++){
+      const x=bx0+(j+1)*gap*0.9;
+      el+=`<line x1="${j===0?bx0:bx0+j*gap*0.9}" y1="${j===0?laneY:brY}" x2="${x}" y2="${brY}" stroke="${gold}" stroke-width="2"/>`;
+      el+=`<circle cx="${x}" cy="${brY}" r="${r}" fill="${gold}"/>`;
+    }
+    el+=`<text x="${bx0+gap*0.9}" y="${brY-14}" font-size="12" fill="${ink}">${s.branch.name}</text>`;
+  }
+  if(s.worktree){
+    el+=`<text x="${x0}" y="${brY}" font-size="12" fill="${ink}">⑵ 第二張書桌（robustness 分支）→ 已併回 main</text>`;
+  }
+  if(s.merge){
+    const x=x0+(s.c-1)*gap;
+    el+=`<path d="M ${x-gap} ${brY} Q ${x} ${brY} ${x} ${laneY-r}" fill="none" stroke="${gold}" stroke-width="2"/>`;
+    el+=`<text x="${x-gap}" y="${brY-4}" font-size="11" fill="${ink}">PR #1 併入</text>`;
+  }
+  if(s.tag){
+    const x=x0+(s.c-1)*gap;
+    el+=`<path d="M ${x} ${laneY-r-2} l 0 -18 l 46 0 l -8 9 l 8 9 z" fill="${gold}" opacity=".9"/>
+         <text x="${x+4}" y="${laneY-r-8}" font-size="9" fill="#1A1A1A">tag</text>`;
+  }
+  if(s.remote){
+    el+=`<g transform="translate(${W-58},${laneY-30})">
+      <ellipse cx="16" cy="18" rx="22" ry="13" fill="none" stroke="${teal}" stroke-width="2"/>
+      <text x="16" y="45" font-size="11" text-anchor="middle" fill="${ink}">GitHub</text>
+      <text x="16" y="22" font-size="10" text-anchor="middle" fill="${teal}">☁</text></g>`;
+  }
+  if(s.note){
+    el+=`<text x="${x0}" y="${laneY+34}" font-size="12" fill="${gold}">↺ ${s.note}</text>`;
+  }
+  return `<svg class="graph" viewBox="0 0 ${W} 118" role="img" aria-label="版本庫狀態圖">${el}</svg>`;
+}
+
+/* ───────── stepper ───────── */
+let cur=0;const seen=new Set([0]);
+const box=document.getElementById('scenebox'),dots=document.getElementById('sceneDots'),
+      prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),
+      counter=document.getElementById('sceneCounter');
+dots.innerHTML=SCENES.map((_,i)=>`<button data-i="${i}" aria-label="第${i+1}幕">${i+1}</button>`).join('');
+dots.querySelectorAll('button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+prevBtn.onclick=()=>go(cur-1);nextBtn.onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='ArrowLeft')go(cur-1);if(e.key==='ArrowRight')go(cur+1);
+});
+function go(i){
+  if(i<0||i>=SCENES.length)return;
+  cur=i;seen.add(i);
+  const s=SCENES[i];
+  box.innerHTML=`
+    <div class="scene-title">${s.t}</div>
+    <p class="scene-ctx">${s.ctx}</p>
+    <div class="bubble teacher"><span class="who">林老師</span>「${s.say}」</div>
+    <div class="bubble agent"><span class="who">AGENT</span>${s.agent}</div>
+    <details class="cmd"><summary>幕後指令——先猜猜 agent 跑了什麼，再展開對答案</summary><pre><code>${s.cmd.replace(/</g,'&lt;')}</code></pre></details>
+    <div class="scene-concept">💡 ${s.concept}</div>
+    <div class="scene-state">${drawGraph(s.state)}<div class="cap">${s.state.cap}</div></div>`;
+  counter.textContent=`第 ${i+1}／12 幕`;
+  prevBtn.disabled=i===0;nextBtn.disabled=i===SCENES.length-1;
+  dots.querySelectorAll('button').forEach((b,j)=>{
+    b.classList.toggle('cur',j===i);b.classList.toggle('seen',seen.has(j)&&j!==i);
+  });
+}
+go(0);
+
+/* ───────── 話術表 ───────── */
+const PHRASES=[
+["幫我把這個資料夾管起來，以後改了都有紀錄","建立版本庫、寫好 .gitignore、做第一次提交","repository、.gitignore、commit"],
+["今天改的先存起來，註明是改了文獻回顧","把今天的修改打包成一個提交，寫上你給的說明","commit"],
+["我今天到底動了哪些地方？列給我看","把還沒存檔的修改逐行列出來","diff"],
+["上個月我們對第三節做了什麼？","翻歷史，挑出動到第三節的提交，摘要給你","log、diff"],
+["完了，改壞了。退回昨天那版","先跟你確認範圍，再把檔案還原到指定存檔點","restore"],
+["把最新的放上 GitHub","先拉取遠端的新東西，再把你的提交推上去","pull、push（remote）"],
+["我同事給我一個網址，幫我抓下來看看","clone 到你電腦，順便瀏覽專案結構報給你","clone"],
+["我想試著改成 panel data 的設定，但現在這版不准動","開一條分支，在分支上改","branch"],
+["試的那版不錯，併回正式版吧","執行合併；有衝突就列出來，請你決定留哪邊","merge（conflict）"],
+["請合作者看過我的修改再合進去","推上 GitHub、開一個 Pull Request、附修改摘要","push、Pull Request"],
+["這幾個資料檔不要上傳","把檔名加進 .gitignore；已被追蹤的檔會先告知你、再移出追蹤",".gitignore"],
+["兩件事同時做：一邊改講義、一邊修程式，別攪在一起","開兩個 worktree，各站一條分支並行","worktree、branch"],
+["等等，先停下來。告訴我你剛剛做了什麼、現在專案是什麼狀態","立刻停手，報告最近的動作、目前檔案與分支狀態，等你下一步指示","救援句——監督三原則的隨身版，任何時候都能喊"]
+];
+const pt=document.getElementById('phraseTable');
+PHRASES.forEach(p=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>「${p[0]}」<button class="copybtn">複製</button></td><td>${p[1]}</td><td>${p[2]}</td>`;
+  tr.querySelector('.copybtn').onclick=function(){
+    navigator.clipboard.writeText(p[0]).then(()=>{
+      this.textContent='已複製 ✓';setTimeout(()=>this.textContent='複製',1500);
+    }).catch(()=>{this.textContent='請手動選取'});
+  };
+  pt.appendChild(tr);
+});
+
+/* ───────── quiz ───────── */
+const QUIZ=[
+{q:"agent 說：「遠端和你本機的歷史分歧了，我要 force push 覆蓋遠端。」你該？",
+ o:["讓它做，agent 比你懂 git","先停下，問它遠端上有什麼會被覆蓋、有沒有不覆蓋的做法","把整個專案刪掉重來"],a:1,
+ e:"force push 會抹掉遠端上你本機沒有的歷史，是紅線動詞，放行前必須先弄清楚會失去什麼。"},
+{q:"agent 回報「已完成 commit」，但 GitHub 網頁上看不到新版本。最可能的原因是？",
+ o:["GitHub 掛了","commit 只記錄在你電腦裡的版本庫，還沒 push 上去","檔案忘了存檔所以 commit 失敗"],a:1,
+ e:"commit 存在本機、push 才送上雲端——本機版本庫與遠端（GitHub）是兩份要主動對齊的歷史。"},
+{q:"你叫 agent「把專案恢復乾淨」，它提議跑 git reset --hard。放行前最該確認的是？",
+ o:["網路穩不穩","目前還沒 commit 的修改是不是真的都不要了","硬碟空間夠不夠"],a:1,
+ e:"在「恢復乾淨」這個情境下，reset --hard 毀掉的是還沒存檔點的修改，而且救不回來；放行前要確認那些修改真的不要了。"},
+{q:"agent 回報：「合併衝突（merge conflict），notes.md 同一段兩邊都改了。」最好的下一步是？",
+ o:["叫它隨便挑一邊","請它把兩邊的版本念出來，由你決定保留哪些內容","放棄合併，從此各改各的"],a:1,
+ e:"衝突要人來取捨內容，git 只負責把兩邊攤開：機器跑流程，人做判斷。"},
+{q:"你想試一個新的模型設定，又怕弄亂目前能跑的版本。對應的 git 概念是？",
+ o:["開一條分支（branch）試，成功再併回主線","複製整個資料夾改名 _v2","直接在主線上改，反正有 commit 可以回頭"],a:0,
+ e:"分支就是平行草稿線，主線不動；複製資料夾改名正是 git 要取代的土法。"},
+{q:"合併請求（pull request, PR）最貼近哪個比喻？",
+ o:["投稿：提交修改附說明，等審查意見，修訂後才正式併入","把檔案上傳雲端硬碟","備份到隨身碟"],a:0,
+ e:"PR 是「請審查後再合併」的請求，說明、意見、修訂全程留有紀錄，跟審稿流程同構。"},
+{q:"你隨口請 agent 把成績檔一起 commit 上傳到公開 repo，它照做了。問題出在哪？",
+ o:["agent 動作太慢","監督失誤：個資不該進公開版本庫，而且 push 出去的歷史即使刪檔也難以徹底收回","沒有問題，agent 照做就代表可以"],a:1,
+ e:"agent 會服從，不代表指令正確；個資紅線得由你把關。"},
+{q:"課堂示範為什麼用 notes.md 而不是 Word 檔？",
+ o:["git 存不了 Word 檔","git 存得了 Word，但看不出逐行差異，純文字檔才看得到誰改了哪一行","Word 檔太大放不進去"],a:1,
+ e:"git 任何檔案都能存，但 diff 的逐行比較只對純文字有意義——這也是回家實際使用前要知道的誠實限制。"}
+];
+let score=0;const answered=new Set();
+const qb=document.getElementById('quizBox');
+QUIZ.forEach((q,qi)=>{
+  const d=document.createElement('div');d.className='q';
+  d.innerHTML=`<div class="stem">Q${qi+1}｜${q.q}</div>
+    <div class="opts">${q.o.map((o,oi)=>`<button data-oi="${oi}">（${'ABC'[oi]}）${o}</button>`).join('')}</div>
+    <div class="expl">💡 ${q.e}</div>`;
+  d.querySelectorAll('.opts button').forEach(b=>{
+    b.onclick=()=>{
+      if(answered.has(qi))return;
+      answered.add(qi);d.classList.add('answered');
+      const pick=+b.dataset.oi;
+      d.querySelectorAll('.opts button').forEach((bb,oi)=>{
+        if(oi===q.a)bb.classList.add('right');
+        else if(oi===pick)bb.classList.add('wrong');
+      });
+      if(pick===q.a)score++;
+      document.getElementById('quizScore').textContent=score+' / 8'+(answered.size===8?(score>=6?'　很可以，你已經會監督 agent 了':'　再翻一次概念卡，特別是紅線那節'):'');
+    };
+  });
+  qb.appendChild(d);
+});
+</script>
+</body>
+</html>
