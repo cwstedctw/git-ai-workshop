@@ -338,9 +338,11 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <strong>紅線先講：</strong>課程全程用講師提供的模擬資料，<strong>請勿把學生個資、成績、未公開研究資料帶進課堂或上傳</strong>。
   </div>
 
-  <h3>AI 工具定案：Antigravity（2026-07-28 實測拍板）</h3>
+  <h3>本課的 AI 工具：Antigravity</h3>
   <div class="callout teal">
-    全班統一用 Google 的 Antigravity：免費、用 Google 帳號登入（東華的學校信箱本身就是 Google 帳號）、編輯器與 AI 助手一體。我們拿它的免費模型把本課任務實測了一輪：本機 git 十關全數通過、幾乎一步到位，連 worktree 都一次做對；<strong>攔停通過真機測試</strong>——實際對它丟出「幫我強制覆蓋遠端」，它先查遠端差異、指出會被毀掉的 commit、拒絕執行覆蓋（遠端資料完好）；課堂用的 PR 全流程也已在真 GitHub 上驗證走通。
+    全班統一用 Google 的 Antigravity：免費、用 Google 帳號登入（東華的學校信箱本身就是 Google 帳號）、編輯器與 AI 助手一體。
+    課堂上的每一個任務，講師都先拿它從頭到尾走過一遍才排進課表。我們也故意對它下過危險指令「幫我強制覆蓋遠端」——
+    它先查了兩邊的差異、指出有些紀錄會被毀掉，然後<strong>拒絕照做</strong>。工具會把關，但最後點頭的人是你，這正是這門課要練的。
   </div>
   <div class="tablewrap"><table>
     <tr><th>備援與延伸</th><th>定位</th></tr>
@@ -348,21 +350,26 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <tr><td>GitHub Copilot</td><td>課後禮物：教師通過 GitHub Education 驗證可免費用 Copilot Pro（審核要數天到數週，行前信同步發動申請）</td></tr>
     <tr><td>Claude Code（Anthropic）</td><td>講師示範機：開場與攔停演示用，順便看到「不同 agent、同一套 git 概念」</td></tr>
   </table></div>
-  <p class="small">⚠️ <span class="badge-tbc">待確認</span> 開課前要真機驗的三件事：學校 Google Workspace 帳號登入 Antigravity 是否需要管理員開通（先試、被擋就用個人 Gmail）；8 人同時使用免費額度的限流行為；IDE 介面的實際操作流程。另：Copilot 教師免費資格的申請現況，行前信寄出前由講師再驗一次。（已完成真機驗證：攔停行為 2026-07-29 通過；PR 全流程已在真 GitHub 走通。講師須知一則：force-with-lease 在先 fetch 過的情況下照樣會覆蓋遠端，別把它當萬靈丹。）</p>
+  <div class="callout">
+    <strong>🏁 行前準備到這裡結束。</strong>上面 9 項都打勾＝課前的事全部做完，可以安心闔上電腦。
+    當天只要帶三樣：<strong>筆電、充電器、設定 2FA 的那支手機</strong>。<br>
+    <span class="small">從下一節「參」開始是課堂當天的教材——想先翻可以，沒翻也完全不影響上課。</span>
+  </div>
 </section>
 
 <!-- ═══════════ 概念地圖 ═══════════ -->
 <section id="concepts">
-  
+
+  <h2><span class="no">參</span>概念地圖：12 張概念卡</h2>
+  <p><strong>〔課堂當天的教材從這一節開始〕</strong>以下各節上課會帶著走；課前想預習，就從這裡讀起。</p>
+  <p>每張卡三句話：白話是什麼、用論文日常打比方、AI agent 什麼時候用它。點卡片展開。順序就是第肆節十二幕的出場順序。</p>
+
   <figure class="dia">
     <img src="img/ag-diff.png" alt="Antigravity 中 AI 助手列出 notes.md 的差異：修改前那行標減號、修改後那行標加號，並用中文說明把 0.98 訂正為 0.96" loading="lazy">
     <figcaption>真實畫面（2026-07-29 截於 Mac）。這就是課堂第 4 關你會看到的東西——
     你問一句「請把差異逐行列給我看」，它把<strong>修改前（減號）</strong>和<strong>修改後（加號）</strong>並排攤開，還用中文說明改了什麼。
     你要確認的只有一件事：<strong>你打算改的那幾行，有沒有出現在對的那一邊。</strong></figcaption>
   </figure>
-
-  <h2><span class="no">參</span>概念地圖：12 張概念卡</h2>
-  <p>每張卡三句話：白話是什麼、用論文日常打比方、AI agent 什麼時候用它。點卡片展開。順序就是第肆節十二幕的出場順序。</p>
   <div class="cards" id="conceptCards"></div>
   <div class="card">
     <h3 style="margin-top:0">附兩個半張</h3>
