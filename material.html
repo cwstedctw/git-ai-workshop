@@ -694,9 +694,9 @@ document.getElementById('conceptCards').innerHTML=CONCEPTS.map((c,i)=>`
 /* ───────── 十二幕資料 ───────── */
 const SCENES=[
 {t:"第一幕　開一本歷史帳本",
- ctx:"林老師的論文資料夾裡躺著 paper_v2_final_really.docx 的慘痛回憶。這次新論文他決定換個方式管版本。",
+ ctx:"林老師的論文資料夾裡躺著 paper_v2_final_really.docx 的慘痛回憶。這次新論文他決定換個方式管版本，草稿也聽同事的勸、改用純文字的 Markdown（.md）來寫。",
  say:"我這篇花蓮觀光的論文，幫我開始記版本，以後改壞了才有得救。",
- agent:"我打算在這個資料夾建立一個版本庫（repository），你的檔案完全不會被改動，只是旁邊多一本看不見的歷史帳本。另外建議草稿用 Markdown（.md）寫——那就是純文字檔，用記事本或 Antigravity 打開就能改，格式只有「標題前面加 #」這種程度。Word 檔照樣存得進版本庫，只是看不到逐行差異。<br><em>（做完）</em>版本庫建好了。目前三個檔案還沒被納入管理（git 說它們「未追蹤」，跟 Word 的追蹤修訂是兩回事），也就是帳本是空的，還沒記任何一頁。",
+ agent:"我打算在這個資料夾建立一個版本庫（repository）——你的檔案完全不會被改動，只是旁邊多一本看不見的歷史帳本。<br><em>（做完）</em>版本庫建好了。目前三個檔案還沒被納入管理（git 說它們「未追蹤」，跟 Word 的追蹤修訂是兩回事），也就是帳本是空的，還沒記任何一頁。",
  cmd:"git init -b main\ngit status",
  concept:"版本庫＝資料夾旁多出一本隱形的歷史帳本；建立它不會動到任何現有檔案。",
  state:{c:0,cap:"版本庫剛建立：0 個 commit，paper.md、code/analysis.R、data/README.md 都是未追蹤。"}},
