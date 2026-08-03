@@ -293,8 +293,8 @@ const TASKS=[
  check:s=> s.pulled?'pass':(s.receipts.has('11')?'pass':'todo'),
  hintFail:'還沒看到拉取（pull）的紀錄。請 agent「回主線、同步最新進度」。如果它說「沒有新的變動」，代表還沒有人的 PR 被合併——這樣也算過關，等講師喊一聲再拉一次就看得到別人的字。'},
 {n:12,name:'回家作業：從零開一本',scene:'對應第一・十幕',
- goal:'回家把課堂沒做的補完：自己開一個新專案（init）、放一份不含個資的講義、加 .gitignore、釘一個標籤。<br><span class="small">先在電腦上新建一個空資料夾、把講義放進去，用 Antigravity 開啟那個資料夾，再貼下面這句。</span>',
- say:()=>`我新開了一個資料夾放我的講義，已經用 Antigravity 打開它了。幫我在這個資料夾開始記版本，加上合適的 .gitignore，存第一版，然後釘一個標籤 v1.0。做完在 RECEIPT.md 加一行：TASK-12 done：自己的第一本開張。`,
+ goal:'回家把課堂沒做的補完：自己開一個新專案（init）、放一份不含個資的講義、加 .gitignore、釘一個標籤，最後放上 GitHub（私人）。<br><span class="small">先在電腦上新建一個空資料夾、把講義放進去，用 Antigravity 開啟那個資料夾，再貼下面這句。</span>',
+ say:()=>`我新開了一個資料夾放我的講義，已經用 Antigravity 打開它了。幫我在這個資料夾開始記版本，加上合適的 .gitignore，存第一版，然後釘一個標籤 v1.0，最後幫我放上 GitHub——開私人（private）的，只有我看得到。做完在 RECEIPT.md 加一行：TASK-12 done：自己的第一本開張。`,
  check:s=> (s.tags.length>=1&&s.initHere)?'pass':(s.receipts.has('12')?'pass':'todo'),
  hintFail:'這關在你自己的新資料夾做（不是課堂那兩個 repo），做完重新連接那個資料夾來驗。'},
 ];
