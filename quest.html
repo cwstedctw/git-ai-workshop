@@ -233,7 +233,7 @@ const MILESTONES=[
   {key:'m5',name:'投稿打包',tasks:[11,12]},
 ];
 const TASKS=[
-{n:1,name:'把範本變成自己的專案',scene:'對應第五・六幕',
+{n:1,name:'把範本變成自己的專案',scene:'對應第六幕（把 GitHub 上的專案抓下來）；公開／私人的分際見第五幕',
  goal:'用講師的範本，在你自己的 GitHub 帳號下建一個公開（public）專案，抓到這台電腦。課堂全是模擬資料所以公開沒關係——而且公開，講師的救援雷達才看得到你；放真資料的 repo 才用私人（第五幕教的分際）。',
  say:()=>`用範本 ${tmpl()} 幫我建一個自己的論文專案，公開的，名字叫 econ-starter-${tag()}，抓到我電腦的「文件」資料夾底下，然後把完整路徑告訴我。做完之後，在專案資料夾最外層的 RECEIPT.md 加一行：TASK-1 done：一句話說你做了什麼。`,
  check:s=>s.hasGit?'pass':(s.receipts.has('1')?'pass':'todo'),
