@@ -142,6 +142,7 @@ details.cmd[open] summary::before{content:"▾ ";}
   font-size:.95rem;margin:14px 0 4px}
 .scene-state{margin-top:14px;border-top:1px dashed var(--line);padding-top:10px}
 .scene-state .cap{font-size:.84rem;color:var(--ink-soft)}
+.scene-quest{font-size:.84rem;color:var(--ink-soft);margin-top:10px}
 .stepnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0}
 .stepnav button{background:var(--teal);color:#fff;border:none;border-radius:10px;
   padding:10px 22px;font-size:1rem;cursor:pointer;font-family:inherit}
@@ -507,6 +508,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <section id="phrases">
   <h2><span class="no">陸</span>怎麼跟 agent 說：13 句常用的話</h2>
   <p>13 句你真的會說的話。按「複製」可以直接貼進 agent 對話框試。</p>
+  <p class="small">課堂當天的任務句都在闖關頁、照抄就好；這張表是<strong>課後回到自己研究時</strong>的日常用語表——也就是紙本對照表的內容。</p>
   <p class="small">⚠️ 一個要小心的說法：「退回上一版」對 agent 是模糊的——它分不清你是「剛改還沒存」「存了想撤銷」還是「想砍掉最近三個版本」，解讀錯了可能把還沒存檔的東西弄丟。用下表的句型講清楚情境，或讓 agent 先覆述它的理解再放行。</p>
   <div class="tablewrap"><table id="phraseTable">
     <tr><th style="width:38%">你這樣說</th><th>agent 會做什麼</th><th style="width:22%">背後概念</th></tr>
@@ -784,6 +786,22 @@ const SCENES=[
  state:{c:11,remote:true,tag:"v1.0-submission",final:true,cap:"終局：main 11 個 commit、1 個標籤、2 位作者，全程可回溯。"}}
 ];
 
+/* 每一幕的課堂對應（教材→闖關的反向地圖） */
+const SCENE_QUEST=[
+"對應課堂第 2 關（問狀態）；「開一本」本身是回家作業第 12 關",
+"對應課堂第 5 關（存成一個版本）",
+"對應課堂第 3・4 關（親手改檔＋看 diff）",
+"課堂沒排關卡——是任務 6 的加碼二（故意改亂→退回）",
+"對應課堂第 6 關（送上 GitHub）",
+"對應課堂第 1 關（抓副本到電腦）與第 11 關（拉別人的進度）",
+"對應課堂第 7・8 關（開分支＋分支上存版本）",
+"對應課堂第 11 關（合併後回主線同步）",
+"對應課堂第 9・10 關（開 PR＋當審稿人）",
+"對應回家作業第 12 關（.gitignore 與標籤）",
+"課堂沒動手——講師示範（沒看到的話，這幕自己讀就夠）",
+"對應課堂收尾的安全紅線段"
+];
+
 /* ───────── commit 圖（SVG）───────── */
 function drawGraph(s){
   const W=760,laneY=70,brY=26,r=9,x0=40,gap=Math.min(64,(W-120)/Math.max(s.c,1));
@@ -861,7 +879,8 @@ function go(i){
     <div class="bubble agent"><span class="who">AI 助手</span>${s.agent}</div>
     <details class="cmd"><summary>幕後指令——先猜猜 agent 跑了什麼，再展開對答案</summary><pre><code>${s.cmd.replace(/</g,'&lt;')}</code></pre></details>
     <div class="scene-concept">💡 ${s.concept}</div>
-    <div class="scene-state">${drawGraph(s.state)}<div class="cap">${s.state.cap}</div></div>`;
+    <div class="scene-state">${drawGraph(s.state)}<div class="cap">${s.state.cap}</div></div>
+    <div class="scene-quest">🎮 <a href="quest.html" target="_blank" rel="noopener">課堂動手（闖關頁）</a>：${SCENE_QUEST[i]}</div>`;
   counter.textContent=`第 ${i+1}／12 幕`;
   prevBtn.disabled=i===0;nextBtn.disabled=i===SCENES.length-1;
   dots.querySelectorAll('button').forEach((b,j)=>{
