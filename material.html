@@ -428,7 +428,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <section id="story">
   <h2><span class="no">肆</span>十二幕劇本：林老師的一篇論文</h2>
   <p>主角：<strong>林老師</strong>（經濟系）、共同作者<strong>陳老師</strong>、還有替他們跑 git 的 <strong>agent</strong>。範例專案 <code>hualien-tourism</code>《花蓮觀光的經濟分析》：<code>paper.md</code>（論文草稿）、<code>code/analysis.R</code>（分析程式）、<code>data/README.md</code>（資料說明）。</p>
-  <p class="small">看懂對話框的小記號：agent 那格裡的<strong>（做完）（回報）（老師點頭後）</strong>是舞台指示——指示之前是它<strong>動手前講的計畫</strong>，指示之後是它<strong>做完的回報</strong>。每一幕都是這個節奏，正好就是全課要練的「動手前看計畫、動手後看結果」。<br>「幕後指令」預設收合——你不必背，但展開就看得到 agent 到底做了什麼。這些指令每一條我們都實際跑過、確認照做就會動。<strong>誠實提醒：</strong>Word／Excel 檔也存得進 git，但看不到逐行差異，所以整齣戲用純文字檔示範（原因見第拾節）。</p>
+  <p class="small">看懂對話框：<strong>金色框＝林老師說的話，另一框＝AI 助手的回話</strong>（助手說的「我」是它自己、「你」都指林老師）。助手框裡的<strong>（做完）（回報）（老師點頭後）</strong>是舞台指示——指示之前是它<strong>動手前講的計畫</strong>，指示之後是它<strong>做完的回報</strong>。每一幕都是這個節奏，正好就是全課要練的「動手前看計畫、動手後看結果」。<br>「幕後指令」預設收合——你不必背，但展開就看得到 agent 到底做了什麼。這些指令每一條我們都實際跑過、確認照做就會動。<strong>誠實提醒：</strong>Word／Excel 檔也存得進 git，但看不到逐行差異，所以整齣戲用純文字檔示範（原因見第拾節）。</p>
   <div class="callout teal">
     <strong>想自己照著劇本走一遍？</strong>先跟 agent 要一個起點——把這句複製給它：
     <div class="bubble teacher" style="max-width:100%;margin:10px 0">
@@ -455,7 +455,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <div class="card">
     <p><span class="small" style="color:var(--teal);font-weight:700">情境</span><br>
     林老師和陳老師都改了 paper.md 的同一句結論。陳老師的版本先進了主線，林老師這邊一說「併回去」，agent 停下來了。</p>
-    <div class="bubble agent"><span class="who">AGENT</span>合併時撞到衝突（conflict）：paper.md 第 12 行，兩邊都改了。左邊是你的版本「觀光支出的所得彈性大於一」，右邊是陳老師已合併的版本「觀光支出的所得彈性接近一」。git 不會替你們選，<strong>要你決定留哪一句、或是重寫一句</strong>。你說了算，我來收尾。</div>
+    <div class="bubble agent"><span class="who">AI 助手</span>合併時撞到衝突（conflict）：paper.md 第 12 行，兩邊都改了。左邊是你的版本「觀光支出的所得彈性大於一」，右邊是陳老師已合併的版本「觀光支出的所得彈性接近一」。git 不會替你們選，<strong>要你決定留哪一句、或是重寫一句</strong>。你說了算，我來收尾。</div>
     <p>裁決三步：一、請 agent 把兩邊版本並排念出來；二、你決定——留一邊、或口述一句新的給它；三、agent 完成合併並提交，衝突解除。就這樣，衝突不是故障，是兩位作者的意見被攤開來等人裁決。</p>
     <p class="small">如果你自己打開那個檔案，會看到 <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> 和 <code>=======</code> 把兩個版本框起來——那不是檔案壞掉，是 git 把兩邊並排攤給你看。<br>課堂上時間允許的話，講師會故意安排兩人改同一行，當場引爆、全班圍觀裁決一次（時間不夠就割愛，這頁自己看完也夠用）。看過一次，以後自己遇到就不慌。</p>
   </div>
@@ -858,7 +858,7 @@ function go(i){
     <div class="scene-title">${s.t}</div>
     <p class="scene-ctx">${s.ctx}</p>
     <div class="bubble teacher"><span class="who">林老師</span>「${s.say}」</div>
-    <div class="bubble agent"><span class="who">AGENT</span>${s.agent}</div>
+    <div class="bubble agent"><span class="who">AI 助手</span>${s.agent}</div>
     <details class="cmd"><summary>幕後指令——先猜猜 agent 跑了什麼，再展開對答案</summary><pre><code>${s.cmd.replace(/</g,'&lt;')}</code></pre></details>
     <div class="scene-concept">💡 ${s.concept}</div>
     <div class="scene-state">${drawGraph(s.state)}<div class="cap">${s.state.cap}</div></div>`;
