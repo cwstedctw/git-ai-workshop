@@ -234,7 +234,7 @@ const MILESTONES=[
 ];
 const TASKS=[
 {n:1,name:'把範本變成自己的專案',scene:'對應第六幕（把 GitHub 上的專案抓下來）；公開／私人的分際見第五幕',
- goal:'用講師的範本，在你自己的 GitHub 帳號下建一個公開（public）專案，抓到這台電腦。課堂全是模擬資料所以公開沒關係——而且公開，講師的救援雷達才看得到你；放真資料的 repo 才用私人（第五幕教的分際）。',
+ goal:'用講師的範本，在你自己的 GitHub 帳號下建一個公開（public）專案，抓到這台電腦。課堂全是模擬資料所以公開沒關係——而且公開，講師的救援雷達才看得到你；放真資料的 repo 才用私人（第五幕教的分際）。<br><span class="small">做完長什麼樣？講師的示範副本 <a href="https://github.com/cwstedctw/econ-starter-demo" target="_blank" rel="noopener">econ-starter-demo</a> 就是這關的成品。</span>',
  say:()=>`用範本 ${tmpl()} 幫我建一個自己的論文專案，公開的，名字叫 econ-starter-${tag()}，抓到我電腦的「文件」資料夾底下，然後把完整路徑告訴我。做完之後，在專案資料夾最外層的 RECEIPT.md 加一行：TASK-1 done：一句話說你做了什麼。`,
  check:s=>s.hasGit?'pass':(s.receipts.has('1')?'pass':'todo'),
  hintFail:'還讀不到版本庫。先確認 agent 說的資料夾位置，再回上面重新連接那個資料夾。'},
