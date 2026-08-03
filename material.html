@@ -182,6 +182,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <a href="#prep">行前準備</a>
   <a href="#concepts">概念地圖</a>
   <a href="#story">十二幕劇本</a>
+  <a href="#conflict">協作進階</a>
   <a href="#safety">安全紅線</a>
   <a href="#phrases">怎麼說</a>
   <a href="#quiz">小測驗</a>
@@ -943,7 +944,7 @@ QUIZ.forEach((q,qi)=>{
 });
 
 /* ───────── 分頁版面與路由 ───────── */
-const TAB_GROUPS=[['why'],['prep'],['concepts'],['story','conflict','gates'],['safety'],['phrases'],['quiz'],['agenda'],['refs']];
+const TAB_GROUPS=[['why'],['prep'],['concepts'],['story'],['conflict','gates'],['safety'],['phrases'],['quiz'],['agenda'],['refs']];
 const navLinks=[...document.querySelectorAll('#topnav a')];
 const fullBtn=document.getElementById('fullBtn');
 let tabbed=localStorage.getItem('gw-tabbed')!=='0';
