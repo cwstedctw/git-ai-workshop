@@ -84,7 +84,9 @@ body.tabbed main>section.active{display:block;animation:gwfade .25s}
 @keyframes gwfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 body.tabbed main>section.active h2{margin-top:44px}
 *[id]{scroll-margin-top:64px}
-@media print{body.tabbed main>section{display:block!important}nav#topnav{display:none}}
+#duoStrip{background:var(--gold-soft);border-bottom:1px solid var(--line);text-align:center;
+  padding:7px 14px;font-size:.88rem}
+@media print{body.tabbed main>section{display:block!important}nav#topnav,#duoStrip{display:none}}
 #themeToggle,#projBtn,#expandBtn,#fullBtn{flex:none;margin:6px 4px;background:none;border:1px solid var(--line);
   border-radius:8px;padding:4px 10px;cursor:pointer;color:var(--ink);font-size:.85rem}
 #fullBtn{margin-left:auto}
@@ -193,6 +195,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <button id="projBtn" title="投影模式：放大字級，上課投影用">🔎 投影</button>
   <button id="themeToggle" title="切換深淺色">🌗</button>
 </nav>
+<div id="duoStrip">📘 這一頁是<strong>教材（用讀的）</strong>：故事、概念、行前準備｜課堂動手請開 <a href="quest.html">🎮 闖關頁（用做的）</a>——12 關自動驗收，每關都標對應幕次。</div>
 
 <main>
 
