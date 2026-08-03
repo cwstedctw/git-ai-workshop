@@ -244,7 +244,7 @@ const TASKS=[
  check:s=>s.receipts.has('2')?'pass':'manual',
  hintFail:''},
 {n:3,name:'親手加一行筆記',scene:'對應第三幕情境',
- goal:'自己打開 notes.md 做兩件事：<strong>把「0.98」改成「0.96」</strong>（那是舊數字），再<strong>加一行</strong>今天的筆記。這一步是你動手，不是 agent 代打——下一關才看得到「紅色刪掉、綠色加上」的對照。<br><span class="small">怎麼開：Antigravity 預設畫面沒有檔案清單，最簡單的方式是<strong>請它幫你打開</strong>——先貼這句：「幫我打開 notes.md 讓我可以編輯」。它會開好，你直接在裡面打字，打完按 ⌘S（Windows 是 Ctrl+S）存檔。<strong>不要用 Word 開。</strong>改完了再按下面的複製。</span>',
+ goal:'自己打開 notes.md 做兩件事：<strong>把「0.98」改成「0.96」</strong>（那是舊數字），再<strong>加一行</strong>今天的筆記。這一步刻意讓你親手改（agent 當然也改得動，但這次別找它）——因為<strong>是你改的，下一關看 diff 時你才是在「驗證」它列得對不對，而不是只能相信它</strong>。真實研究也是這樣：稿子你自己寫，版本管理才交給 agent。<br><span class="small">怎麼開：Antigravity 預設畫面沒有檔案清單，最簡單的方式是<strong>請它幫你打開</strong>——先貼這句：「幫我打開 notes.md 讓我可以編輯」。它會開好，你直接在裡面打字，打完按 ⌘S（Windows 是 Ctrl+S）存檔。<strong>不要用 Word 開。</strong>改完了再按下面的複製。</span>',
  say:()=>`我自己改了 notes.md（訂正了一個數字、加了一行筆記，都存檔了）。幫我確認你看得到這些修改，然後在 RECEIPT.md 加一行：TASK-3 done：看到修改了。`,
  check:s=>s.receipts.has('3')?'pass':'manual',
  hintFail:''},
