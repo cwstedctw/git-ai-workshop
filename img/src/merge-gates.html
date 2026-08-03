@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>誰能動正稿（main）？三個檔位</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    width: 1280px;
+    height: 720px;
+    margin: 0;
+    overflow: hidden;
+  }
+  body {
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+    color: #263536;
+    background:
+      radial-gradient(circle at 8% 10%, rgba(184,134,11,.09), transparent 26%),
+      radial-gradient(circle at 92% 12%, rgba(14,124,123,.09), transparent 27%),
+      #f7f8f5;
+  }
+  .page {
+    width: 100%;
+    height: 100%;
+    padding: 27px 42px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    text-align: center;
+    flex: 0 0 98px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 39px;
+    line-height: 1.18;
+    font-weight: 850;
+    letter-spacing: .5px;
+    color: #183f40;
+  }
+  .subtitle {
+    margin-top: 8px;
+    font-size: 19px;
+    color: #647273;
+    letter-spacing: 1.5px;
+  }
+  .cards {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 38px 1fr 38px 1fr;
+    align-items: stretch;
+  }
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b8860b;
+    font-size: 31px;
+    font-weight: 900;
+    text-shadow: 0 2px 7px rgba(184,134,11,.15);
+  }
+  .card {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    padding: 23px 24px 20px;
+    border: 1px solid #d9dfdc;
+    border-radius: 20px;
+    background: rgba(255,255,255,.97);
+    box-shadow: 0 10px 24px rgba(36,62,62,.10);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 8px;
+  }
+  .level1::before { background: #cddfda; }
+  .level2::before { background: linear-gradient(90deg, #84bdb5, #0e7c7b); }
+  .level3::before { background: linear-gradient(90deg, #0e7c7b, #8d690c, #b8860b); }
+
+  .icon {
+    width: 142px;
+    height: 142px;
+    margin: 0 auto 4px;
+    color: #0e7c7b;
+    flex: 0 0 auto;
+  }
+  .level3 .icon { color: #946d09; }
+  .icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .level {
+    margin: 0;
+    font-size: 29px;
+    line-height: 1.1;
+    font-weight: 850;
+    color: #183f40;
+  }
+  .tagline {
+    min-height: 58px;
+    margin: 13px 0 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    line-height: 1.35;
+    font-weight: 800;
+    color: #0e6f6e;
+  }
+  .level3 .tagline { color: #8a6508; }
+  .scene {
+    margin: 0;
+    padding: 13px 12px;
+    border-radius: 13px;
+    background: #f1f7f5;
+    font-size: 18px;
+    line-height: 1.42;
+    font-weight: 700;
+    color: #314748;
+  }
+  .level3 .scene { background: #faf6e9; }
+  .small {
+    margin: auto 2px 0;
+    padding-top: 14px;
+    font-size: 16px;
+    line-height: 1.35;
+    color: #6a7676;
+  }
+  footer {
+    flex: 0 0 65px;
+    margin-top: 18px;
+    border: 1px solid #d9e3df;
+    border-radius: 15px;
+    background: linear-gradient(90deg, #f5f0df, #edf7f4, #f5f0df);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.35;
+    font-weight: 850;
+    color: #234849;
+    box-shadow: 0 5px 14px rgba(36,62,62,.06);
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>誰能動正稿（main）？三個檔位</h1>
+    <div class="subtitle">同一套協作，差別只在門上的設定</div>
+  </header>
+
+  <section class="cards" aria-label="main 的三種權限檔位">
+    <article class="card level1">
+      <div class="icon" aria-hidden="true">
+        <svg viewBox="0 0 160 160" fill="none">
+          <path d="M43 134V31h65v103" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M108 32l37 18v79l-37 6V32z" fill="#eaf5f2" stroke="currentColor" stroke-width="7" stroke-linejoin="round"/>
+          <circle cx="127" cy="83" r="4.5" fill="currentColor"/>
+          <path d="M21 135h126" stroke="#b8860b" stroke-width="7" stroke-linecap="round"/>
+          <path d="M51 51h35M51 68h25" stroke="#b9d5cf" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2 class="level">檔位一｜全開放</h2>
+      <div class="tagline">PR 是禮數，merge 自己按</div>
+      <p class="scene">平輩共同作者互信合寫<br>——我們的課堂就是這檔</p>
+      <p class="small">連直接推上正稿都不會被擋。</p>
+    </article>
+
+    <div class="arrow" aria-hidden="true">→</div>
+
+    <article class="card level2">
+      <div class="icon" aria-hidden="true">
+        <svg viewBox="0 0 160 160" fill="none">
+          <path d="M39 135V29h82v106" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+          <path d="M80 42v86M80 85l34-25M80 85l34 25M80 85L47 60M80 85l-33 25" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="80" cy="85" r="9" fill="#fff" stroke="currentColor" stroke-width="6"/>
+          <path d="M20 135h120" stroke="#b8860b" stroke-width="7" stroke-linecap="round"/>
+          <path d="M22 74h20m-9-10 10 10-10 10" stroke="#b8860b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="level">檔位二｜必走 PR</h2>
+      <div class="tagline">人人要舉手攤牌，<br>但不用等誰點頭</div>
+      <p class="scene">要留完整修改紀錄的團隊</p>
+      <p class="small">不能繞過 PR 直改 main。</p>
+    </article>
+
+    <div class="arrow" aria-hidden="true">→</div>
+
+    <article class="card level3">
+      <div class="icon" aria-hidden="true">
+        <svg viewBox="0 0 160 160" fill="none">
+          <path d="M34 136V29h91v107" stroke="#0e7c7b" stroke-width="7" stroke-linecap="round"/>
+          <path d="M50 136V45h59v91" fill="#edf7f4" stroke="#0e7c7b" stroke-width="6"/>
+          <circle cx="99" cy="91" r="4.5" fill="#0e7c7b"/>
+          <rect x="56" y="65" width="48" height="43" rx="7" fill="#f5d778" stroke="currentColor" stroke-width="6"/>
+          <path d="M66 65V55c0-13 7-21 14-21s14 8 14 21v10" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="80" cy="84" r="5" fill="currentColor"/>
+          <path d="M80 88v10" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 136h121" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="132" cy="60" r="8" stroke="currentColor" stroke-width="5"/>
+          <path d="M126 66l-14 14m7-7 7 7m-14 0 6 6" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2 class="level">檔位三｜要核可</h2>
+      <div class="tagline">指定的人按核可，<br>merge 鈕才會亮</div>
+      <p class="scene">指導教授 × 研究生合寫論文</p>
+      <p class="small">學生不能核可自己的 PR——<br>鑰匙自然在老師手上。</p>
+    </article>
+  </section>
+
+  <footer>
+    PR＝舉手＋把逐行差異攤在桌上；鎖是門上的設定，隨時可調。
+  </footer>
+</main>
+</body>
+</html>
