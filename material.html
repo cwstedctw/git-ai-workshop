@@ -78,9 +78,16 @@ nav#topnav{position:sticky;top:0;z-index:50;background:var(--card);border-bottom
   display:flex;align-items:center}
 nav#topnav a{display:inline-block;flex:none;padding:11px 12px;color:var(--ink);text-decoration:none;font-size:.9rem}
 nav#topnav a:hover{color:var(--teal)}
-#themeToggle,#projBtn,#expandBtn{flex:none;margin:6px 4px;background:none;border:1px solid var(--line);
+nav#topnav a.cur{color:var(--teal);font-weight:700;box-shadow:inset 0 -3px 0 var(--gold)}
+body.tabbed main>section{display:none}
+body.tabbed main>section.active{display:block;animation:gwfade .25s}
+@keyframes gwfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+body.tabbed main>section.active h2{margin-top:44px}
+*[id]{scroll-margin-top:64px}
+@media print{body.tabbed main>section{display:block!important}nav#topnav{display:none}}
+#themeToggle,#projBtn,#expandBtn,#fullBtn{flex:none;margin:6px 4px;background:none;border:1px solid var(--line);
   border-radius:8px;padding:4px 10px;cursor:pointer;color:var(--ink);font-size:.85rem}
-#expandBtn{margin-left:auto}
+#fullBtn{margin-left:auto}
 :root.projector body{font-size:22px}
 :root.projector #scenebox{min-height:480px}
 :root.projector .small{font-size:1rem}
@@ -180,6 +187,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <a href="#quiz">小測驗</a>
   <a href="#agenda">當天課表</a>
   <a href="#refs">參考資料</a>
+  <button id="fullBtn" title="切換整頁／分頁">🗒 整頁</button>
   <button id="expandBtn" title="展開全部收合內容，方便搜尋與列印">⊞ 全部展開</button>
   <button id="projBtn" title="投影模式：放大字級，上課投影用">🔎 投影</button>
   <button id="themeToggle" title="切換深淺色">🌗</button>
@@ -563,7 +571,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 </main>
 
 <footer>
-  跟 AI 一起用 Git——不背指令的版本控制｜2026-08-03 v3.1（教材版；另有闖關版與講師儀表板）<br>
+  跟 AI 一起用 Git——不背指令的版本控制｜2026-08-03 v4 分頁版面（教材版；另有闖關版與講師儀表板）<br>
   工具費用與方案會變動，開課前請以各官方頁面現況為準。
 </footer>
 
@@ -932,6 +940,33 @@ QUIZ.forEach((q,qi)=>{
   });
   qb.appendChild(d);
 });
+
+/* ───────── 分頁版面與路由 ───────── */
+const TAB_GROUPS=[['why'],['prep'],['concepts'],['story','conflict','gates'],['safety'],['phrases'],['quiz'],['agenda'],['refs']];
+const navLinks=[...document.querySelectorAll('#topnav a')];
+const fullBtn=document.getElementById('fullBtn');
+let tabbed=localStorage.getItem('gw-tabbed')!=='0';
+function route(){
+  if(!tabbed)return;
+  const h=location.hash.replace('#','');
+  const el=h?document.getElementById(h):null;
+  const sec=el?el.closest('main > section'):null;
+  const secId=sec?sec.id:(el?h:'why');
+  const g=TAB_GROUPS.find(x=>x.includes(secId))||TAB_GROUPS[0];
+  document.querySelectorAll('main > section').forEach(s=>s.classList.toggle('active',g.includes(s.id)));
+  navLinks.forEach(a=>a.classList.toggle('cur',a.getAttribute('href')==='#'+g[0]));
+  if(el&&h!==g[0])setTimeout(()=>el.scrollIntoView({block:'start'}),80);
+  else window.scrollTo({top:0});
+}
+function applyMode(){
+  document.body.classList.toggle('tabbed',tabbed);
+  fullBtn.textContent=tabbed?'🗒 整頁':'🗂 分頁';
+  fullBtn.title=tabbed?'切成整頁：全部章節攤開，方便列印與 Ctrl+F 搜尋':'切回分頁：一次一節，比較好讀';
+  route();
+}
+fullBtn.onclick=()=>{tabbed=!tabbed;localStorage.setItem('gw-tabbed',tabbed?'1':'0');applyMode();};
+window.addEventListener('hashchange',route);
+applyMode();
 </script>
 </body>
 </html>
