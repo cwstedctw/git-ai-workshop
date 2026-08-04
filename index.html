@@ -4,8 +4,10 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>跟 AI 一起用 Git｜工作坊入口</title>
 <style>
-:root{--teal:#0E7C7B;--teal-deep:#0A5958;--gold:#D9A441;--bg:#F4ECD8;--card:#FDFAF2;--ink:#1A1A1A;--line:#e2d8bf}
-@media (prefers-color-scheme: dark){:root{--bg:#151d1c;--card:#1d2726;--ink:#ece6d6;--line:#33403e;--teal:#3aa6a1;--teal-deep:#7fd0cb}}
+:root{--teal:#0E7C7B;--teal-deep:#0A5958;--bg:#F4ECD8;--card:#FDFAF2;--ink:#1A1A1A;--soft:#4a463d;--line:#e2d8bf}
+@media (prefers-color-scheme: dark){:root{--bg:#151d1c;--card:#1d2726;--ink:#ece6d6;--soft:#b7b0a0;--line:#33403e;--teal:#3aa6a1;--teal-deep:#7fd0cb}}
+:root[data-theme="dark"]{--bg:#151d1c;--card:#1d2726;--ink:#ece6d6;--soft:#b7b0a0;--line:#33403e;--teal:#3aa6a1;--teal-deep:#7fd0cb}
+:root[data-theme="light"]{--teal:#0E7C7B;--teal-deep:#0A5958;--bg:#F4ECD8;--card:#FDFAF2;--ink:#1A1A1A;--soft:#4a463d;--line:#e2d8bf}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.7}
 header{background:linear-gradient(150deg,#0E7C7B,#0A5958);color:#F4ECD8;text-align:center;padding:56px 20px}
 header h1{margin:0 0 8px;font-size:clamp(1.5rem,4vw,2.2rem)}
@@ -13,18 +15,21 @@ main{max-width:720px;margin:0 auto;padding:32px 20px 60px}
 a.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;
   padding:20px 24px;margin:14px 0;text-decoration:none;color:var(--ink);box-shadow:0 2px 10px rgba(26,26,26,.07)}
 a.card:hover{border-color:var(--teal)}
+a.card:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
 a.card .t{font-weight:800;font-size:1.1rem;color:var(--teal-deep)}
-a.card .d{font-size:.92rem;margin-top:4px}
-p.note{font-size:.85rem;color:#4a463d;opacity:.85}
+a.card .d{font-size:.92rem;margin-top:4px;overflow-wrap:anywhere}
+p.note{font-size:.85rem;color:var(--soft)}
 </style>
+<script>(()=>{const t=localStorage.getItem('gw-theme');if(t)document.documentElement.dataset.theme=t})()</script>
 </head>
 <body>
-<header><h1>跟 AI 一起用 Git<br>——不背指令的版本控制</h1><p>給經濟系老師的 2 小時動手工作坊</p></header>
+<header><h1>跟 AI 一起用 Git<br>——不背指令的版本控制</h1><p>給大學教師的 2 小時動手工作坊</p></header>
 <main>
-  <a class="card" href="material.html"><div class="t">📘 教材——用讀的</div><div class="d">十二幕劇本、概念卡、行前準備、常用說法、小測驗——課前預習、課後複習都靠這本。<br><strong>課前請先做「行前準備包」那一節。</strong></div></a>
-  <a class="card" href="quest.html"><div class="t">🎮 闖關——用做的</div><div class="d">課堂當天全程開這頁：12 關可複製話術、自動驗收、你的專案即時狀態圖；每一關都標了對應教材的第幾幕。請用 Chrome 或 Edge 開。<br><span style="font-size:.85rem">網址：cwstedctw.github.io/git-ai-workshop/quest.html</span></div></a>
-  <a class="card" href="radar.html"><div class="t">📡 講師儀表板</div><div class="d">講師專用救援雷達，學員不必開。</div></a>
-  <p class="note">練習 repo：<a href="https://github.com/cwstedctw/econ-starter">econ-starter（範本）</a>｜<a href="https://github.com/cwstedctw/econ-shared">econ-shared（共用）</a>。全站為教學用途，內容皆模擬資料。</p>
+  <a class="card" href="material.html"><div class="t">📘 教材——用讀的</div><div class="d">兩階段全課路線、15 步觀念與完整操作、協作進階、故障排除與自然語言速查。上課看主線，課後卡住直接回來查。<br><strong>課前請先做「行前準備包」。</strong></div></a>
+  <a class="card" href="quest.html"><div class="t">🎮 闖關——用做的</div><div class="d">課堂當天全程開這頁：15 步分成「自己的研究專案」與「研究生／指導教授協作」，可複製自然語言、查看 Git 儀表板並逐步驗收。請用 Chrome 或 Edge 開。<br><span style="font-size:.85rem">網址：cwstedctw.github.io/git-ai-workshop/quest.html</span></div></a>
+  <a class="card" href="radar.html"><div class="t">📡 講師儀表板</div><div class="d">講師專用：第一階段看公開練習 repo 的 commit 與最近更新；第二階段看每組 PR 正在等待審查、補改、核准或合併。本機 restore 與 pull 仍要現場確認。做闖關時，你不用開這頁。</div></a>
+  <p class="note">第一階段你會建立自己的公開假資料練習 repo；第二階段使用講師分配給你與夥伴的配對 repo。全站只用模擬資料，真正研究資料請依校內規範決定公開範圍。</p>
+  <p class="note">教材版本：2026-08-04 v5.4</p>
 </main>
 </body>
 </html>

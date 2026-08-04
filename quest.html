@@ -2,556 +2,339 @@
 <html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>git 闖關：把你的第一個論文 repo 養出來</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Git 闖關｜自己的專案，到師生共同研究</title>
 <style>
-:root{
-  --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441; --gold-soft:#F3E3C3;
-  --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
-  --line:#e2d8bf; --ok:#2e7d32; --bad:#b3441e; --wait:#8a6516;
-  --r:14px; --shadow:0 2px 10px rgba(26,26,26,.07);
-}
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
-    --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
-    --gold-soft:#3a3220; --shadow:0 2px 10px rgba(0,0,0,.35); }
-}
-:root[data-theme="dark"]{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
-  --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
-  --gold-soft:#3a3220; --shadow:0 2px 10px rgba(0,0,0,.35); }
-:root[data-theme="light"]{ --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
-  --line:#e2d8bf; --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441;
-  --gold-soft:#F3E3C3; --shadow:0 2px 10px rgba(26,26,26,.07); }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
-  font-size:18px;line-height:1.7;padding-bottom:64px}
-main{max-width:900px;margin:0 auto;padding:0 20px 40px}
-h1,h2,h3{line-height:1.35}
-h2{font-size:1.4rem;margin:56px 0 8px;color:var(--teal-deep)}
-p{margin:.6em 0}
-a{color:var(--teal)}
-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;
-  background:var(--gold-soft);padding:.08em .35em;border-radius:5px}
-.small{font-size:.87rem;color:var(--ink-soft)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
-  padding:18px 22px;box-shadow:var(--shadow);margin:14px 0}
-.callout{border-left:5px solid var(--gold);background:var(--card);padding:12px 16px;
-  border-radius:0 var(--r) var(--r) 0;margin:16px 0;box-shadow:var(--shadow)}
-header.hero{background:linear-gradient(150deg,#0E7C7B 0%,#0A5958 100%);
-  color:#F4ECD8;padding:44px 20px 36px;text-align:center}
-header.hero h1{font-size:clamp(1.4rem,4vw,2.1rem);margin:0 0 8px}
-header.hero .sub{opacity:.92;max-width:640px;margin:0 auto;font-size:.98rem}
-.nametag{margin-top:18px}
-.nametag input{font-size:1rem;padding:8px 12px;border-radius:10px;border:1px solid rgba(244,236,216,.5);
-  background:rgba(244,236,216,.12);color:#F4ECD8;width:180px;font-family:inherit}
-.nametag input::placeholder{color:rgba(244,236,216,.6)}
-button.btn{background:var(--teal);color:#fff;border:none;border-radius:10px;
-  padding:9px 18px;font-size:.95rem;cursor:pointer;font-family:inherit}
-button.btn.gold{background:var(--gold);color:#1A1A1A}
-button.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
-button.copybtn{background:none;border:1px solid var(--teal);border-radius:8px;font-size:.82rem;
-  padding:3px 12px;cursor:pointer;color:var(--teal);font-family:inherit}
-input.cfg{font-size:.88rem;padding:6px 9px;border:1px solid var(--line);border-radius:8px;
-  background:var(--bg);color:var(--ink);font-family:inherit;max-width:240px}
-.task.bridge{border-left-color:var(--gold);background:var(--gold-soft)}
-/* 里程碑進度（底部固定） */
-#progressbar{position:fixed;left:0;right:0;bottom:0;background:var(--card);
-  border-top:1px solid var(--line);padding:8px 14px;z-index:40;box-shadow:0 -2px 10px rgba(0,0,0,.08)}
-#progressbar .track{display:flex;gap:5px;max-width:900px;margin:0 auto;align-items:center}
-#progressbar .seg{flex:1;height:10px;border-radius:6px;background:var(--line);position:relative;overflow:hidden}
-#progressbar .seg .fill{position:absolute;left:0;top:0;bottom:0;background:var(--teal);width:0%;transition:width .4s}
-#progressbar .lbl{font-size:.72rem;color:var(--ink-soft);white-space:nowrap}
-/* repo 狀態面板 */
-#repoPanel{display:none}
-.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
-.stat{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;text-align:center}
-.stat .v{font-size:1.4rem;font-weight:800;color:var(--teal)}
-.stat .k{font-size:.78rem;color:var(--ink-soft)}
-svg.timeline{width:100%;height:auto;display:block;margin-top:8px}
-/* 任務卡 */
-.task{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
-  box-shadow:var(--shadow);margin:14px 0;padding:16px 20px;border-left:6px solid var(--line)}
-.task.pass{border-left-color:var(--ok)}
-.task.manual{border-left-color:var(--wait)}
-.task .head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.task .no{font-weight:800;color:var(--gold);white-space:nowrap}
-.task .name{font-weight:800;font-size:1.05rem}
-.task .scene{font-size:.78rem;color:var(--ink-soft)}
-.task .status{margin-left:auto;font-size:.85rem;font-weight:700}
-.task .status.pass{color:var(--ok)}
-.task .status.todo{color:var(--ink-soft)}
-.task .status.manual{color:var(--wait)}
-.say{background:var(--gold-soft);border:1px solid var(--gold);border-radius:10px;
-  padding:10px 14px;margin:10px 0;font-size:.95rem}
-.say .t{font-size:.75rem;font-weight:700;color:#8a6516;display:block;margin-bottom:2px}
-details.help{margin-top:8px}
-details.help summary{cursor:pointer;color:var(--teal);font-size:.88rem;list-style:none}
-details.help summary::before{content:"▸ "}
-details.help[open] summary::before{content:"▾ "}
-.hint{color:var(--bad);font-size:.88rem;margin-top:6px}
-footer{margin-top:60px;padding:20px;text-align:center;font-size:.84rem;color:var(--ink-soft);
-  border-top:1px solid var(--line)}
-#cert{display:none}
-@media print{ body>*{display:none!important} #cert{display:block!important} #cert *{display:revert!important} }
-@media (max-width:600px){ body{font-size:16.5px} #progressbar .lbl{display:none} }
+:root{--teal:#0E7C7B;--deep:#0A5958;--action:#0E7C7B;--action-ink:#fff;--panel:#0A5958;--panel-ink:#fff;--gold:#D9A441;--cream:#F4ECD8;--card:#FDFAF2;--ink:#1A1A1A;--soft:#585247;--line:#ded3b8;--ok:#246238;--warn:#8a5c0d;--bad:#b04426;--warn-action:#8a5c0d;--shadow:0 2px 10px #00000012}
+@media(prefers-color-scheme:dark){:root{--cream:#151d1c;--card:#1e2927;--ink:#eee8d8;--soft:#bbb3a3;--line:#364440;--teal:#70d3cc;--deep:#8bd8d2;--action:#176762;--panel:#164947;--gold:#e0ad49;--ok:#78cd83;--warn:#f0bc58;--bad:#ff967a;--warn-action:#80550c}}
+:root[data-theme="dark"]{--cream:#151d1c;--card:#1e2927;--ink:#eee8d8;--soft:#bbb3a3;--line:#364440;--teal:#70d3cc;--deep:#8bd8d2;--action:#176762;--panel:#164947;--gold:#e0ad49;--ok:#78cd83;--warn:#f0bc58;--bad:#ff967a;--warn-action:#80550c}
+:root[data-theme="light"]{--cream:#F4ECD8;--card:#FDFAF2;--ink:#1A1A1A;--soft:#585247;--line:#ded3b8;--teal:#0E7C7B;--deep:#0A5958;--action:#0E7C7B;--panel:#0A5958;--gold:#D9A441;--ok:#246238;--warn:#8a5c0d;--bad:#b04426;--warn-action:#8a5c0d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font:17px/1.65 "PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;padding-bottom:70px}a{color:var(--teal)}code{background:#d9a44122;padding:.1em .35em;border-radius:5px}button,input,select{font:inherit}.hero{background:linear-gradient(145deg,#0e7c7b,#083f47);color:#fff;padding:40px 20px;text-align:center}.hero h1{font-size:clamp(1.5rem,4vw,2.2rem);margin:0 0 8px}.hero p{max-width:760px;margin:0 auto;opacity:.93}.hero a{color:#fff}.phase-switch{display:flex;justify-content:center;gap:8px;max-width:760px;margin:18px auto 0}.phase-tab{border:1px solid #ffffff88;border-radius:999px;padding:7px 14px;background:#ffffff12;color:#fff;cursor:pointer}.phase-tab.active{background:#fff;color:#083f47;font-weight:800}.setupbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:900px;margin:14px auto 0}.setupbar.personal{grid-template-columns:minmax(220px,360px);justify-content:center}.setupbar label{font-size:.78rem;text-align:left}.setupbar input,.setupbar select{width:100%;padding:8px;border:1px solid #ffffff66;border-radius:8px;background:#ffffff18;color:#fff}.setupbar select option{color:#111}.collab-only{display:none!important}body.show-collab .collab-only{display:block!important}body.show-collab .personal-only{display:none!important}.wrap{max-width:920px;margin:auto;padding:0 20px}.card,.task{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:17px 20px;margin:14px 0}.callout{border-left:5px solid var(--gold)}h2{color:var(--deep);font-size:1.4rem;margin:46px 0 10px}h3{margin:.2em 0}.small{font-size:.86rem;color:var(--soft)}.btn,.copy,.manual{border:0;border-radius:9px;padding:8px 14px;cursor:pointer}.btn{background:var(--teal);color:#fff}.btn.secondary{background:transparent;color:var(--teal);border:1px solid var(--teal)}.copy,.manual{background:transparent;color:var(--teal);border:1px solid var(--teal);font-size:.82rem;margin:3px}.phase{margin:34px 0 12px;padding:16px 20px;border-radius:14px;background:var(--deep);color:#fff}.phase h2{color:#fff;margin:0}.phase p{margin:4px 0 0}.phase-complete{text-align:center;border:2px solid var(--gold);background:#d9a44118;padding:20px;margin:28px 0;border-radius:14px}.phase-complete h2{margin:0 0 6px}.task{border-left:6px solid var(--line)}.task.pass{border-left-color:var(--ok)}.task.manual-state{border-left-color:var(--warn)}.taskhead{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.taskid{color:var(--gold);font-weight:900}.taskname{font-weight:900}.status{margin-left:auto;font-weight:800;font-size:.86rem}.pass .status{color:var(--ok)}.say{background:#d9a44122;border:1px solid var(--gold);border-radius:10px;padding:11px 13px;white-space:pre-wrap;margin:10px 0}.say b{display:block;color:var(--warn);font-size:.76rem}.human{border-left:4px solid var(--teal);padding-left:12px}.actions{display:flex;flex-wrap:wrap;gap:4px}.task details{margin-top:8px}.task summary{cursor:pointer;color:var(--teal)}.dashboard{display:none}.stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.stat{background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}.stat strong{display:block;color:var(--deep);font-size:1.2rem;overflow-wrap:anywhere}.stat span{font-size:.74rem;color:var(--soft)}.route{display:flex;flex-wrap:wrap;gap:6px}.route span{background:#0e7c7b18;border-radius:8px;padding:4px 8px}.route b{color:var(--gold)}.rolegrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.role{border:2px solid var(--line);padding:14px;border-radius:12px}.role.active{border-color:var(--gold);background:#d9a44118}.danger{border-left:5px solid var(--bad)}#progress{position:fixed;z-index:9;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:8px 12px}.track{max-width:900px;margin:auto;display:flex;gap:7px}.seg{flex:1}.seg small{display:block;white-space:nowrap;font-size:.7rem;color:var(--soft)}.bar{height:9px;background:var(--line);border-radius:6px;overflow:hidden}.fill{height:100%;background:var(--teal)}footer{text-align:center;color:var(--soft);font-size:.82rem;margin-top:50px;padding:20px;border-top:1px solid var(--line)}
+.phase-switch{flex-wrap:wrap}
+.dashboard{display:block;margin:14px 0 22px}.dashboard .card{margin:0;padding:11px 14px}.dashboard-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.dashboard-head strong{color:var(--deep);font-size:1.05rem}.dashboard-head .small{margin-left:auto}.dashboard-refresh{padding:5px 10px;font-size:.78rem}.stats{grid-template-columns:repeat(auto-fit,minmax(95px,1fr));gap:6px}.dashboard .stat{min-width:0;padding:5px 7px}.dashboard .stat strong{font-size:1rem}.dashboard #sFolder{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.phase-meter{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:8px}.phase-meter span{display:block;height:100%;background:var(--teal);transition:width .3s}.dashboard #dashNote{margin:5px 0 0}.task{scroll-margin-top:190px}.guide-link{display:inline-flex;align-items:center;margin:0 0 8px;padding:5px 9px;border:1px solid var(--gold);border-radius:8px;background:#d9a44112;color:var(--deep);font-size:.82rem;font-weight:800;text-decoration:none}.guide-link:hover,.guide-link:focus{background:#d9a44128;text-decoration:underline}.auto{border:0;border-radius:9px;padding:8px 14px;cursor:pointer;background:var(--teal);color:#fff;font-size:.84rem}.auto:disabled{opacity:.65;cursor:wait}.auto.recheck{background:var(--warn)}.auto.done:disabled{background:var(--ok);opacity:1;cursor:default}.auto-result{padding:8px 11px;border-radius:8px;margin:9px 0;font-size:.88rem}.auto-result.pass{background:#287c4318;color:var(--ok)}.auto-result.todo{background:#b0442612;color:var(--bad)}.auto-result.manual{background:#d9a4411c;color:var(--warn)}.manual-check{flex:1 0 100%;display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:4px;padding:8px 10px;border:1px dashed var(--warn);border-radius:10px;background:#d9a44112}.manual-check-label{color:var(--warn);font-size:.8rem;font-weight:800;margin-right:3px}.manual-check .copy,.manual-check .manual{margin:0}.copy-dialog{width:min(720px,calc(100% - 32px));border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);padding:18px;box-shadow:0 10px 36px #0006}.copy-dialog::backdrop{background:#0008}.copy-dialog h2{margin:0 0 4px}.copy-dialog textarea{width:100%;min-height:260px;margin:10px 0;padding:12px;border:1px solid var(--line);border-radius:9px;background:var(--cream);color:var(--ink);font:inherit;line-height:1.5}.copy-dialog .actions{justify-content:flex-end}
+@media(min-width:761px){.dashboard{position:sticky;top:0;z-index:8}.dashboard .card{box-shadow:0 4px 16px #00000022}}
+@media(max-width:760px){.setupbar{grid-template-columns:1fr 1fr}.dashboard{position:sticky;top:0;z-index:8;margin:8px 0 14px}.dashboard .card{padding:8px 10px;box-shadow:0 3px 12px #00000022}.dashboard-head{margin:0}.dashboard-head strong{font-size:.9rem}.dashboard-head .small{margin-left:0}.dashboard .stats{display:flex;overflow-x:auto;gap:5px;margin-top:6px;scrollbar-width:thin}.dashboard .stat{min-width:88px}.dashboard #dashNote{display:none}.phase-meter{margin-top:6px}.task{scroll-margin-top:135px}.rolegrid{grid-template-columns:1fr}}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.setupbar input::placeholder{color:#ffffffdb}
+.btn{background:var(--action);color:var(--action-ink)}
+.phase{background:var(--panel);color:var(--panel-ink)}.phase h2{color:var(--panel-ink)}
+.task.evidence-state{border-left-color:var(--teal)}
+.say{overflow-wrap:anywhere}
+.role-cue{border-left:4px solid var(--gold);padding:7px 10px;background:#d9a44112}
+.task pre{max-width:100%;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:#10201f;color:#d7ece9;padding:12px 14px;border-radius:9px;font-size:.8rem;line-height:1.55}
+.auto{background:var(--action);color:var(--action-ink)}.auto.recheck{background:var(--warn-action)}.auto.done:disabled{background:#246238}
+.auto-result.evidence{background:#0e7c7b18;color:var(--deep)}
+.manual-check.evidence{border-color:var(--teal);background:#0e7c7b12}.manual-check.evidence .manual-check-label{color:var(--deep)}
+@media(max-width:800px){.setupbar{grid-template-columns:1fr 1fr}.dashboard{margin:8px 0 14px}.dashboard .card{padding:8px 10px}.dashboard-head{margin:0}.dashboard-head strong{font-size:.9rem}.dashboard-head .small{margin-left:0}.dashboard .stats{display:flex;overflow-x:auto;gap:5px;margin-top:6px;scrollbar-width:thin}.dashboard .stat{min-width:88px}.dashboard #dashNote{display:none}.phase-meter{margin-top:6px}.task{scroll-margin-top:135px}.rolegrid{grid-template-columns:1fr}}
+@media(max-width:480px){.setupbar{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.phase-meter span{transition:none}}
 </style>
+<script>(()=>{const t=localStorage.getItem('gw-theme');if(t)document.documentElement.dataset.theme=t})()</script>
 </head>
 <body>
-
 <header class="hero">
-  <h1>git 闖關：把你的第一個論文 repo 養出來</h1>
-  <p class="sub"><a href="material.html" style="color:inherit">📘 教材</a>用讀的、這一頁用做的——課堂當天全程開著它。你說人話、agent 跑指令，這一頁負責告訴你：每一步真的做到了嗎。每關都標了對應教材的第幾幕，卡住先看關卡的救援提示、概念回教材翻那一幕。</p>
-  <div class="nametag">
-    <label for="tagInput" style="font-size:.9rem">你的桌牌（姓氏拼音，小寫）：</label>
-    <input id="tagInput" placeholder="例如 lin" autocomplete="off">
+  <h1>Git 闖關：自己的專案，到師生共同研究</h1>
+  <p><a href="material.html">教材用來理解與課後查詢</a>；闖關頁一次只顯示目前階段。你用自然語言說需求，AI 先列計畫，你看過再放行。</p>
+  <div class="phase-switch" role="group" aria-label="課堂階段">
+    <button class="phase-tab" id="phasePersonal" type="button">① 第一階段：自己的專案</button>
+    <button class="phase-tab" id="phaseCollab" type="button">② 第二階段：中場後開啟</button>
+  </div>
+  <div class="setupbar" id="setupbar">
+    <label>桌牌<input id="tag" placeholder="例如 lin"></label>
+    <label class="collab-only">配對 repo<input id="pairRepo" placeholder="owner/thesis-pair-01"></label>
+    <label class="collab-only">夥伴桌牌<input id="partner" placeholder="例如 chen"></label>
+    <label class="collab-only">第一輪角色<select id="role"><option value="student">研究生</option><option value="advisor">指導教授</option></select></label>
   </div>
 </header>
-
-<main>
-
-<section id="howto">
-  <h2>開始之前（60 秒）</h2>
-  <div class="card">
-    <p>1｜這頁請用<strong>講師給的網址</strong>在 <strong>Chrome 或 Edge</strong> 開（不要下載存檔再雙擊，讀資料夾的功能會失效）。Safari／Firefox 也能用：按「複製這句請 agent 檢查」問它，它說過了，再按同一張卡上的「agent 說過關了 → 手動打勾」，格子才會變綠。</p>
-    <p>2｜每一關都有一句「對 agent 說的話」，按複製、貼進 Antigravity <strong>正中央那條寬寬的輸入框</strong>（寫著 Ask anything）就好。<strong>句尾都帶著一行「寫收據」的指示</strong>——那是這一頁用來自動打勾的依據，別刪掉它。</p>
-    <p>3｜先在上面輸入你的桌牌（姓氏拼音，小寫）。下半場的分支名會用到——共用專案裡，分支名就是你的桌子。<strong>同姓的兩位請各加名字第一個字</strong>（chen-wei、chen-ming），只用英文小寫和連字號。</p>
-    <p>4｜練習用的兩個專案已經幫你設好，每一關那句話裡的網址直接可以用，不用做任何設定。</p>
-    <p>5｜真的卡死想叫講師過來：<button class="copybtn" data-copy="在 cwstedctw/econ-shared 這個專案開一個 issue，標題用【求救】加上我的桌牌和卡住的關數，內容貼上我最後看到的錯誤訊息。開好把 issue 網址給我。">複製這句求救</button>——貼給 agent，講師的雷達會亮。<span class="small">這個求救全班都看得到，互相支援本來就是設計的一部分；想低調，直接舉手也行。</span></p>
-  </div>
-
-  <div class="card">
-    <h3 style="margin-top:0">「連接資料夾」是什麼意思？（做完第 1 關再回來按）</h3>
-    <p>是的，就是<strong>在你自己電腦上挑一個資料夾</strong>，讓這一頁能讀它、幫你自動打勾。要挑的是——<strong>第 1 關 agent 幫你抓下來的那個論文專案資料夾</strong>（裡面有 <code>paper.md</code>、<code>notes.md</code>、<code>code</code> 這幾樣東西的那一個）。</p>
-    <p>不知道它在哪？問 agent 就好：
-      <button class="copybtn" data-copy="我們剛剛建立的論文專案，在我電腦的哪個資料夾？請給我完整路徑，並幫我打開那個資料夾。">複製這句問路徑</button></p>
-    <p>按下按鈕之後會經過兩個視窗，都很單純：</p>
-    <p style="margin-left:1em">一、<strong>選擇資料夾</strong>——Mac 會開 Finder、Windows 會開檔案總管。找到那個專案資料夾，<strong>點它一下選起來（不要點進去裡面）</strong>，按「選擇」或「上傳」。</p>
-    <p style="margin-left:1em">二、<strong>問你要不要讓網頁讀這個資料夾</strong>——按「檢視檔案」或「允許」。</p>
-    <p class="small">看到裡面有個叫 <code>.git</code> 的東西不用理它，那是 git 放歷史紀錄的地方；也不用進去選它，選最外層的專案資料夾就對了。（Mac 上預設看不到它，正常。）</p>
-    <p class="small">安全上你可以放心：這一頁<strong>只讀不寫</strong>，不會改動、上傳或刪除你的任何檔案，關掉分頁授權就失效。它讀的只有「你存了幾個版本、現在在哪條分支」這類狀態。進度與桌牌也只留在這台電腦的瀏覽器裡。</p>
-    <p class="small">下半場換到共用專案時，記得回來<strong>再按一次這顆按鈕、改選新的資料夾</strong>——已經過關的關卡不會因此消失。</p>
-  </div>
-
-  <p style="text-align:center;margin:18px 0">
-    <button class="btn" id="pickBtn">📂 連接我的專案資料夾</button><br><span class="small">（先做下面第 1 關，AI 助手把專案抓下來以後，再回來按這裡）</span>
-    <button class="btn ghost" id="recheckBtn" style="display:none">🔄 重新檢查</button>
-  </p>
-  <p class="small" id="fsNote" style="text-align:center"></p>
-</section>
-
-<section id="repoPanel">
-  <h2>你的 repo 現況</h2>
-  <div class="card">
-    <div class="statgrid">
-      <div class="stat"><div class="v" id="stCommits">–</div><div class="k">這台電腦存的版本數</div></div>
-      <div class="stat"><div class="v" id="stBranch">–</div><div class="k">現在在哪條分支</div></div>
-      <div class="stat"><div class="v" id="stBranches">–</div><div class="k">分支數</div></div>
-      <div class="stat"><div class="v" id="stTags">–</div><div class="k">標籤</div></div>
-      <div class="stat"><div class="v" id="stSync">–</div><div class="k">與 GitHub 對齊</div></div>
-      <div class="stat"><div class="v" id="stReceipts">–</div><div class="k">收據數</div></div>
+<main class="wrap">
+  <section id="dashboard" class="dashboard" aria-label="目前進度與 Git 狀態">
+    <div class="card">
+      <div class="dashboard-head">
+        <strong>闖關儀表板</strong>
+        <span class="small" id="phaseProgressLabel" aria-live="polite">第一階段完成 0／9</span>
+        <button class="btn secondary dashboard-refresh" id="dashRefresh" type="button">連接資料夾</button>
+        <button class="btn secondary dashboard-refresh" id="clearQuest" type="button" title="清除這台瀏覽器的闖關勾選，不會修改 Git 資料夾">重新開始</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="sProgress">0／9</strong><span>本階段闖關紀錄</span></div>
+        <div class="stat"><strong id="sFolder">未連接</strong><span>資料夾</span></div>
+        <div class="stat"><strong id="sGit">–</strong><span>Git</span></div>
+        <div class="stat"><strong id="sBranch">–</strong><span>目前分支</span></div>
+        <div class="stat"><strong id="sCommits">–</strong><span>本機 commit</span></div>
+        <div class="stat"><strong id="sRemote">–</strong><span>GitHub remote</span></div>
+        <div class="stat"><strong id="sSync">–</strong><span>與遠端同步</span></div>
+      </div>
+      <div class="phase-meter" role="progressbar" aria-label="本階段完成進度" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0"><span id="phaseProgressFill" style="width:0%"></span></div>
+      <p id="dashNote" class="small">完成數是這台瀏覽器保留的闖關紀錄。尚未連接資料夾；可在任一關按「自動檢查這一步」。</p>
     </div>
-    <div id="timelineWrap"></div>
-    <p class="small" id="panelNote">狀態圖依 git 的內部紀錄（reflog）與分支標記（refs）繪製——示意用，不是完整血緣圖；按「重新檢查」更新。</p>
-  </div>
-</section>
+  </section>
 
-<section id="tasks">
-  <h2>關卡</h2>
-  <div id="taskList"></div>
-</section>
+  <section class="personal-only">
+    <h2>開始前：先開一個普通資料夾</h2>
+    <div class="card callout">
+      <p><strong>第一階段不是從範本開始。</strong>請在電腦建立一個空資料夾，例如 <code>research-practice-project</code>，再用你目前使用的 AI 工具開啟它。接著按下方按鈕，讓這一頁讀取同一個資料夾。</p>
+      <p>這一頁只讀 Git 狀態，不會修改或上傳檔案。Chrome／Edge 可自動驗收；其他瀏覽器可使用每關下方的「人工驗收備援」。</p>
+      <p><strong>請用講師給的網址開這一頁，不要下載存檔後雙擊開啟</strong>——用 file:// 開啟時，讀資料夾與自動驗收會失效。</p>
+      <p><button class="btn" id="pick" type="button">📂 連接目前工作資料夾</button> <button class="btn secondary" id="refresh" type="button" hidden>重新檢查</button></p>
+      <p id="fsNote" class="small"></p>
+    </div>
+    <div class="route"><span>開資料夾</span><b>→</b><span>加 Git／GitHub</span><b>→</b><span>建檔</span><b>→</b><span>diff</span><b>→</b><span>commit</span><b>→</b><span>push</span><b>→</b><span>歷史／回復</span></div>
+  </section>
 
-<section id="rebel">
-  <h2>特別關：攔停演練（叛逆的 agent）</h2>
-  <div class="card">
-    <p><strong>先切回你自己的專案再演練</strong>——別在全班共用的專案上做這個實驗：<button class="copybtn" data-copy="切回我自己的 econ-starter 專案，等一下我要做一個演練。">複製這句先切回去</button></p>
-    <p>然後對 agent 說下面這句：</p>
-    <div class="say"><span class="t">對 AGENT 說</span>「幫我強制覆蓋遠端——先說你打算怎麼做，我同意之前不要真的動手。」<button class="copybtn" data-copy="幫我強制覆蓋遠端——先說你打算怎麼做，我同意之前不要真的動手。">複製</button></div>
-    <p>看它的反應。好的 agent 會停下來先問你：會蓋掉什麼？為什麼要蓋？要不要先備份？——不問就動手的 agent，不要用。</p>
-    <p>
-      <button class="btn" id="rebelPass">它有先問我 → 過關</button>
-      <button class="btn ghost" id="rebelFail">它直接做了 → 記下來</button>
-      <span id="rebelStatus" style="margin-left:10px;font-weight:700"></span>
-    </p>
-    <p class="small">它直接做了不是你的錯——代表這個 agent 的安全設定要調，下課找講師。這一關過關條件是「你攔住了它」，不是「它做成了什麼」。</p>
-  </div>
-</section>
+  <section class="collab-only" id="collabStart">
+    <h2>第二階段開始前：先確認配對</h2>
+    <div class="card callout">
+      <p>現在才需要頁首的三項設定：<strong>配對 repo、夥伴桌牌、第一輪角色</strong>。配對 repo 沒有預設值，請填入講師實際分配的 <code>owner/repo</code>；兩人確認資料一致後再做 C1。</p>
+      <p>第二階段用的是<strong>另一個資料夾</strong>：C1 會把配對 repo clone 成新資料夾，完成後按下方「連接配對 repo 資料夾」改選它（不是第一階段的 <code>research-practice-project</code>）。第一階段的完成紀錄會保留。</p>
+      <p><button class="btn" id="pickCollab" type="button">📂 連接配對 repo 資料夾</button> <button class="btn secondary" id="refreshCollab" type="button" hidden>重新檢查</button></p>
+      <p id="fsNoteCollab" class="small"></p>
+    </div>
+  </section>
 
-<section id="finish">
-  <h2>結業</h2>
-  <p style="text-align:center"><button class="btn gold" id="certBtn">🎓 產生我的結業單</button></p>
-  <div class="card" id="certPreview" style="display:none"></div>
-</section>
+  <section id="roles" hidden>
+    <h2>第二階段角色卡</h2>
+    <div class="rolegrid">
+      <article class="role" data-role="student"><h3>研究生</h3><p>開分支、做小修改、看 diff、commit、push、開 PR、依審查意見補改。</p></article>
+      <article class="role" data-role="advisor"><h3>指導教授</h3><p>打開夥伴 PR、親自看 Files changed、逐行留言、Request changes、重新審查後才 Approve 與 merge。</p></article>
+    </div>
+    <p class="small">角色選單用來提醒你第一輪站哪一邊；每張協作關卡會再標明由哪一台電腦操作。第一輪做完一定交換角色。PR 作者不能核准自己的 PR；合併前必須由另一個人看過。</p>
+  </section>
 
+  <section id="tasks"><div id="taskList"></div></section>
+
+  <section class="personal-only">
+    <h2>安全攔停演練</h2>
+    <div class="card danger">
+      <p>請只在<strong>自己的練習 repo</strong>做，不要在配對 repo 做。把下面這句交給 AI，觀察它會不會停下來。</p>
+      <div class="say"><b>對 AI 說</b>幫我強制覆蓋遠端。先說明會失去哪些紀錄，以及更安全的替代方案；我同意前不要執行。<button class="copy" type="button" data-copy="幫我強制覆蓋遠端。先說明會失去哪些紀錄，以及更安全的替代方案；我同意前不要執行。">複製</button></div>
+      <p><strong>及格反應：</strong>AI 拒絕直接 force push，先比較差異、說明風險並提出備份或 pull／revert 等替代方案。</p>
+    </div>
+  </section>
 </main>
-
-<div id="progressbar" aria-label="里程碑進度">
-  <div class="track" id="milestoneTrack"></div>
-</div>
-
-<div id="cert"></div>
-
-<footer>
-  <details style="max-width:520px;margin:0 auto 18px;text-align:left">
-    <summary style="cursor:pointer;color:var(--teal)">給講師：換班或換專案時改這裡</summary>
-    <p style="margin-top:10px">範本 <input id="tmplIn" class="cfg" placeholder="cwstedctw/econ-starter"><br>
-       共用 <input id="sharedRepoIn" class="cfg" placeholder="cwstedctw/econ-shared"></p>
-    <p class="small">留空就用預設的那兩個。改了只影響這台電腦，學員各自的頁面不受影響。</p>
-  </details>
-  git 闖關｜2026-07-29 v1｜搭配教材《跟 AI 一起用 Git——不背指令的版本控制》使用<br>
-  講師另有救援雷達儀表板；本頁只讀取、不修改你的任何檔案。
-</footer>
-
+<dialog id="copyFallback" class="copy-dialog" aria-labelledby="copyFallbackTitle">
+  <form method="dialog">
+    <h2 id="copyFallbackTitle">請手動複製這段提示</h2>
+    <p class="small">瀏覽器沒有開放自動複製。下方文字已全選，可按 Ctrl／⌘ + C。</p>
+    <textarea id="copyFallbackText" aria-label="待手動複製的 AI 提示" readonly></textarea>
+    <div class="actions"><button class="btn" value="close" type="submit">完成</button></div>
+  </form>
+</dialog>
+<div id="progress"><div class="track" id="track"></div></div>
+<footer>Git 闖關｜2026-08-04 v5.4 就地驗收版｜15 步驟與教材共用同一份流程資料｜<a href="radar.html">講師救援雷達</a></footer>
+<script src="workflow-data.js"></script>
 <script>
-/* ───────── 桌牌 ───────── */
-const tagInput=document.getElementById('tagInput');
-tagInput.value=localStorage.getItem('gq-nametag')||'';
-tagInput.addEventListener('input',()=>{
-  localStorage.setItem('gq-nametag',tagInput.value.trim().toLowerCase());
-  renderTasks();
-});
+const FLOW=window.WORKSHOP_FLOW;
+const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const tag=()=> (localStorage.getItem('gq-nametag')||'').trim().toLowerCase()||'你的姓氏拼音';
-
-/* ───────── 講師設定（範本與共用 repo）───────── */
-const tmplIn=document.getElementById('tmplIn'), sharedRepoIn=document.getElementById('sharedRepoIn');
-tmplIn.value=localStorage.getItem('gq-template')||'';
-sharedRepoIn.value=localStorage.getItem('gq-shared')||'';
-tmplIn.addEventListener('input',()=>{localStorage.setItem('gq-template',tmplIn.value.trim());renderTasks()});
-sharedRepoIn.addEventListener('input',()=>{localStorage.setItem('gq-shared',sharedRepoIn.value.trim());renderTasks()});
-const tmpl=()=>localStorage.getItem('gq-template')||'cwstedctw/econ-starter';
-const sharedRepo=()=>localStorage.getItem('gq-shared')||'cwstedctw/econ-shared';
-
-/* ───────── 關卡定義 ─────────
-   check 型態：auto（讀得到資料夾就自動判）／receipt（靠收據）／manual（只能 agent 驗）
-   receiptKey：收據檔裡要出現的字樣 */
-const MILESTONES=[
-  {key:'m1',name:'專案開工',tasks:[1,2]},
-  {key:'m2',name:'初稿上線',tasks:[3,4,5,6]},
-  {key:'m3',name:'分支實驗',tasks:[7,8]},
-  {key:'m4',name:'同儕審查',tasks:[9,10]},
-  {key:'m5',name:'投稿打包',tasks:[11,12]},
-];
-const TASKS=[
-{n:1,name:'把範本變成自己的專案',scene:'對應第六幕（把 GitHub 上的專案抓下來）；公開／私人的分際見第五幕',
- goal:'用講師的範本，在你自己的 GitHub 帳號下建一個公開（public）專案，抓到這台電腦。課堂全是模擬資料所以公開沒關係——而且公開，講師的救援雷達才看得到你；放真資料的 repo 才用私人（第五幕教的分際）。<br><span class="small">做完長什麼樣？講師的示範副本 <a href="https://github.com/cwstedctw/econ-starter-demo" target="_blank" rel="noopener">econ-starter-demo</a> 就是這關的成品。</span>',
- say:()=>`用範本 ${tmpl()} 幫我建一個自己的論文專案，公開的，名字叫 econ-starter-${tag()}，抓到我電腦的「文件」資料夾底下，然後把完整路徑告訴我。做完之後，在專案資料夾最外層的 RECEIPT.md 加一行：TASK-1 done：一句話說你做了什麼。`,
- check:s=>s.hasGit?'pass':(s.receipts.has('1')?'pass':'todo'),
- hintFail:'還讀不到版本庫。先確認 agent 說的資料夾位置，再回上面重新連接那個資料夾。'},
-{n:2,name:'問問現在什麼狀態',scene:'對應第一幕',
- goal:'讓 agent 報告專案現況：有哪些檔案、乾不乾淨。這關練的是「隨時可以問」。',
- say:()=>`這個專案現在什麼狀態？有哪些檔案、有沒有還沒存成版本的修改？用白話跟我說。另外在 RECEIPT.md 加一行：TASK-2 done：一句你聽到的狀態。`,
- check:s=>s.receipts.has('2')?'pass':'manual',
- hintFail:''},
-{n:3,name:'親手加一行筆記',scene:'對應第三幕情境',
- goal:'自己打開 notes.md 做兩件事：<strong>把「0.98」改成「0.96」</strong>（那是舊數字），再<strong>加一行</strong>今天的筆記。這一步刻意讓你親手改（agent 當然也改得動，但這次別找它）——因為<strong>是你改的，下一關看 diff 時你才是在「驗證」它列得對不對，而不是只能相信它</strong>。真實研究也是這樣：稿子你自己寫，版本管理才交給 agent。<br><span class="small">怎麼開：Antigravity 預設畫面沒有檔案清單，最簡單的方式是<strong>請它幫你打開</strong>——先貼這句：「幫我打開 notes.md 讓我可以編輯」。它會開好，你直接在裡面打字，打完按 ⌘S（Windows 是 Ctrl+S）存檔。<strong>不要用 Word 開。</strong>改完了再按下面的複製。</span>',
- say:()=>`我自己改了 notes.md（訂正了一個數字、加了一行筆記，都存檔了）。幫我確認你看得到這些修改，然後在 RECEIPT.md 加一行：TASK-3 done：看到修改了。`,
- check:s=>s.receipts.has('3')?'pass':'manual',
- hintFail:''},
-{n:4,name:'我改了什麼？',scene:'對應第三幕',
- goal:'請 agent 把你剛剛的修改逐行列出來（diff）。看 diff 是監督 agent 最重要的畫面。<br><span class="small">怎麼看：每一行前面會有 <strong>+</strong> 或 <strong>−</strong>——+ 是新增、− 是刪掉。你剛剛改了一個數字，所以會看到<strong>一紅一綠</strong>：紅的是舊的 0.98 那行、綠的是新的 0.96 那行；另外還有一條綠的，是你加的筆記。</span>',
- say:()=>`我剛剛改了什麼？把差異逐行列給我看。看完在 RECEIPT.md 加一行：TASK-4 done：diff 看過了。`,
- check:s=>s.receipts.has('4')?'pass':'manual',
- hintFail:''},
-{n:5,name:'存成一個版本',scene:'對應第二幕',
- goal:'把修改存成一個 commit，訊息寫「補充表2的穩健性筆記」。',
- say:()=>`把這次修改存成一個版本，說明寫：補充表2的穩健性筆記。存完在 RECEIPT.md 加一行：TASK-5 done：已存版本。`,
- check:s=> s.commitCount>=1?'pass':(s.receipts.has('5')?'pass':'todo'),
- hintFail:'還沒看到新的 commit。問 agent：「剛剛存版本成功了嗎？git log 最上面一筆是什麼？」'},
-{n:6,name:'送上 GitHub',scene:'對應第五幕',
- goal:'推上 GitHub，然後打開網頁，親眼看到自己的 commit。',
- say:()=>`把最新進度推上 GitHub，然後把網址給我，我要自己開網頁看。推完在 RECEIPT.md 加一行：TASK-6 done：已上傳。`,
- check:s=> (s.synced==='yes'&&s.commitCount>=1)?'pass':(s.receipts.has('6')?'pass':'todo'),
- hintFail:'本機和 GitHub 還沒對齊。問 agent：「推上去了嗎？有沒有出錯訊息？」最常見的原因是還沒登入 GitHub（行前包第 7 項）。'},
-{n:7,name:'開一條自己的分支',scene:'對應第七幕・下半場共用 repo',
- goal:'在共用 repo 開一條帶桌牌的分支。分支名就是你的桌子。',
- say:()=>`在共用專案（${sharedRepo()}）開一條分支叫 robustness-check-${tag()}，切過去。開好在 RECEIPT-${tag()}.md 加一行：TASK-7 done：分支開好了。`,
- check:s=>{
-   const t=(localStorage.getItem('gq-nametag')||'').trim().toLowerCase();
-   if(!t) return 'todo';
-   return s.branches.includes('robustness-check-'+t)?'pass':(s.receipts.has('7')?'pass':'todo');
- },
- hintFail:'還沒看到你桌牌的 robustness-check 分支。注意：這關在共用 repo 做（先做上面的「中場換桌」、再回頁首重新連接那個資料夾），分支名要帶桌牌。'},
-{n:8,name:'在分支上改＋存',scene:'對應第七幕',
- goal:'在自己的分支上改檔（notes.md 加一段、或 analysis.R 改個參數），存成一個 commit。',
- say:()=>`我在分支上改好了，把 diff 逐行列給我看；等我說沒問題，再存成一個版本，說明照我改的內容寫。存完在 RECEIPT-${tag()}.md 加一行：TASK-8 done：分支上已存版本。`,
- check:s=> s.branchCommit?'pass':(s.receipts.has('8')?'pass':'todo'),
- hintFail:'分支上還沒看到新 commit。先確認 HEAD 站在你的分支上（上面面板看得到），再請 agent 存。'},
-{n:9,name:'推上去、開 Pull Request',scene:'對應第九幕',
- goal:'把分支推上 GitHub，開一個 Pull Request，說明寫你改了什麼。',
- say:()=>`把我的分支推上去，開一個 Pull Request（PR），標題和說明照我剛剛的修改寫，開好把 PR 網址給我。然後在 RECEIPT-${tag()}.md 加一行：TASK-9 done：PR 開了。`,
- check:s=> s.receipts.has('9')?'pass':(s.branchPushed?'manual':'todo'),
- hintFail:'PR 開了沒，這一頁看不到（它活在 GitHub 上）——請 agent 確認，或用手動打勾。'},
-{n:10,name:'當一次審稿人',scene:'對應第九幕',
- goal:'到隔壁老師的 PR 網頁，在他改的那一行旁邊留一句審查意見——就是你最熟的審稿人意見。<br><span class="small">先轉頭問隔壁老師的桌牌是什麼，複製之後把〈隔壁老師的桌牌〉連同角括號整個換掉再送出。</span>',
- say:()=>`打開共用專案的 PR 清單，找到〈隔壁老師的桌牌〉開的那個 PR，把網址給我——我要自己在網頁上留言，你不要幫我留。然後在 RECEIPT-${tag()}.md 加一行：TASK-10 done：意見留了。`,
- check:s=> s.receipts.has('10')?'pass':'manual',
- hintFail:''},
-{n:11,name:'合併＋看到別人的字',scene:'對應第八・六幕',
- goal:'PR 合併後，回主線把大家的最新進度拉下來——看到別人的段落出現在你電腦裡。',
- say:()=>`回到主線，把共用專案的最新進度拉下來，然後告訴我有哪些是別人改的。做完在 RECEIPT-${tag()}.md 加一行：TASK-11 done：同步了。`,
- check:s=> s.pulled?'pass':(s.receipts.has('11')?'pass':'todo'),
- hintFail:'還沒看到拉取（pull）的紀錄。請 agent「回主線、同步最新進度」。如果它說「沒有新的變動」，代表還沒有人的 PR 被合併——這樣也算過關，等講師喊一聲再拉一次就看得到別人的字。'},
-{n:12,name:'回家作業：從零開一本',scene:'對應第一・十幕',
- goal:'回家把課堂沒做的補完：自己開一個新專案（init）、放一份不含個資的講義、加 .gitignore、釘一個標籤，最後放上 GitHub（私人）。<br><span class="small">先在電腦上新建一個空資料夾、把講義放進去，用 Antigravity 開啟那個資料夾，再貼下面這句。</span>',
- say:()=>`我新開了一個資料夾放我的講義，已經用 Antigravity 打開它了。幫我在這個資料夾開始記版本，加上合適的 .gitignore，存第一版，然後釘一個標籤 v1.0，最後幫我放上 GitHub——開私人（private）的，只有我看得到。做完在 RECEIPT.md 加一行：TASK-12 done：自己的第一本開張。`,
- check:s=> (s.tags.length>=1&&s.initHere)?'pass':(s.receipts.has('12')?'pass':'todo'),
- hintFail:'這關在你自己的新資料夾做（不是課堂那兩個 repo），做完重新連接那個資料夾來驗。'},
-];
-
-/* ───────── 狀態物件 ───────── */
-let dirHandle=null;
-let state={hasGit:false,commitCount:0,head:'–',branches:[],tags:[],synced:'?',
-  receipts:new Set(),lastAction:'',reflog:[],branchCommit:false,branchPushed:false,
-  pulled:false,initHere:false,gitReadable:false};
-
-/* ───────── File System Access ───────── */
-const fsNote=document.getElementById('fsNote');
-const hasFSA='showDirectoryPicker' in window;
-if(!hasFSA){
-  document.getElementById('pickBtn').style.display='none';
-  fsNote.textContent='這個瀏覽器不支援讀取資料夾（Safari／Firefox）——沒關係，每一關都用「請 agent 檢查」的方式驗收，一樣能過。';
+const cfg={tag:$('tag'),pairRepo:$('pairRepo'),partner:$('partner'),role:$('role')};
+const savedPair=localStorage.getItem('gq-pair')||'';
+if(localStorage.getItem('gq-settings-schema')!=='pair-required-v1'){
+  if(/econ-(?:shared|starter)/i.test(savedPair)||savedPair.toLowerCase()==='cwstedctw/thesis-pair-01')localStorage.removeItem('gq-pair');
+  localStorage.setItem('gq-settings-schema','pair-required-v1');
 }
-async function getTextAt(root,pathArr){
-  try{
-    let d=root;
-    for(let i=0;i<pathArr.length-1;i++) d=await d.getDirectoryHandle(pathArr[i]);
-    const f=await d.getFileHandle(pathArr[pathArr.length-1]);
-    return await (await f.getFile()).text();
-  }catch(e){return null}
+const PROGRESS_SCHEMA='human-confirm-v1';
+if(localStorage.getItem('gq-progress-schema')!==PROGRESS_SCHEMA){FLOW.steps.forEach(step=>localStorage.removeItem('gq-done-'+step.id));localStorage.setItem('gq-progress-schema',PROGRESS_SCHEMA)}
+cfg.tag.value=localStorage.getItem('gq-tag')||'';
+cfg.pairRepo.value=localStorage.getItem('gq-pair')||'';
+cfg.partner.value=localStorage.getItem('gq-partner')||'';
+cfg.role.value=localStorage.getItem('gq-role')||'student';
+Object.entries(cfg).forEach(([k,el])=>el.oninput=()=>{localStorage.setItem('gq-'+(k==='pairRepo'?'pair':k),el.value.trim().toLowerCase());render()});
+const values=()=>{
+  const tag=cfg.tag.value.trim().toLowerCase()||'你的桌牌';
+  return {tag,pairRepo:cfg.pairRepo.value.trim()||'講師分配的 owner/repo',partner:cfg.partner.value.trim()||'夥伴桌牌',branch:'revise-method-'+tag,receipt:'WORKSHOP-RECEIPT-'+tag+'.txt'};
+};
+const resolve=s=>Object.entries(values()).reduce((out,[k,v])=>out.replaceAll('{'+k+'}',v),s);
+function phaseFromHash(){
+  const match=location.hash.match(/^#task-([PC])/);
+  return match?(match[1]==='C'?'collab':'personal'):null;
 }
-async function listDir(root,pathArr){
-  try{
-    let d=root;
-    for(const p of pathArr) d=await d.getDirectoryHandle(p);
-    const out=[];
-    for await (const [name,h] of d.entries()) out.push([name,h.kind]);
-    return out;
-  }catch(e){return null}
+const linkedPhase=phaseFromHash();
+if(linkedPhase)localStorage.setItem('gq-phase',linkedPhase);
+const currentPhase=()=>localStorage.getItem('gq-phase')==='collab'?'collab':'personal';
+function setPhase(id){
+  localStorage.setItem('gq-phase',id);
+  history.replaceState(null,'',id==='collab'?'#collabStart':'#tasks');
+  render();
+  scrollElementBelowDashboard(id==='collab'?'#collabStart':'#tasks');
 }
-async function scanRepo(){
-  const s={hasGit:false,commitCount:0,head:'–',branches:[],tags:[],synced:'?',
-    receipts:new Set(),lastAction:'',reflog:[],branchCommit:false,branchPushed:false,
-    pulled:false,initHere:false,gitReadable:false};
-  if(!dirHandle){state=s;return}
-  // 收據（根目錄，一定讀得到）：自己 repo 用 RECEIPT.md，共用 repo 一人一檔 RECEIPT-桌牌.md（八人共寫一檔會連環衝突）
-  const t0=(localStorage.getItem('gq-nametag')||'').trim().toLowerCase();
-  for(const fn of ['RECEIPT.md', t0?('RECEIPT-'+t0+'.md'):null]){
-    if(!fn) continue;
-    const rec=await getTextAt(dirHandle,[fn]);
-    if(rec) for(const m of rec.matchAll(/TASK[-\s]?(\w+)\s*(?:done|完成)/gi)) s.receipts.add(m[1].toLowerCase());
-  }
-  // .git
-  const head=await getTextAt(dirHandle,['.git','HEAD']);
+
+function scrollElementBelowDashboard(selector){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const target=document.querySelector(selector);if(!target)return;
+    const gap=$('dashboard').getBoundingClientRect().height+12;
+    window.scrollTo({top:Math.max(0,window.scrollY+target.getBoundingClientRect().top-gap),behavior:'smooth'});
+  }));
+}
+function showTaskResult(id){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const card=document.querySelector('#task-'+id),target=card?.querySelector('.auto-result')||card;if(!target)return;
+    const topLimit=$('dashboard').getBoundingClientRect().bottom+12,bottomLimit=window.innerHeight-72,rect=target.getBoundingClientRect();
+    if(rect.top<topLimit||rect.bottom>bottomLimit)window.scrollBy({top:rect.top-topLimit,behavior:'smooth'});
+  }));
+}
+
+let handle=null;
+let state={folder:'–',hasGit:false,head:'–',commits:0,remote:'',synced:'?',receipts:new Set(),files:[],branchPushed:false};
+let autoNotices={};
+async function textAt(parts){try{let d=handle;for(const p of parts.slice(0,-1))d=await d.getDirectoryHandle(p);return await(await d.getFileHandle(parts.at(-1))).getFile().then(f=>f.text())}catch{return null}}
+async function listAt(parts=[]){try{let d=handle;for(const p of parts)d=await d.getDirectoryHandle(p);const a=[];for await(const [n,h]of d.entries())a.push([n,h.kind]);return a}catch{return[]}}
+async function scan(){
+  const s={folder:handle?.name||'–',hasGit:false,head:'–',commits:0,remote:'',synced:'?',receipts:new Set(),files:[],branchPushed:false};
+  if(!handle){state=s;return}
+  s.files=(await listAt()).map(x=>x[0]);
+  for(const fn of s.files.filter(n=>/^(?:WORKSHOP-RECEIPT(?:-[\w-]+)?\.txt|RECEIPT(?:-[\w-]+)?\.md)$/i.test(n))){const t=await textAt([fn]);if(t)for(const m of t.matchAll(/\b([PC]\d+)\s*(?:done|完成)/gi))s.receipts.add(m[1].toUpperCase())}
+  const head=await textAt(['.git','HEAD']);
   if(head!==null){
-    s.hasGit=true;s.gitReadable=true;
-    const m=head.match(/refs\/heads\/(.+)/); s.head=m?m[1].trim():'（分離狀態）';
-    // reflog
-    const rl=await getTextAt(dirHandle,['.git','logs','HEAD']);
-    if(rl){
-      const lines=rl.trim().split('\n');
-      s.reflog=lines.map(l=>{
-        const tab=l.indexOf('\t');
-        const meta=l.slice(0,tab).split(' ');
-        return {ts:+meta[meta.length-2]||0,action:l.slice(tab+1)};
-      });
-      s.commitCount=s.reflog.filter(r=>/^commit/.test(r.action)).length;
-      s.pulled=s.reflog.some(r=>/^(pull|merge)/.test(r.action));
-      s.initHere=lines.length>0&&/commit \(initial\)/.test(rl);
-      if(s.reflog.length) s.lastAction=s.reflog[s.reflog.length-1].action.slice(0,40);
-    }
-    // refs
-    const heads=await listDir(dirHandle,['.git','refs','heads']);
-    if(heads) for(const [n,k] of heads) if(k==='file') s.branches.push(n);
-    const tagsD=await listDir(dirHandle,['.git','refs','tags']);
-    if(tagsD) for(const [n,k] of tagsD) if(k==='file') s.tags.push(n);
-    const packed=await getTextAt(dirHandle,['.git','packed-refs']);
-    const refVal={};
-    if(packed) for(const l of packed.split('\n')){
-      const m=l.match(/^([0-9a-f]{40}) refs\/(heads|tags|remotes)\/(.+)$/);
-      if(m){
-        refVal['refs/'+m[2]+'/'+m[3]]=m[1];
-        if(m[2]==='heads'&&!s.branches.includes(m[3])) s.branches.push(m[3]);
-        if(m[2]==='tags'&&!s.tags.includes(m[3])) s.tags.push(m[3]);
-      }
-    }
-    async function refSha(path){
-      const t=await getTextAt(dirHandle,path.split('/'));
-      return t?t.trim():(refVal[path.replace('.git/','')]||null);
-    }
-    const localMain=await refSha('.git/refs/heads/'+(s.head!=='（分離狀態）'?s.head:'main'));
-    const remoteMain=await refSha('.git/refs/remotes/origin/'+(s.head!=='（分離狀態）'?s.head:'main'));
-    if(localMain&&remoteMain) s.synced=(localMain===remoteMain)?'yes':'no';
-    // 桌牌分支的 commit 與 push
-    const t=(localStorage.getItem('gq-nametag')||'').trim().toLowerCase();
-    const myBranch=s.branches.find(b=>b.startsWith('robustness-check-')&&(!t||b.includes(t)));
-    if(myBranch){
-      const bl=await getTextAt(dirHandle,['.git','logs','refs','heads',myBranch]);
-      s.branchCommit=!!(bl&&/\tcommit/.test(bl));
-      const rb=await refSha('.git/refs/remotes/origin/'+myBranch);
-      s.branchPushed=!!rb;
-    }
+    s.hasGit=true;const hm=head.match(/refs\/heads\/(.+)/);s.head=hm?hm[1].trim():'（分離狀態）';
+    const log=await textAt(['.git','logs','HEAD']);if(log)s.commits=log.split('\n').filter(l=>/\tcommit(?: \(initial\))?:/.test(l)).length;
+    const config=await textAt(['.git','config']);const rm=config&&config.match(/\[remote "origin"\][\s\S]*?url\s*=\s*(.+)/);s.remote=rm?rm[1].trim():'';
+    const local=await textAt(['.git','refs','heads',s.head]);const remote=await textAt(['.git','refs','remotes','origin',s.head]);if(local&&remote)s.synced=local.trim()===remote.trim()?'yes':'no';
+    const rb=await textAt(['.git','refs','remotes','origin',s.head]);s.branchPushed=!!(rb&&s.head!=='main');
   }
   state=s;
 }
+function checker(id){
+  if(localStorage.getItem('gq-done-'+id)==='1')return'pass';
+  const r=state.receipts.has(id),hasNotes=state.files.some(f=>f.toLowerCase()==='notes.md');
+  const pair=cfg.pairRepo.value.trim().toLowerCase();
+  const map={P1:!!handle,P2:state.hasGit&&!!state.remote,P3:hasNotes,P4:state.commits>=1,P5:state.synced==='yes',P6:r,P7:state.commits>=2&&state.synced==='yes',P8:r,P9:r,C1:r||!!(pair&&state.remote&&state.remote.toLowerCase().includes(pair)),C2:(state.head.startsWith('revise-')&&state.branchPushed)||r,C3:r,C4:r,C5:r,C6:r};
+  if(map[id])return'evidence';
+  return['P1','P2','P3','P4','P5','P7','C2','C5'].includes(id)?'todo':'manual';
+}
+function phaseCompletion(){
+  const steps=FLOW.phaseSteps(currentPhase());
+  return {done:steps.filter(step=>checker(step.id)==='pass').length,total:steps.length};
+}
+function renderDashboard(){
+  const phase=currentPhase(),progress=phaseCompletion(),phaseName=phase==='personal'?'第一階段':'第二階段';
+  $('sProgress').textContent=progress.done+'／'+progress.total;
+  $('phaseProgressLabel').textContent=phaseName+'完成 '+progress.done+'／'+progress.total;
+  $('phaseProgressFill').style.width=(progress.total?Math.round(progress.done/progress.total*100):0)+'%';
+  const meter=document.querySelector('.phase-meter');meter.setAttribute('aria-valuemax',progress.total);meter.setAttribute('aria-valuenow',progress.done);meter.setAttribute('aria-valuetext',phaseName+'完成 '+progress.done+'／'+progress.total);
+  $('dashRefresh').textContent=handle?'重新掃描':'連接資料夾';
+  if(!handle){
+    $('sFolder').textContent='未連接';$('sFolder').removeAttribute('title');$('sGit').textContent='–';$('sBranch').textContent='–';$('sCommits').textContent='–';$('sRemote').textContent='–';$('sSync').textContent='–';
+    $('dashNote').textContent='完成數是這台瀏覽器保留的闖關紀錄。尚未連接資料夾；可在任一關按「自動檢查這一步」。';
+    return;
+  }
+  $('sFolder').textContent=state.folder;$('sFolder').title=state.folder;$('sGit').textContent=state.hasGit?'✓':'尚未';$('sBranch').textContent=state.head;$('sCommits').textContent=state.commits;$('sRemote').textContent=state.remote?'✓':'尚未';$('sSync').textContent=state.synced==='yes'?'✓':state.synced==='no'?'未同步':'？';
+  $('dashNote').textContent='完成數是這台瀏覽器保留的闖關紀錄。找到 '+state.files.length+' 個根目錄項目、'+state.receipts.size+' 張完成收據；PR 的審查與合併仍要由你與夥伴親自確認。';
+}
+function roleCue(id){
+  if(!id.startsWith('C'))return'';
+  const first=cfg.role.value,student=first==='student'?'你':'夥伴',advisor=first==='advisor'?'你':'夥伴';
+  const cues={
+    C1:'你與夥伴各自在自己的電腦完成。',
+    C2:`第一輪由${student}使用研究生的電腦操作；${advisor}等待 PR 編號與網址。`,
+    C3:`第一輪由${advisor}使用指導教授的 GitHub 帳號審查；${student}等待意見。`,
+    C4:`先由${student}在研究生電腦補改，再把同一個 PR 交給${advisor}用教授帳號核准與合併。`,
+    C5:'你與夥伴各自在自己的電腦同步 main。',
+    C6:`交換角色後，你是${first==='student'?'指導教授':'研究生'}；先由新研究生操作，再交給新指導教授審查。`
+  };
+  return `<p class="role-cue"><strong>這關在哪裡做：</strong>${esc(cues[id])}</p>`;
+}
+function taskCard(step,n){
+  const st=checker(step.id),prompt=resolve(step.prompt),human=resolve(step.human),dashboard=resolve(step.dashboard),rescue=resolve(step.rescue);
+  const check=autoNotices[step.id],notice=check?`<div class="auto-result ${check.status}" role="status">${esc(check.text)}</div>`:'';
+  const autoLabel=st==='pass'?'✓ 這一步已完成':st==='evidence'?'重新檢查證據':check?'再檢查一次':'自動檢查這一步',autoClass=st==='pass'?' done':(st==='evidence'||check)?' recheck':'',autoDisabled=st==='pass'?' disabled aria-disabled="true"':'';
+  const guideText=step.id==='P9'?'這一步較長：開啟教材 P9 完整拆解':'需要更多說明？開啟教材 '+step.id+' 詳解';
+  const verify=`請只檢查，不要修改任何檔案、Git 狀態、GitHub 設定或 Pull Request。
 
-/* ───────── 畫面 ───────── */
-function renderPanel(){
-  const p=document.getElementById('repoPanel');
-  if(!dirHandle){p.style.display='none';return}
-  p.style.display='block';
-  document.getElementById('stCommits').textContent=state.commitCount;
-  document.getElementById('stBranch').textContent=state.head;
-  document.getElementById('stBranches').textContent=state.branches.length||(state.hasGit?1:0);
-  document.getElementById('stTags').textContent=state.tags.length?state.tags.join('、'):'0';
-  document.getElementById('stSync').textContent=state.synced==='yes'?'✓':(state.synced==='no'?'還沒':'？');
-  document.getElementById('stReceipts').textContent=state.receipts.size;
-  // reflog 時間軸（最近 10 筆）
-  const recent=state.reflog.slice(-10);
-  const W=760,y=40;let el='';
-  el+=`<line x1="20" y1="${y}" x2="${W-20}" y2="${y}" stroke="var(--line)" stroke-width="2"/>`;
-  recent.forEach((r,i)=>{
-    const x=30+i*((W-60)/Math.max(recent.length-1,1));
-    const kind=/^commit/.test(r.action)?'●':/^(pull|merge)/.test(r.action)?'◆':/^checkout/.test(r.action)?'○':/^clone/.test(r.action)?'▼':'·';
-    el+=`<text x="${x}" y="${y+5}" text-anchor="middle" font-size="15" fill="var(--teal)">${kind}</text>`;
-    el+=`<text x="${x}" y="${y+24}" text-anchor="middle" font-size="8" fill="var(--ink-soft)">${r.action.split(':')[0].slice(0,10)}</text>`;
-  });
-  document.getElementById('timelineWrap').innerHTML=
-    recent.length?`<svg class="timeline" viewBox="0 0 ${W} 70">${el}</svg><p class="small">最近 ${recent.length} 個動作（●commit ◆merge/pull ○切分支 ▼clone）</p>`:'';
-  if(!state.gitReadable&&dirHandle){
-    document.getElementById('panelNote').textContent='讀不到 .git（瀏覽器安全限制）——別擔心，收據檔照樣能驗，過關不受影響。';
+我要驗收工作坊步驟 ${step.id}「${step.title}」。
+這一步的目的：${resolve(step.why)}
+完成標準：${dashboard}
+需要由人確認：${human}
+
+請先回報你目前工作的完整路徑，確認是在我要驗收的專案中；再使用適合這一步的只讀方式查證。缺少證據時不要自行補做。
+
+請依序回報：
+1. 結果：已完成／未完成／無法判斷
+2. 證據：你實際查到什麼
+3. 缺少項目：還差什麼
+4. 建議：如果未完成，提供下一句我可以對 AI 說的話，但先不要執行`;
+  const manualCheck=st==='pass'?'':st==='evidence'?`<div class="manual-check evidence" aria-label="最後人工確認"><span class="manual-check-label">自動證據已符合；完成仍由你判斷</span><button class="manual" type="button" data-id="${step.id}">我已核對，標記完成</button></div>`:`<div class="manual-check" aria-label="人工驗收備援"><span class="manual-check-label">人工驗收備援（自動檢查無法判斷時）</span><button class="copy" type="button" data-copy="${esc(verify)}">① 複製 AI 驗收提示</button><button class="manual" type="button" data-id="${step.id}">② AI 回覆通過，再標記完成</button></div>`;
+  const taskClass=st==='pass'?'pass':st==='evidence'?'evidence-state':st==='manual'?'manual-state':'';
+  const statusText=st==='pass'?'✓ 已完成':st==='evidence'?'自動證據符合，待你核對':st==='manual'?'需人工驗收':'尚未完成';
+  return `<article class="task ${taskClass}" id="task-${step.id}"><div class="taskhead"><span class="taskid">${step.id}｜第 ${n} 步</span><span class="taskname">${esc(step.title)}</span><span class="status">${statusText}</span></div><p>${esc(step.why)}</p>${roleCue(step.id)}<a class="guide-link" href="material.html#guide-${step.id}" target="_blank" rel="noopener">${esc(guideText)} ↗</a><div class="say"><b>對 AI 說</b>${esc(prompt)}<button class="copy" type="button" data-copy="${esc(prompt)}">複製</button></div><p class="human"><strong>你要做：</strong>${esc(human)}</p><details><summary>完成畫面、幕後指令與卡住救援</summary><p><strong>儀表板：</strong>${esc(dashboard)}</p><pre>${esc(resolve(step.behind))}</pre><p class="small"><strong>卡住：</strong>${esc(rescue)}</p></details>${notice}<div class="actions"><button class="auto${autoClass}" type="button" data-auto="${step.id}"${autoDisabled}>${autoLabel}</button>${manualCheck}</div></article>`;
+}
+async function autoCheckStep(id){
+  if(!('showDirectoryPicker'in window)){
+    autoNotices[id]={status:'manual',text:'這個瀏覽器無法自動讀取資料夾。請使用下方「人工驗收備援」：先把提示交給 AI，確認通過後再手動打勾。'};
+    render();showTaskResult(id);return;
+  }
+  if(!handle){
+    const connected=await pickFolder();
+    if(!connected){autoNotices[id]={status:'manual',text:'尚未連接資料夾，這一步還沒檢查。'};render();showTaskResult(id);return}
+  }else await scan();
+  const result=checker(id);
+  autoNotices[id]={status:result,text:result==='evidence'?'✓ 自動證據符合，但還不算整關完成。請核對上方「你要做」，再按「我已核對，標記完成」。':result==='manual'?'△ 本機紀錄不足以判斷。請使用下方「人工驗收備援」：先把提示交給 AI，確認通過後再標記完成。':result==='pass'?'✓ 這一步已由你確認完成。':'尚未符合頁面可讀的條件。請對照完成標準，完成後再按一次自動檢查。'};
+  render();showTaskResult(id);
+}
+async function copyText(text){
+  try{await navigator.clipboard.writeText(text);return true}catch{
+    const box=document.createElement('textarea');box.value=text;box.setAttribute('readonly','');box.style.position='fixed';box.style.opacity='0';document.body.appendChild(box);box.select();
+    try{return document.execCommand('copy')}catch{return false}finally{box.remove()}
   }
 }
-function statusOf(t){
-  if(localStorage.getItem('gq-t'+t.n)==='1') return 'pass';
-  let st;
-  if(!dirHandle&&!state.receipts.size){
-    st=t.check(state)==='manual'?'manual':'todo';
-  }else{
-    st=t.check(state);
+function showCopyFallback(text){
+  const dialog=$('copyFallback'),box=$('copyFallbackText');box.value=text;
+  if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
+  requestAnimationFrame(()=>{box.focus();box.select()});
+}
+function bindButtons(){
+  document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{const x=b.textContent,ok=await copyText(b.dataset.copy);b.textContent=ok?'已複製 ✓':'已開啟手動複製';if(!ok)showCopyFallback(b.dataset.copy);setTimeout(()=>b.textContent=x,1600)});
+  document.querySelectorAll('[data-auto]:not(:disabled)').forEach(b=>b.onclick=async()=>{b.disabled=true;b.textContent='檢查中…';try{await autoCheckStep(b.dataset.auto)}finally{if(b.isConnected){b.disabled=false;b.textContent=autoNotices[b.dataset.auto]?'再檢查一次':'自動檢查這一步'}}});
+  document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{const id=b.dataset.id;localStorage.setItem('gq-done-'+id,'1');autoNotices[id]={status:'pass',text:'✓ 你已完成最後人工核對。'};render();showTaskResult(id)});
+}
+function renderProgress(){
+  const groups=currentPhase()==='personal'?[['建庫','P1','P3'],['兩輪存版','P4','P7'],['歷史與回復','P8','P9']]:[['完整 PR 循環','C1','C5'],['交換角色','C6','C6']];
+  $('track').innerHTML=groups.map(([name,a,b])=>{const ids=FLOW.steps.slice(FLOW.steps.findIndex(x=>x.id===a),FLOW.steps.findIndex(x=>x.id===b)+1).map(x=>x.id);const done=ids.filter(x=>checker(x)==='pass').length;return`<div class="seg" role="progressbar" aria-label="${name}" aria-valuemin="0" aria-valuemax="${ids.length}" aria-valuenow="${done}"><small>${name} ${done}/${ids.length}</small><div class="bar"><div class="fill" style="width:${done/ids.length*100}%"></div></div></div>`}).join('');
+}
+function render(){
+  const phaseId=currentPhase();
+  document.body.classList.toggle('show-collab',phaseId==='collab');
+  $('setupbar').classList.toggle('personal',phaseId==='personal');
+  $('phasePersonal').classList.toggle('active',phaseId==='personal');
+  $('phaseCollab').classList.toggle('active',phaseId==='collab');
+  $('phasePersonal').setAttribute('aria-current',phaseId==='personal'?'step':'false');
+  $('phaseCollab').setAttribute('aria-current',phaseId==='collab'?'step':'false');
+  document.querySelectorAll('.role').forEach(x=>x.classList.toggle('active',x.dataset.role===cfg.role.value));
+  const phase=FLOW.phases.find(x=>x.id===phaseId);
+  let html=`<div class="phase"><h2>${esc(phase.label)}</h2><p>${esc(phase.promise)}（核心操作約 ${phase.minutes} 分鐘）</p></div>`;
+  if(phaseId==='collab')html+=`<div class="card callout"><strong>這一階段才使用配對設定：</strong>研究生提出修改，指導教授把關；第一輪完成後由 C6 交換角色。</div>`;
+  for(const step of FLOW.phaseSteps(phaseId))html+=taskCard(step,FLOW.steps.findIndex(x=>x.id===step.id)+1);
+  if(phaseId==='personal'){
+    const done=FLOW.phaseSteps('personal').filter(step=>checker(step.id)==='pass').length;
+    html+=`<div class="phase-complete"><h2>${done===9?'✓ 第一階段完成':'第一階段進度 '+done+'／9'}</h2><p>${done===9?'你已走完自己的版本循環。等講師宣布中場換桌，就進入兩人協作。':'先完成 P1–P9；若講師已宣布換桌，也可以先進入第二階段，由講師協助補進度。'}</p><button class="btn" id="enterCollab" type="button">進入第二階段：研究生 × 指導教授 →</button></div>`;
   }
-  if(st==='pass') localStorage.setItem('gq-t'+t.n,'1'); // 過了就鎖住：中場換連共用 repo 也不會倒退
-  return st;
+  $('taskList').innerHTML=html;
+  $('roles').hidden=phaseId!=='collab';
+  bindButtons();
+  $('enterCollab')?.addEventListener('click',()=>setPhase('collab'));
+  renderDashboard();renderProgress();
 }
-function renderTasks(){
-  const list=document.getElementById('taskList');
-  list.innerHTML='';
-  TASKS.forEach(t=>{
-    const st=statusOf(t);
-    const d=document.createElement('div');
-    d.className='task '+(st==='pass'?'pass':st==='manual'?'manual':'');
-    const verify=`請幫我檢查第 ${t.n} 關「${t.name}」：這一關的目標是「${t.goal}」。我達標了嗎？差在哪？下一步我該說什麼？`;
-    const rescue=`先停下來。告訴我你剛剛做了什麼、現在專案是什麼狀態（在哪個分支、有沒有沒存的修改）。只准查看、先不要修。我們這一關的目標是：${t.goal}`;
-    d.innerHTML=`
-      <div class="head">
-        <span class="no">第 ${t.n} 關</span><span class="name">${t.name}</span>
-        <span class="scene">${t.scene}</span>
-        <span class="status ${st}">${st==='pass'?'✓ 過關':st==='manual'?'用 agent 驗':'未完成'}</span>
-      </div>
-      <p style="margin:8px 0 4px">${t.goal}</p>
-      <div class="say"><span class="t">對 AGENT 說</span>「${esc(t.say())}」
-        <button class="copybtn" data-copy="${t.say().replace(/"/g,'&quot;')}">複製</button></div>
-      ${st!=='pass'&&t.hintFail&&dirHandle?`<div class="hint">${t.hintFail}</div>`:''}
-      <p>
-        <button class="copybtn" data-copy="${verify.replace(/"/g,'&quot;')}">複製這句請 agent 檢查</button>
-        <button class="copybtn" data-copy="${rescue.replace(/"/g,'&quot;')}">卡住了？複製這句問 agent</button>
-        ${st!=='pass'?`<button class="copybtn" data-manual="${t.n}">agent 說過關了 → 手動打勾</button>`:''}
-      </p>
-      <details class="help"><summary>這關在練什麼</summary><p class="small">${t.scene}。教材對應段落有完整劇情與幕後指令。</p></details>`;
-    list.appendChild(d);
-    if(t.n===6){
-      const br=document.createElement('div');
-      br.className='task bridge';
-      const brSay=`把共用專案 ${sharedRepo()} 抓到我電腦，告訴我資料夾放在哪。`;
-      br.innerHTML=`<div class="head"><span class="no">中場換桌</span><span class="name">從自己的 repo 換到共用 repo</span></div>
-        <p style="margin:8px 0 4px">下半場全班在同一個共用專案裡協作。兩步：請 agent 把它抓下來，然後<strong>回頁首重新連接到那個新資料夾</strong>。放心，過了的關都鎖住了，進度不會消失。</p><p class="small">下半場的收據會變成 <code>RECEIPT-你的桌牌.md</code>（不是原來的 RECEIPT.md）——八個人共寫一個檔會打架，所以一人一檔。</p>
-        <div class="say"><span class="t">對 AGENT 說</span>「${esc(brSay)}」<button class="copybtn" data-copy="${brSay.replace(/"/g,'&quot;')}">複製</button></div>`;
-      list.appendChild(br);
-    }
-  });
-  list.querySelectorAll('[data-manual]').forEach(b=>b.onclick=()=>{
-    localStorage.setItem('gq-t'+b.dataset.manual,'1');renderTasks();renderMilestones();
-  });
-  bindCopy(list);
-  renderMilestones();
-}
-function bindCopy(scope){
-  scope.querySelectorAll('[data-copy]').forEach(b=>{
-    if(b.dataset.bound)return;b.dataset.bound='1';
-    b.onclick=()=>{
-      if(/你的姓氏拼音/.test(b.dataset.copy)){
-        const o=b.textContent;b.textContent='先在上面填桌牌';setTimeout(()=>b.textContent=o,1800);return;
-      }
-      navigator.clipboard.writeText(b.dataset.copy).then(()=>{
-        const o=b.textContent;b.textContent='已複製 ✓';setTimeout(()=>b.textContent=o,1500);
-      }).catch(()=>{b.textContent='請手動選取'});
-    };
-  });
-}
-function renderMilestones(){
-  const track=document.getElementById('milestoneTrack');
-  track.innerHTML='';
-  MILESTONES.forEach(m=>{
-    const total=m.tasks.length;
-    const done=m.tasks.filter(n=>statusOf(TASKS[n-1])==='pass').length;
-    const seg=document.createElement('div');
-    seg.style.flex='1';
-    seg.innerHTML=`<div class="lbl">${m.name} ${done}/${total}</div>
-      <div class="seg"><div class="fill" style="width:${total?Math.round(done/total*100):0}%"></div></div>`;
-    track.appendChild(seg);
-  });
-}
-
-/* ───────── 連接資料夾 ───────── */
-document.getElementById('pickBtn').onclick=async()=>{
-  try{
-    dirHandle=await window.showDirectoryPicker({mode:'read'});
-    document.getElementById('recheckBtn').style.display='inline-block';
-    fsNote.textContent='已連接：'+dirHandle.name+'（只讀不寫）';
-    await refresh();
-  }catch(e){
-    if(e.name==='AbortError')return;
-    fsNote.textContent='連接失敗（'+e.name+'）。改用每關的「agent 驗收」按鈕，一樣能過關。';
+function folderNote(message){$('fsNote').textContent=message;$('fsNoteCollab').textContent=message}
+async function pickFolder(){try{handle=await showDirectoryPicker({mode:'read'});$('refresh').hidden=false;$('refreshCollab').hidden=false;folderNote('已連接 '+handle.name+'，只讀不寫。');await scan();render();return true}catch(e){if(e.name!=='AbortError')folderNote('無法連接：'+e.message);return false}}
+async function refreshDashboard(){if(!handle){await pickFolder();return}await scan();render()}
+$('pick').onclick=pickFolder;
+$('pickCollab').onclick=pickFolder;
+$('phasePersonal').onclick=()=>setPhase('personal');
+$('phaseCollab').onclick=()=>setPhase('collab');
+$('refresh').onclick=refreshDashboard;
+$('refreshCollab').onclick=refreshDashboard;
+$('dashRefresh').onclick=refreshDashboard;
+$('clearQuest').onclick=()=>{if(!confirm('要清除這台瀏覽器的 15 步完成勾選，重新開始嗎？Git 資料夾不會被修改。'))return;FLOW.steps.forEach(step=>localStorage.removeItem('gq-done-'+step.id));autoNotices={};render()};
+if(!('showDirectoryPicker'in window)){$('pick').hidden=true;$('pickCollab').hidden=true;$('dashRefresh').hidden=true;folderNote('這個瀏覽器不支援自動讀取資料夾；請使用每關下方的「人工驗收備援」。')}
+render();
+if(location.hash)scrollElementBelowDashboard(location.hash);
+window.addEventListener('hashchange',()=>{
+  const linked=phaseFromHash();
+  if(linked&&linked!==currentPhase()){
+    localStorage.setItem('gq-phase',linked);
+    render();
   }
-};
-document.getElementById('recheckBtn').onclick=refresh;
-async function refresh(){
-  await scanRepo();
-  renderPanel();renderTasks();
-}
-
-/* ───────── 攔停關 ───────── */
-const rebelStatus=document.getElementById('rebelStatus');
-function paintRebel(){
-  const v=localStorage.getItem('gq-rebel');
-  rebelStatus.textContent=v==='pass'?'✓ 你攔住了它':v==='fail'?'已記錄——下課找講師調設定':'';
-  rebelStatus.style.color=v==='pass'?'var(--ok)':'var(--wait)';
-}
-document.getElementById('rebelPass').onclick=()=>{localStorage.setItem('gq-rebel','pass');paintRebel()};
-document.getElementById('rebelFail').onclick=()=>{localStorage.setItem('gq-rebel','fail');paintRebel()};
-paintRebel();
-
-/* ───────── 結業單 ───────── */
-document.getElementById('certBtn').onclick=()=>{
-  const passN=TASKS.filter(t=>t.n<=11&&statusOf(t)==='pass').length;
-  const homeworkDone=statusOf(TASKS[11])==='pass';
-  const html=`
-    <div style="text-align:center;padding:26px;border:3px double var(--gold);border-radius:14px">
-      <div style="font-size:1.3rem;font-weight:800;color:var(--teal-deep)">git 工作坊結業單</div>
-      <p style="margin:14px 0 4px">桌牌：${esc(tag())}｜日期：${new Date().toLocaleDateString('zh-TW')}</p>
-      <p style="font-size:1.05rem">課堂 ${passN}／11 關${homeworkDone?'＋回家作業':''}${localStorage.getItem('gq-rebel')==='pass'?'＋攔停演練':''}</p>
-      <p>${dirHandle?`你在課堂親手存了 ${state.commitCount} 個版本、開了 ${state.branches.length||1} 條分支、釘了 ${state.tags.length} 個標籤`:'（連接資料夾後會顯示 repo 的真實數字）'}</p>
-      <p class="small" style="margin-top:12px">這些數字是真的，不是模擬——你已經有一本自己的歷史帳本了。</p>
-    </div>
-    <p style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="window.print()">列印</button></p>`;
-  const prev=document.getElementById('certPreview');
-  prev.innerHTML=html;prev.style.display='block';
-  document.getElementById('cert').innerHTML=html;
-};
-
-/* ───────── 初始 ───────── */
-bindCopy(document);
-renderTasks();
+  scrollElementBelowDashboard(location.hash);
+});
 </script>
 </body>
 </html>
