@@ -136,7 +136,7 @@ for(const name of ['material','quest','radar']){
 if(!html.material.includes('id="flowGuide"')||!html.material.includes('id="troubleGrid"'))fail('教材缺少完整手冊或故障排除容器');
 {
   const checkCount=(html.material.match(/class="check"/g)||[]).length;
-  const labels=[...html.material.matchAll(/aria-label="完成第 (\d+) 項"/g)].map(m=>Number(m[1]));
+  const labels=[...html.material.matchAll(/aria-label="完成第\s*(\d+)\s*項"/g)].map(m=>Number(m[1]));
   const progress=html.material.match(/id="checkProgress"[^>]*>0 \/ (\d+)</);
   if(!progress||Number(progress[1])!==checkCount)fail(`行前進度初始字串是 0 / ${progress?progress[1]:'?'}，但實際有 ${checkCount} 個項目`);
   if(labels.length!==checkCount||labels.some((n,i)=>n!==i+1))fail(`行前項目的 aria-label 編號應為 1–${checkCount} 連續，目前是 ${labels.join(',')}`);
