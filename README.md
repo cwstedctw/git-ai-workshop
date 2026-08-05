@@ -18,6 +18,8 @@
 
 ## 授權
 
-© 2026 陳文盛（國立東華大學）× AI 夥伴洄瀾（Claude）
+© 2026 陳文盛（國立東華大學通識教育中心）× AI 協作團隊
+
+AI 協作團隊：洄瀾（組長・Claude）、立霧（Codex）、秀姑巒（Gemini）、木瓜溪（OpenCode）、美崙溪（Grok）。
 
 本教材以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant) 授權：歡迎教學與自學使用、改作請以相同方式開放，請勿用於商業用途。
