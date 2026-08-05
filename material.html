@@ -472,7 +472,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <h3 style="margin-top:0">監督三原則</h3>
     <p><strong>一、動手前看計畫。</strong>agent 動手前會先說「我打算怎麼做、為什麼」；沒看懂那段話，先問——<strong>聽得懂才放行</strong>，解釋不通就不准做。</p>
     <p><strong>二、動手後看 diff。</strong>agent 說做完了不算數，逐行差異你掃過一眼才算數。就當審自己學生的修改稿。</p>
-    <p class="small" style="background:var(--gold-soft);padding:8px 12px;border-radius:8px">這三條跟行前第 6 項的授權設定是同一件事：<strong>指令放沙箱讓它自己跑、要碰工作資料夾以外的檔案保持要問、千萬別選 Turbo mode。</strong>設定是你調的，代表哪些事你願意授權、哪些你要親自把關，是你決定的。</p>
+    <p class="small" style="background:var(--gold-soft);padding:8px 12px;border-radius:8px">這三條跟行前第 6 項的授權設定是同一件事：<strong>指令自動執行讓課堂跑得順、要碰工作資料夾以外的檔案保持要問、千萬別選 Turbo mode。</strong>設定是你調的，代表哪些事你願意授權、哪些你要親自把關，是你決定的。</p>
     <p><strong>三、破壞性動作，agent 必須先問你。</strong>紅線動詞清單：強制推送（force push）、把分支 reset 到舊 commit、硬重設（<code>reset --hard</code>）、改寫歷史（rebase）、刪除檔案或分支、覆蓋遠端。<code>reset --hard</code> 會讓暫存區與已追蹤工作檔對齊目標 commit，未提交修改會被覆蓋；其他 reset 模式若指向舊 commit，也會移動本機歷史。看到這些動詞一律喊停，先問「會動哪一層？會不會弄丟東西？這段歷史是否已經分享？有沒有更安全的做法？」<strong>它沒問就做了，換掉它的設定或換掉它。</strong></p>
   </div>
   <div class="card">

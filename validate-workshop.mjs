@@ -142,6 +142,7 @@ if(!html.material.includes('id="flowGuide"')||!html.material.includes('id="troub
   for(const [page,gone] of [['material','講師實際分配'],['material','講師分配'],['quest','講師分配'],['material','thesis-pair-01'],['quest','講師會分配']]){
     if(html[page].includes(gone))fail(`${fileFor[page]} 殘留「講師預先分配配對 repo」的舊流程：${gone}`);
   }
+  if(html.material.includes('Proceed in Sandbox')||html.material.includes('指令放沙箱'))fail('教材殘留新版 Antigravity 已無的沙箱選項（2026-08-04 Windows 實測：Custom 只有兩格、無 Proceed in Sandbox）');
 }
 if(!Array.isArray(flow.phrases)||flow.phrases.length!==12)fail('共用資料缺少 12 句日常用語表（flow.phrases）');
 if(html.material.includes('const PHRASES=')||!html.material.includes('FLOW.phrases'))fail('教材的 12 句表應改用共用資料 FLOW.phrases，不得另存一份');
