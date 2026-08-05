@@ -205,7 +205,7 @@
     {
       id:'C1',phase:'collab',minutes:10,title:'兩人建立並連上配對 repo',
       why:'個人階段從零建立自己的專案；協作的共同 repo 也由你們自己建——教授擁有論文 repo、研究生受邀協作，權力結構跟真實研究一樣。',
-      concept:'協作 repo 的骨架是三件事：放在其中一人帳號下的遠端 repo、對另一人發出的協作者邀請、以及各自 clone 回本機的完整副本。clone 會把檔案、commit 歷史與遠端連結一起帶下來，日後同步才用 pull。公開 repo 沒有寫入權限也能 clone，但要 push 修改必須先接受邀請，所以這一關的驗收重點是權限。',
+      concept:'協作 repo 的骨架是三件事：放在其中一人帳號下的遠端 repo、對另一人發出的協作者邀請、以及兩人手上各有一份本機工作副本。建立 repo 的那個人（本課的指導教授角色）本機已經有了，另一人才需要 clone。clone 會把檔案、commit 歷史與遠端連結一起帶下來，日後同步才用 pull。公開 repo 沒有寫入權限也能 clone，但要 push 修改必須先接受邀請，所以這一關的驗收重點是權限。',
       terms:[
         {term:'clone',meaning:'第一次把遠端 repo、全部 commit 歷史及遠端設定完整複製到電腦。'},
         {term:'協作者（collaborator）',meaning:'被 repo 擁有者邀請、可推送修改的成員；邀請要對方親自接受才生效。'},

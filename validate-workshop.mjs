@@ -28,7 +28,7 @@ for(const step of flow.steps){
     if(!item||typeof item.term!=='string'||!item.term.trim()||typeof item.meaning!=='string'||!item.meaning.trim())fail(`${step.id} 的名詞格式不完整`);
   }
   if(typeof step.concept!=='string'||step.concept.trim().length<45)fail(`${step.id} 的觀念說明太短`);
-  if(/<\/?(strong|em|b|i|br|span|div|p)\b/i.test(step.prompt))fail(`${step.id} 的 prompt 混進 HTML 標籤——這一欄會被學員原樣複製貼給 AI，只能放純文字`);
+  if(/<\/?[a-zA-Z][a-zA-Z0-9]*(\s[^>]*)?\/?>/.test(step.prompt))fail(`${step.id} 的 prompt 混進 HTML 標籤——這一欄會被學員原樣複製貼給 AI，只能放純文字`);
 }
 {
   const c1=flow.byId('C1');
