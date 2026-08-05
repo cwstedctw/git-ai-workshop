@@ -49,7 +49,7 @@
       human:'確認路徑、公開範圍與資料都是假的，再明確說「同意執行」。',
       dashboard:'Git 已建立；分支為 main；remote 已連接；歷史仍可為 0。',
       behind:'git init\ngit branch -M main\ngh repo create research-practice-project --public --source=.\ngit remote -v',
-      rescue:'若 GitHub 登入失敗，先請 AI 執行 gh auth status；不要改用 force 或把密碼交給 AI。'
+      rescue:'若 GitHub 登入失敗，先請 AI 執行 gh auth status；不要改用 force 或把密碼交給 AI。若建立 repo 時回報名稱已被占用（Name already exists），代表你帳號下已有同名 repo——自學重做時很常見：改用 research-practice-project-2 之類的新名稱，或先確認舊的那個沒有要留再處理，不要急著刪。'
     },
     {
       id:'P3',phase:'personal',minutes:5,title:'建立第一份研究筆記',
@@ -215,20 +215,21 @@
       prompt:`請分成兩台電腦依序完成。開始前先跟夥伴互報 GitHub 帳號、講好組號。
 
 指導教授的電腦（這一輪的教授擁有論文 repo）：
-- 幫我建立一個公開 GitHub repo，名稱 thesis-pair-組號（把「組號」換成你們的，例如 thesis-pair-03）。裡面建兩個檔案：paper.md 要有「方法」與「文獻回顧」兩個標題、各放一句假內容；.gitignore 要排除 WORKSHOP-RECEIPT*.txt。commit 並 push 後，把我的夥伴加為可推送（push）的協作者——帳號用夥伴剛報給我的那個。完成後回報 repo 完整網址。
+- ⚠️ 新 repo 要獨立、不能蓋在第一階段的專案裡。請先告訴我我的「文件」資料夾（Documents）完整路徑，在那底下建一個全新的空資料夾 thesis-pair-組號（把「組號」換成你們的，例如 thesis-pair-03）；如果你發現目前位置在 research-practice-project 裡面，立刻停下來告訴我。
+- 在那個新資料夾裡建兩個檔案：paper.md 要有「方法」與「文獻回顧」兩個標題、各放一句假內容；.gitignore 要排除 WORKSHOP-RECEIPT*.txt。做成第一個 commit（分支名 main）後建立同名的公開 GitHub repo 並推上去，再把我的夥伴加為可推送（push）的協作者——帳號用夥伴剛報給我的那個。完成後回報 repo 完整網址。
 
 研究生這邊：
 - 打開 github.com 右上角的通知（或信箱裡的邀請信），親自按 Accept invitation 接受邀請，回報你打開得了這個 repo。
 
 然後兩人各自：
 - 把教授回報的 owner/thesis-pair-組號 填進闖關頁上方的「配對 repo」欄位。
-- 請 AI 把配對 repo {pairRepo} clone 到「文件」資料夾，回報 clone 後完整路徑；只查看目前分支、origin 與自己的 GitHub 寫入權限。
+- 請 AI 把配對 repo {pairRepo} clone 到自己的「文件」資料夾（英文系統顯示為 Documents，請以你系統上實際的名稱為準），回報 clone 後完整路徑；只查看目前分支、origin 與自己的 GitHub 寫入權限。
 - 用目前使用的 AI 工具開啟這個新資料夾，讓闖關頁改連接這個剛 clone 的資料夾（不是第一階段那個），最後把組號與 repo 網址回報講師。`,
-      plan:['互報 GitHub 帳號並決定組號','教授端：AI 建 repo、放 paper.md 與 .gitignore、發協作者邀請','研究生端：親自接受邀請','兩人把 owner/repo 填進闖關頁','各自 clone 到文件資料夾並回報完整路徑','核對 main、origin 與寫入權限','闖關頁改連新資料夾、組號與網址回報講師'],
+      plan:['互報 GitHub 帳號並決定組號','教授端：先離開第一階段資料夾，在文件夾底下建獨立新資料夾','教授端：AI 建 repo、放 paper.md 與 .gitignore、發協作者邀請','研究生端：親自接受邀請','兩人把 owner/repo 填進闖關頁','各自 clone 到文件資料夾並回報完整路徑','核對 main、origin 與寫入權限','闖關頁改連新資料夾、組號與網址回報講師'],
       human:'教授確認 repo 名稱與邀請的帳號沒打錯；研究生親自按 Accept invitation；兩人都確認自己的權限是 WRITE 或更高，下一關才推得上去。',
       dashboard:'資料夾切換成功；HEAD 是 main；main 與 origin/main 同步；顯示正確配對資訊。',
-      behind:'# 教授端：先在本機備好內容，再連同檔案一起建遠端 repo\nmkdir thesis-pair-組號\ncd thesis-pair-組號\n# 建立 paper.md（含「方法」「文獻回顧」兩個標題）與 .gitignore（排除 WORKSHOP-RECEIPT*.txt）\ngit init -b main\ngit add paper.md .gitignore\ngit commit -m "建立配對練習論文骨架"\ngh repo create thesis-pair-組號 --public --source=. --push\ngh api repos/{pairRepo}/collaborators/夥伴帳號 -X PUT -f permission=push\n\n# 研究生端：到 github.com 通知或信箱親自按 Accept invitation（這一步網頁做，沒有指令）\n\n# 兩人各自：\ngit clone https://github.com/{pairRepo}.git <文件資料夾中的目標路徑>\ngit -C <clone後完整路徑> status --short --branch\ngit -C <clone後完整路徑> remote -v\ngh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef',
-      rescue:'公開 repo 即使尚未接受邀請也能 clone，但 push 會被拒——先確認邀請已接受、登入的是自己的帳號；邀請信找不到時，直接打開 repo 網址也會出現接受邀請的提示。clone 失敗先核對網址與網路；若目標資料夾已存在，不要刪除或覆蓋，先回報內容再決定。整組卡超過五分鐘就舉手：講師會把你們兩人都加為示範 repo 的協作者（你們仍要親自接受邀請、確認權限是 WRITE），再 clone 那一個繼續走 C2——沒有 WRITE 權限，C2 的 push 一定會失敗。課後再補建自己的。'
+      behind:'# 教授端：⚠️ 一定要離開第一階段的 research-practice-project，在文件夾底下另建獨立資料夾\ncd ~/Documents          # Windows PowerShell 用 cd $HOME\\Documents（中文系統顯示為「文件」，路徑名仍是 Documents）\nmkdir thesis-pair-組號\ncd thesis-pair-組號\n# 建立 paper.md（含「方法」「文獻回顧」兩個標題）與 .gitignore（排除 WORKSHOP-RECEIPT*.txt）\ngit init -b main\ngit add paper.md .gitignore\ngit commit -m "建立配對練習論文骨架"\ngh repo create thesis-pair-組號 --public --source=. --push\ngh api repos/{pairRepo}/collaborators/夥伴帳號 -X PUT -f permission=push\n\n# 研究生端：到 github.com 通知或信箱親自按 Accept invitation（這一步網頁做，沒有指令）\n\n# 兩人各自：\ngit clone https://github.com/{pairRepo}.git <文件資料夾中的目標路徑>\ngit -C <clone後完整路徑> status --short --branch\ngit -C <clone後完整路徑> remote -v\ngh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef',
+      rescue:'⚠️ 若發現 AI 把新資料夾建在 research-practice-project 裡面（出現巢狀的第二個 .git），立刻停下、不要再 commit 或 push，請它刪掉那個新資料夾、改到文件夾底下重建。若 repo 名稱已被占用，換一個組號或加後綴，不要刪掉別人的 repo。公開 repo 即使尚未接受邀請也能 clone，但 push 會被拒——先確認邀請已接受、登入的是自己的帳號；邀請信找不到時，直接打開 repo 網址也會出現接受邀請的提示。clone 失敗先核對網址與網路；若目標資料夾已存在，不要刪除或覆蓋，先回報內容再決定。整組卡超過五分鐘就舉手：講師會把你們兩人都加為示範 repo 的協作者（你們仍要親自接受邀請、確認權限是 WRITE），再 clone 那一個繼續走 C2——沒有 WRITE 權限，C2 的 push 一定會失敗。課後再補建自己的。'
     },
     {
       id:'C2',phase:'collab',minutes:8,title:'研究生開分支並提出修改',

@@ -459,7 +459,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <div class="card">
     <p><strong>檔位一「全開放」</strong>——什麼都不設。PR 是大家說好的禮數，協作者互相看過就自己併。適合已經約定好流程、彼此高度互信的共同作者。</p>
     <p><strong>檔位二「必走 PR」</strong>——設定「改 main 一律要走 PR」。誰都不能偷偷直改正稿，每筆修改都留下攤開過的紀錄；但舉完手自己就能併，不用等誰點頭。適合想要「凡走過必留下痕跡」的團隊。</p>
-    <p><strong>檔位三「要核可」</strong>——再加一條「要 1 個核可（Approve），merge 鈕才會亮」。課堂上你們現場自建的配對 repo 走的是<strong>檔位一＋課堂紀律</strong>：C3 明訂由另一人逐行審查、作者不得自我核准——這把鎖裝在約定裡，不在門上。<strong>課後帶研究生做真實研究，建議把門升到檔位三</strong>：GitHub 規定不能核可自己的 PR，師生兩人的 repo，唯一能點頭的人自然是指導教授；整段指導歷程（誰改了什麼、為什麼要求修改）都留在 PR 裡，半年後仍可查閱。</p>
+    <p><strong>檔位三「要核可」</strong>——再加一條「要 1 個核可（Approve），merge 鈕才會亮」。課堂上你們現場自建的配對 repo 走的是<strong>檔位一＋課堂紀律</strong>：C3 明訂由另一人逐行審查、作者不得自我核准——這把鎖裝在約定裡，不在門上。<strong>課後帶研究生做真實研究，建議把門升到檔位三</strong>：GitHub 規定不能核可自己的 PR，所以研究生的 PR 一定要指導教授點頭；整段指導歷程（誰改了什麼、為什麼要求修改）都留在 PR 裡，半年後仍可查閱。<br>⚠️ <strong>設檔位三時要多勾一格</strong>：repo 的擁有者與管理員<strong>預設可以繞過</strong>這道規則直接 merge，所以除了「Require a pull request before merging」與「Require approvals: 1」，還要勾 <strong>Do not allow bypassing the above settings</strong>，這道門才真的鎖得住你自己。</p>
     <p class="small">設定位置：repo 的 Settings → Branches，給 main 加規則、勾兩個選項就完成，隨時可調。⚠️ 誠實提醒：<strong>私人 repo 要用這些門檻，免費方案不夠</strong>（公開 repo 免費就能設）——但申請了行前信提過的 GitHub Education 教師方案，就有付費版功能可用。</p>
   </div>
   <p class="small">這一節跟第伍節說的是同一件事：<strong>哪些事互信、哪些事上鎖，是你決定的</strong>——差別只是這次的鎖設在 GitHub 的門上，不是設在 agent 的授權裡。</p>
@@ -536,11 +536,12 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <tr><td>0:40–0:47</td><td>第二次 commit 與 push</td><td>P7</td><td>分清 commit 與 push</td></tr>
     <tr><td>0:47–0:56</td><td>歷史、版本比較、restore 與 revert</td><td>P8–P9</td><td>每個改動步驟都停下確認</td></tr>
     <tr><td>0:56–1:02</td><td>個人階段補進度</td><td>最低線檢查</td><td>2 commits＋2 pushes</td></tr>
-    <tr><td>1:02–1:16</td><td>休息、配對、互報 GitHub 帳號；C1 兩人自建配對 repo＋clone（第二個資料夾）</td><td>C1</td><td>教授建 repo、研究生親自接受邀請；權限 WRITE；闖關頁改連新資料夾</td></tr>
-    <tr><td>1:16–1:35</td><td>第一輪：研究生提 PR；教授要求補改；補改後核准合併</td><td>C2–C5</td><td>另一人親自看 Files changed；作者不可自我核准</td></tr>
-    <tr><td>1:35–1:47</td><td>交換角色，走一次短流程</td><td>C6</td><td>不能省略 diff 與另一人核准</td></tr>
-    <tr><td>1:47–1:55</td><td>第二輪合併後雙方最終 pull、看歷史、故障排除</td><td>C6 收尾＋救援</td><td>兩台電腦都看得到 main 最新內容</td></tr>
-    <tr><td>1:55–2:00</td><td>小測驗、回顧與帶走資源</td><td>收尾</td><td>說得出 AI／人的分工與三條紅線</td></tr>
+    <tr><td>1:02–1:06</td><td>休息、配對、發角色卡、兩人互報 GitHub 帳號</td><td>配對</td><td>帳號抄在角色卡背面，C1 立刻要用</td></tr>
+    <tr><td>1:06–1:16</td><td>C1 兩人自建配對 repo＋各自 clone（第二個資料夾）</td><td>C1</td><td>教授建 repo、研究生親自接受邀請；權限 WRITE；闖關頁改連新資料夾</td></tr>
+    <tr><td>1:16–1:41</td><td>第一輪：研究生提 PR；教授要求補改；補改後核准合併；雙方 pull</td><td>C2–C5</td><td>另一人親自看 Files changed；作者不可自我核准</td></tr>
+    <tr><td>1:41–1:50</td><td>交換角色，走一次短流程</td><td>C6</td><td>不能省略 diff 與另一人核准</td></tr>
+    <tr><td>1:50–1:56</td><td>第二輪合併後雙方最終 pull、看歷史、故障排除</td><td>C6 收尾＋救援</td><td>兩台電腦都看得到 main 最新內容</td></tr>
+    <tr><td>1:56–2:00</td><td>小測驗、回顧與帶走資源</td><td>收尾</td><td>說得出 AI／人的分工與三條紅線</td></tr>
   </table></div>
   <h3>開課前講師要完成的準備</h3>
   <p>配對 repo 改由學員在 C1 <strong>現場自建</strong>（教授角色的 AI 一句話建好、研究生親自接受邀請），講師不必預建。要準備的是：<strong>角色卡</strong>——正面寫組號與第一輪角色，背面留兩格「我的 GitHub 帳號／夥伴的 GitHub 帳號」讓兩人互抄；<strong>配對方式</strong>——建議相鄰兩人一組，奇數人時最後一組三人、第三人在 C6 當第二輪研究生；以及<strong>一個講師示範 repo</strong>——照 C1 規格先建好（<code>paper.md</code> 含「方法」「文獻回顧」、<code>.gitignore</code> 排除 <code>WORKSHOP-RECEIPT*.txt</code>），哪一組 C1 卡超過五分鐘，把<strong>兩人都加為示範 repo 的協作者</strong>（請他們親自接受邀請、確認權限是 WRITE，否則 C2 的 push 會失敗），再讓他們 clone 那一個繼續走 C2，課後補建自己的。</p>

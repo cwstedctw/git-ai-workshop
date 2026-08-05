@@ -143,6 +143,21 @@ if(!html.material.includes('id="flowGuide"')||!html.material.includes('id="troub
     if(html[page].includes(gone))fail(`${fileFor[page]} 殘留「講師預先分配配對 repo」的舊流程：${gone}`);
   }
   if(html.material.includes('Proceed in Sandbox')||html.material.includes('指令放沙箱'))fail('教材殘留新版 Antigravity 已無的沙箱選項（2026-08-04 Windows 實測：Custom 只有兩格、無 Proceed in Sandbox）');
+  if(!html.material.includes('Do not allow bypassing'))fail('檔位三缺少「擁有者／管理員預設可繞過」的提醒（GitHub 官方：admin 可在未核可下 merge，除非勾此項）');
+}
+{
+  const toMin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m};
+  const rows=[...html.material.matchAll(/<td>(\d:\d\d)–(\d:\d\d)<\/td>/g)].map(m=>[toMin(m[1]),toMin(m[2])]);
+  if(rows.length<10)fail(`課表列數異常：只抓到 ${rows.length} 列`);
+  for(let i=0;i<rows.length;i++){
+    if(rows[i][1]<=rows[i][0])fail(`課表第 ${i+1} 列的結束時間不晚於開始時間`);
+    if(i&&rows[i][0]!==rows[i-1][1])fail(`課表第 ${i} 列結束於 ${rows[i-1][1]} 分，第 ${i+1} 列卻從 ${rows[i][0]} 分開始——時間必須首尾相接`);
+  }
+  if(rows[0][0]!==0||rows[rows.length-1][1]!==120)fail('課表應從 0:00 開始、於 2:00 結束');
+  const collabRows=rows.filter(([start])=>start>=toMin('1:02'));
+  const collabTable=collabRows.reduce((sum,[a,b])=>sum+(b-a),0);
+  const collabDeclared=flow.phases.find(p=>p.id==='collab').minutes;
+  if(collabTable<collabDeclared)fail(`課表協作段只排了 ${collabTable} 分鐘，但 collab 各關宣告合計 ${collabDeclared} 分鐘——現場會做不完`);
 }
 if(!Array.isArray(flow.phrases)||flow.phrases.length!==12)fail('共用資料缺少 12 句日常用語表（flow.phrases）');
 if(html.material.includes('const PHRASES=')||!html.material.includes('FLOW.phrases'))fail('教材的 12 句表應改用共用資料 FLOW.phrases，不得另存一份');
