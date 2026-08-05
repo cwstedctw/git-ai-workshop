@@ -571,7 +571,10 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <h3 style="margin-top:0">這些可以先不學</h3>
     <p>stash、rebase、amend、fork 工作流、GitHub Actions、git 內部原理——研究者課程的共識是入門階段全部跳過，我們跟進。理由一句話：需要它們的時候，你的 agent 會用，而你只要看得懂它的計畫。這張「可以不學」清單跟前面「該學」的一樣重要——有它，兩小時的範圍才站得住腳。</p>
   </div>
+</section>
 
+<!-- ═══════════ 誠實限制 ═══════════ -->
+<section id="limits">
   <h2><span class="no">拾</span>三條誠實限制（不藏）</h2>
   <div class="card">
     <p><strong>一、Word 和 Excel 在 git 裡看不到逐行差異。</strong>它們不是純文字檔，diff 只會說「檔案變了」，不會說哪一行變了。git 對純文字檔（.md、.R、.do、.tex、.csv）才火力全開。Word 照樣可以放進版本庫備份與同步，只是「追蹤修訂」那種體驗要靠 Word 自己。</p>
@@ -842,7 +845,7 @@ QUIZ.forEach((q,qi)=>{
 });
 
 /* ───────── 分頁版面與路由 ───────── */
-const TAB_GROUPS=[['roadmap','why'],['prep'],['concepts'],['guide'],['conflict','gates'],['safety'],['phrases','troubleshoot','quiz','refs'],['agenda']];
+const TAB_GROUPS=[['roadmap','why'],['prep'],['concepts'],['guide'],['conflict','gates'],['safety'],['phrases','troubleshoot','quiz','refs','limits'],['agenda']];
 const navLinks=[...document.querySelectorAll('#topnav a')];
 const fullBtn=document.getElementById('fullBtn');
 let tabbed=localStorage.getItem('gw-tabbed')!=='0';

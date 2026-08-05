@@ -215,7 +215,7 @@ for(const [page,oldText] of [['quest','<strong>人要做：</strong>'],['quest',
 }
 if(html.quest.includes("if(map[id]){localStorage.setItem('gq-done-'"))fail('自動證據不得直接把整關標成完成');
 for(const needle of ["if(map[id])return'evidence'",'自動證據已符合；完成仍由你判斷','gq-progress-schema','role="progressbar"','aria-label="待手動複製的 AI 提示"','.task pre{max-width:100%'])if(!html.quest.includes(needle))fail(`闖關頁缺少雙階段驗收或版面修正：${needle}`);
-if(!html.material.includes('--teal-soft:#DCEFED')||!html.material.includes('background:var(--panel)')||!html.material.includes("['roadmap','why']")||!html.material.includes("['phrases','troubleshoot','quiz','refs']"))fail('教材缺少色彩 token 或精簡後導覽分組');
+if(!html.material.includes('--teal-soft:#DCEFED')||!html.material.includes('background:var(--panel)')||!html.material.includes("['roadmap','why']")||!html.material.includes("['phrases','troubleshoot','quiz','refs','limits']"))fail('教材缺少色彩 token 或精簡後導覽分組');
 if(/git worktree|<strong>fork<\/strong>|worktree、branch/.test(html.material)||/git worktree/.test(read('./workflow-data.js')))fail('教材仍有未進入主流程的 worktree／fork 延伸內容');
 for(const url of ['https://gitbook.tw/','https://swcarpentry.github.io/git-novice/','https://www.aeaweb.org/journals/data'])if(!html.material.includes(`href="${url}"`))fail(`參考資料不是可點連結：${url}`);
 if(!html.radar.includes('配對 repo')||!html.radar.includes('/reviews?'))fail('雷達缺少配對 repo 或 PR review 檢查');
