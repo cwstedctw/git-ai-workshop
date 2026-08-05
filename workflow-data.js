@@ -11,7 +11,7 @@
     {
       id:'collab',
       label:'第二階段｜研究生 × 指導教授',
-      minutes:39,
+      minutes:44,
       promise:'兩人輪流提出修改與把關，完整走過 PR、退回補改、核准、合併與同步。共享的 main 不用 reset、rebase 或 force push 改寫歷史。'
     }
   ];
@@ -203,21 +203,32 @@
       rescue:'若開始前不乾淨或未同步、diff 不只包含指定假內容、分支改變、revert 衝突或 push 被拒絕，立即停止。只回報 repo、branch、status、log 與 diff；不得 restore 非預期內容、reset、rebase 或 force push。若錯誤 commit 已在遠端，明確提醒目前狀態且不要標記 P9 done；若 revert 衝突，不得 push，等你決定是否 abort。'
     },
     {
-      id:'C1',phase:'collab',minutes:5,title:'切換到配對研究 repo',
-      why:'個人階段從零建立；協作階段才練習把既有共同專案 clone 下來。兩條情境在這裡正式接上。',
-      concept:'clone 是把 GitHub 上既有的 repo 第一次完整搬到你的電腦，檔案、commit 歷史與遠端連結會一起帶下來；日後同步才用 pull。公開 repo 即使沒有寫入權限也能 clone，但要 push 修改仍須接受協作者邀請。完成後先核對 repo、main 與完整路徑，避免在錯的專案工作。',
+      id:'C1',phase:'collab',minutes:10,title:'兩人建立並連上配對 repo',
+      why:'個人階段從零建立自己的專案；協作的共同 repo 也由你們自己建——教授擁有論文 repo、研究生受邀協作，權力結構跟真實研究一樣。',
+      concept:'協作 repo 的骨架是三件事：放在其中一人帳號下的遠端 repo、對另一人發出的協作者邀請、以及各自 clone 回本機的完整副本。clone 會把檔案、commit 歷史與遠端連結一起帶下來，日後同步才用 pull。公開 repo 沒有寫入權限也能 clone，但要 push 修改必須先接受邀請，所以這一關的驗收重點是權限。',
       terms:[
-        {term:'repo／repository',meaning:'包含專案檔案與 Git 歷史的完整版本庫，不只是 GitHub 網址。'},
         {term:'clone',meaning:'第一次把遠端 repo、全部 commit 歷史及遠端設定完整複製到電腦。'},
+        {term:'協作者（collaborator）',meaning:'被 repo 擁有者邀請、可推送修改的成員；邀請要對方親自接受才生效。'},
         {term:'origin',meaning:'clone 後，Git 通常替原 GitHub repo 網址設定的預設名稱。'},
         {term:'寫入權限',meaning:'能 clone 不代表能 push；公開 repo 可讀，但推送修改仍須協作者權限。'}
       ],
-      prompt:'把配對練習 repo {pairRepo} clone 到我的「文件」資料夾，告訴我 clone 後的完整路徑。只使用這個公開假資料 repo，不要碰其他專案。完成後請只查看目前分支、origin 與我的 GitHub 寫入權限；再請我用目前使用的 AI 工具開啟這個新資料夾，並提醒我讓闖關頁改連接這個剛 clone 的資料夾（不是第一階段那個）。',
-      plan:['確認配對 repo 網址與目標位置','clone 到文件資料夾','回報 clone 後完整路徑','核對 main、origin 與寫入權限','提醒重新連接闖關頁儀表板'],
-      human:'核對配對編號與夥伴；確認闖關頁顯示配對 repo 的 main，並確認你的權限是 WRITE 或更高，下一關才推得上去。',
+      prompt:`請分成兩台電腦依序完成。開始前先跟夥伴互報 GitHub 帳號、講好組號。
+
+指導教授的電腦（這一輪的教授擁有論文 repo）：
+- 幫我建立一個公開 GitHub repo，名稱 thesis-pair-組號（把「組號」換成你們的，例如 thesis-pair-03）。裡面建兩個檔案：paper.md 要有「方法」與「文獻回顧」兩個標題、各放一句假內容；.gitignore 要排除 WORKSHOP-RECEIPT*.txt。commit 並 push 後，把我的夥伴加為可推送（push）的協作者——帳號用夥伴剛報給我的那個。完成後回報 repo 完整網址。
+
+研究生這邊：
+- 打開 github.com 右上角的通知（或信箱裡的邀請信），親自按 Accept invitation 接受邀請，回報你打開得了這個 repo。
+
+然後兩人各自：
+- 把教授回報的 owner/thesis-pair-組號 填進闖關頁上方的「配對 repo」欄位。
+- 請 AI 把配對 repo {pairRepo} clone 到「文件」資料夾，回報 clone 後完整路徑；只查看目前分支、origin 與自己的 GitHub 寫入權限。
+- 用目前使用的 AI 工具開啟這個新資料夾，讓闖關頁改連接這個剛 clone 的資料夾（不是第一階段那個），最後把組號與 repo 網址回報講師。`,
+      plan:['互報 GitHub 帳號並決定組號','教授端：AI 建 repo、放 paper.md 與 .gitignore、發協作者邀請','研究生端：親自接受邀請','兩人把 owner/repo 填進闖關頁','各自 clone 到文件資料夾並回報完整路徑','核對 main、origin 與寫入權限','闖關頁改連新資料夾、組號與網址回報講師'],
+      human:'教授確認 repo 名稱與邀請的帳號沒打錯；研究生親自按 Accept invitation；兩人都確認自己的權限是 WRITE 或更高，下一關才推得上去。',
       dashboard:'資料夾切換成功；HEAD 是 main；main 與 origin/main 同步；顯示正確配對資訊。',
-      behind:'git clone https://github.com/{pairRepo}.git <文件資料夾中的目標路徑>\ngit -C <clone後完整路徑> status --short --branch\ngit -C <clone後完整路徑> remote -v\ngh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef',
-      rescue:'公開 repo 即使尚未接受邀請也能 clone。clone 失敗時先核對網址與網路；若目標資料夾已存在，不要刪除或覆蓋，先回報內容再決定沿用或換新名稱。若 clone 成功但權限只有 READ，請接受該組協作者邀請並核對登入帳號，不要改用別組 repo。'
+      behind:'gh repo create thesis-pair-組號 --public\ngh api repos/{pairRepo}/collaborators/夥伴帳號 -X PUT -f permission=push\ngit clone https://github.com/{pairRepo}.git <文件資料夾中的目標路徑>\ngit -C <clone後完整路徑> status --short --branch\ngit -C <clone後完整路徑> remote -v\ngh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef',
+      rescue:'公開 repo 即使尚未接受邀請也能 clone，但 push 會被拒——先確認邀請已接受、登入的是自己的帳號；邀請信找不到時，直接打開 repo 網址也會出現接受邀請的提示。clone 失敗先核對網址與網路；若目標資料夾已存在，不要刪除或覆蓋，先回報內容再決定。整組卡超過五分鐘就舉手，先掛講師的示範 repo 繼續走 C2，課後再補建自己的。'
     },
     {
       id:'C2',phase:'collab',minutes:8,title:'研究生開分支並提出修改',
@@ -415,7 +426,7 @@
   ];
 
   window.WORKSHOP_FLOW={
-    version:'2026-08-04-v5.4',
+    version:'2026-08-05-v5.5',
     phases,steps,resetGuide,troubleshooting,reference,phrases,
     byId:id=>steps.find(s=>s.id===id),
     phaseSteps:id=>steps.filter(s=>s.phase===id)

@@ -22,7 +22,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   <section class="toolbar">
     <div><label>GitHub token（建議填，只存在本分頁）<input id="token" type="password" autocomplete="off" placeholder="少量 repo 可留空"></label><p class="muted">無 token 時 GitHub API 每個 IP 每小時只有 60 次，只適合少量 repo 手動讀一次；自動更新必須先填 token。請使用唯讀、最小權限 token，且不要放進教材、repo 或截圖。</p><details class="muted"><summary>課前怎麼準備安全的 token</summary><p>依 <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener">GitHub 官方步驟</a>建立 fine-grained token；只選課堂練習 repo，Repository permissions 的 Contents、Metadata 與 Pull requests 都只給 Read-only，並設定短效期。這個雷達不需要任何寫入權限。</p></details></div>
     <div><label>個人練習 repo（一行：桌牌,owner/repo）<textarea id="personal" placeholder="lin,lin-account/research-practice-project"></textarea></label></div>
-    <div><label>配對 repo（一行：組別,owner/repo）<textarea id="pairs" placeholder="第1組,teacher-account/thesis-pair-01"></textarea></label></div>
+    <div><label>配對 repo（一行：組別,owner/repo——C1 各組現場自建、回報後在這裡輸入）<textarea id="pairs" placeholder="第3組,advisor-account/thesis-pair-03"></textarea></label></div>
     <div><label>目前階段<select id="phase"><option value="personal">第一階段｜自己的研究專案</option><option value="collab">第二階段｜研究生 × 指導教授</option></select></label></div>
     <div><label>自動更新<select id="interval"><option value="0">關閉</option><option value="60">每 60 秒</option><option value="300">每 5 分鐘</option></select></label></div>
     <div style="align-self:end"><button class="btn" id="load" type="button">立即讀取目前階段</button><p id="note" class="muted" role="status" aria-live="polite"></p></div>
@@ -41,7 +41,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   <section id="personalSection"><h2>個人練習進度</h2><div id="personalGrid" class="grid"></div></section>
   <section id="pairSection"><h2>研究生／指導教授配對進度</h2><div id="pairGrid" class="grid"></div></section>
 </main>
-<footer>講師救援雷達｜2026-08-04 v5.4｜只讀 GitHub 上看得到的證據｜<a href="material.html">完整教材</a>・<a href="quest.html">闖關頁</a></footer>
+<footer>講師救援雷達｜2026-08-05 v5.5｜只讀 GitHub 上看得到的證據｜<a href="material.html">完整教材</a>・<a href="quest.html">闖關頁</a></footer>
 <script>
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const saved=k=>localStorage.getItem('gr-'+k)||'';

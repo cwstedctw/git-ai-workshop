@@ -73,6 +73,10 @@ if((p9.behind.match(/git push origin main/g)||[]).length!==2)fail('P9 應有錯�
 
 const c1=flow.byId('C1'),c2=flow.byId('C2'),c4=flow.byId('C4'),c5=flow.byId('C5');
 if(!c1.behind.includes('<文件資料夾中的目標路徑>')||!c1.rescue.includes('公開 repo 即使尚未接受邀請也能 clone'))fail('C1 clone 位置或權限說明不完整');
+for(const phrase of ['互報 GitHub 帳號','「方法」與「文獻回顧」兩個標題','WORKSHOP-RECEIPT*.txt','Accept invitation','回報 repo 完整網址']){
+  if(!c1.prompt.includes(phrase))fail(`C1 自建配對 repo 提示缺少：${phrase}`);
+}
+if(!c1.behind.includes('gh repo create thesis-pair-')||!c1.behind.includes('collaborators'))fail('C1 幕後流程缺少建 repo 或邀請協作者指令');
 for(const phrase of ['git pull --ff-only origin main','git add paper.md','git diff --cached -- paper.md']){
   if(!c2.behind.includes(phrase))fail(`C2 幕後流程缺少：${phrase}`);
 }
@@ -133,7 +137,7 @@ for(const removed of ['十二幕','id="story"','#story','SCENES','SCENE_QUEST','
 }
 if(html.material.includes('template repo'))fail('教材仍殘留已取消的範本 repo 流程');
 if(!html.material.includes('協作進階：衝突來了怎麼辦'))fail('教材缺少保留的協作衝突說明');
-if(html.material.includes('本課的共用專案就是這檔')||!html.material.includes('本課每組的配對 repo 使用這一檔'))fail('教材的 main 保護檔位與配對 repo 流程不一致');
+if(html.material.includes('本課的共用專案就是這檔')||html.material.includes('本課每組的配對 repo 使用這一檔')||!html.material.includes('檔位一＋課堂紀律'))fail('教材的 main 保護檔位與「課堂自建 repo」流程不一致');
 for(const target of ['#guide-P1','#guide-P4','#guide-P6','#guide-P9','#guide-C1','#guide-C2','#guide-C3','#guide-C4','#conflict']){
   if(!html.material.includes(`href="${target}"`))fail(`術語表缺少實際步驟連結：${target}`);
 }
@@ -180,6 +184,6 @@ for(const needle of ["items=rows(personal?'personal':'pairs')","allowEmpty&&r.st
 if(!html.radar.includes("localStorage.getItem('gr-settings-schema')!=='real-repos-v1'"))fail('講師雷達沒有一次性清除舊示範設定');
 if(html.radar.includes('id="demo"')||html.radar.includes('已有練習分支'))fail('講師雷達仍有無效示範設定或舊分支流程');
 if(!html.index.includes('15 步'))fail('首頁沒有更新為 15 步');
-if(flow.version!=='2026-08-04-v5.4'||!html.material.includes('v5.4')||!html.quest.includes('v5.4')||!html.radar.includes('v5.4')||!html.index.includes('v5.4'))fail('版本號未同步到 v5.4（四頁都要有）');
+if(flow.version!=='2026-08-05-v5.5'||!html.material.includes('v5.5')||!html.quest.includes('v5.5')||!html.radar.includes('v5.5')||!html.index.includes('v5.5'))fail('版本號未同步到 v5.5（四頁都要有）');
 
 console.log(`PASS ${flow.version}: ${flow.steps.length} steps, 4 HTML files, shared flow, layout guards and inline JavaScript verified.`);
