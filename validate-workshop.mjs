@@ -133,7 +133,7 @@ if(!html.material.includes('id="flowGuide"')||!html.material.includes('id="troub
   const progress=html.material.match(/id="checkProgress"[^>]*>0 \/ (\d+)</);
   if(!progress||Number(progress[1])!==checkCount)fail(`行前進度初始字串是 0 / ${progress?progress[1]:'?'}，但實際有 ${checkCount} 個項目`);
   if(labels.length!==checkCount||labels.some((n,i)=>n!==i+1))fail(`行前項目的 aria-label 編號應為 1–${checkCount} 連續，目前是 ${labels.join(',')}`);
-  for(const [n] of [...html.material.matchAll(/第 (\d+) 項/g)].map(m=>[Number(m[1])])){
+  for(const [n] of [...html.material.matchAll(/第\s*(\d+)\s*項/g)].map(m=>[Number(m[1])])){
     if(n>checkCount)fail(`教材引用了不存在的行前項次：第 ${n} 項（目前只有 ${checkCount} 項）`);
   }
   for(const gone of ['viewform','id="projBtn"','.projector','回填檢核表','講師會把你加進','第 9 項回報','第 8 項回報','第 9 項要用','第 8 項註明']){
