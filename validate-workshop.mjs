@@ -28,6 +28,13 @@ for(const step of flow.steps){
     if(!item||typeof item.term!=='string'||!item.term.trim()||typeof item.meaning!=='string'||!item.meaning.trim())fail(`${step.id} 的名詞格式不完整`);
   }
   if(typeof step.concept!=='string'||step.concept.trim().length<45)fail(`${step.id} 的觀念說明太短`);
+  if(/<\/?(strong|em|b|i|br|span|div|p)\b/i.test(step.prompt))fail(`${step.id} 的 prompt 混進 HTML 標籤——這一欄會被學員原樣複製貼給 AI，只能放純文字`);
+}
+{
+  const c1=flow.byId('C1');
+  for(const phrase of ['不要再 clone 一次','研究生']){
+    if(!c1.prompt.includes(phrase))fail(`C1 未區分教授（沿用剛建的資料夾）與研究生（clone）：缺少「${phrase}」`);
+  }
 }
 const p9=flow.steps.find(step=>step.id==='P9');
 if(p9.title!=='三種看似「回去」：只看、restore、revert'||p9.why.includes('學生'))fail('P9 標題或讀者稱呼不正確');
