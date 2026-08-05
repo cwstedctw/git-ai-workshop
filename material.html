@@ -238,7 +238,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <!-- ═══════════ 行前準備 ═══════════ -->
 <section id="prep">
   <h2><span class="no">貳</span>行前準備包（請留兩個晚上，別排在開課前一天）</h2>
-  <p>第 1、2 項約 30 分鐘；第 3–7 項要下載安裝，視網速可能要一小時以上。<br><strong>卡住不用硬撐，直接問 AI。</strong>裝好 Antigravity（第 3 項）之後就問它——把錯誤訊息或畫面截圖貼進輸入框，請它一步一步帶你；還沒裝好之前，問你慣用的 AI 助手（ChatGPT、Gemini 都可以）。<br><strong>這些勾只給你自己看</strong>——最後用第 9 項的自我檢查收尾。（勾選狀態存在這台電腦的瀏覽器裡，關掉再開還在。）目前完成：<span id="checkProgress" aria-live="polite">0 / 10</span>　<button id="clearProg" class="copybtn" type="button">清除進度</button></p>
+  <p>第 1、2 項約 30 分鐘；第 3–7 項要下載安裝，視網速可能要一小時以上。<br><strong>卡住不用硬撐，直接問 AI。</strong>裝好 Antigravity（第 3 項）之後就問它——把錯誤訊息或畫面截圖貼進輸入框，請它一步一步帶你；還沒裝好之前，問你慣用的 AI 助手（ChatGPT、Gemini 都可以）。<br><strong>這些勾只給你自己看</strong>——最後用第 9 項的自我檢查收尾。（勾選狀態存在這台電腦的瀏覽器裡，關掉再開還在。）目前完成：<span id="checkProgress" aria-live="polite">0 / 9</span>　<button id="clearProg" class="copybtn" type="button">清除進度</button></p>
 
   <div class="card" id="checklist">
     <div class="check" data-k="c1"><input type="checkbox" aria-label="完成第 1 項">
@@ -260,7 +260,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
       <span class="small">完成判準：<strong>電腦上</strong>那一頁（GitHub 的 Password and authentication 設定頁）顯示 2FA 已啟用、Authenticator app 旁出現「Configured」。手機那支 App 不會顯示「已啟用」，它只負責跳六位數字。當天請帶著這支手機。</span></div></div>
     <div class="check" data-k="c3"><input type="checkbox" aria-label="完成第 3 項">
       <div class="t"><strong>3｜裝 Antigravity（我們的 AI 工作環境）</strong> <span class="done-mark">✓ 完成</span><br>
-      Google 出的 AI 工作環境（編輯器和 AI 助手合在一起），免費。到 <a href="https://antigravity.google" target="_blank" rel="noopener">antigravity.google</a> 下載——<strong>網址列開頭是 antigravity.google 才是官方的</strong>，別點搜尋結果裡其他長得像的網站。<br>裝好打開，用 Google 帳號登入：<strong>先試學校信箱 @gms.ndhu.edu.tw</strong>，被擋就改用個人 Gmail，並在第 8 項註明。<br><strong>打開之後長這樣：</strong>左邊是專案清單、<strong>正中央一條寬寬的輸入框</strong>（寫著 Ask anything）——那就是你之後所有指令要打的地方。右上角有顆「Install IDE」是進階用的編輯器，<strong>本課用不到，不用裝</strong>。<br>
+      Google 出的 AI 工作環境（編輯器和 AI 助手合在一起），免費。到 <a href="https://antigravity.google" target="_blank" rel="noopener">antigravity.google</a> 下載——<strong>網址列開頭是 antigravity.google 才是官方的</strong>，別點搜尋結果裡其他長得像的網站。<br>裝好打開，用 Google 帳號登入：<strong>先試學校信箱 @gms.ndhu.edu.tw</strong>，被擋就改用個人 Gmail（本課用得到的功能都一樣）。<br><strong>打開之後長這樣：</strong>左邊是專案清單、<strong>正中央一條寬寬的輸入框</strong>（寫著 Ask anything）——那就是你之後所有指令要打的地方。右上角有顆「Install IDE」是進階用的編輯器，<strong>本課用不到，不用裝</strong>。<br>
       <span class="small">完成判準：打得開、登入成功、找得到那個可以打字的輸入框。找不到就把畫面截圖問你慣用的 AI 助手，別自己耗。</span></div></div>
   <figure class="dia">
     <img src="img/ag-input.png" alt="Antigravity 主畫面的輸入框：上方是專案資料夾選單，中間是「Ask anything」輸入框，下方顯示模型名稱" loading="lazy">
@@ -271,7 +271,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <div class="check" data-k="c4"><input type="checkbox" aria-label="完成第 4 項">
       <div class="t"><strong>4｜裝 git 本體</strong> <span class="done-mark">✓ 完成</span><br>
       <strong>這步交給 AI 助手做就好，你不用自己去下載。</strong>在第 3 項找到的輸入框裡貼這句：<br>「<strong>請幫我確認這台電腦有沒有裝 git；沒有的話幫我裝好，過程中要我做什麼請一步一步告訴我。</strong>」<br>它會自己判斷你的作業系統、下載安裝。過程中可能出現兩種情況：Mac 會跳出一個寫著「Xcode 命令列工具」的視窗——沒錯，git 就在裡面，按「安裝」，約 5–10 分鐘；Windows 可能會問你要不要允許安裝，按「是」。<br>
-      <span class="small">完成判準：它回覆你 git 的版本號（像 git version 2.5x.x）。⚠️ 如果它要你輸入這台電腦的<strong>系統管理員密碼</strong>，停下來照第 8 項回報——密碼不要交給任何 AI，當天現場處理。<strong>本課全程你不必自己開終端機</strong>，那是 AI 助手的工具，不是你的。</span></div></div>
+      <span class="small">完成判準：它回覆你 git 的版本號（像 git version 2.5x.x）。⚠️ 如果它要你輸入這台電腦的<strong>系統管理員密碼</strong>，先停下來——<strong>密碼不要交給任何 AI</strong>；改用你慣用的 AI 助手問怎麼自己輸入，或找人在旁邊陪你操作。<strong>本課全程你不必自己開終端機</strong>，那是 AI 助手的工具，不是你的。</span></div></div>
     <div class="check" data-k="c5"><input type="checkbox" aria-label="完成第 5 項">
       <div class="t"><strong>5｜跟 AI 助手打第一聲招呼（見面測試）</strong> <span class="done-mark">✓ 完成</span><br>
       打開 Antigravity，在第 3 項找到的那個<strong>輸入框</strong>裡貼這句話，按 Enter：<div class="prep-say">你好，請確認這台電腦的 git 裝好了嗎？版本幾號？<button class="copybtn prep-copy" type="button" data-copy="你好，請確認這台電腦的 git 裝好了嗎？版本幾號？">複製</button></div>它會回你一段話，親眼看到版本號就完成了。<br>
@@ -431,7 +431,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <h2><span class="no">導</span>完整操作手冊：每一步都寫清楚</h2>
   <p>下面 15 步和課堂闖關使用相同編號、目標與完成標準，但分工不同：<strong>闖關頁帶你做，這份教材幫你看懂。</strong>每一步先說明為什麼需要、Git 正在處理哪個狀態、有哪些新名詞，以及你要判斷什麼；完整 AI 提示、操作計畫與幕後指令收在「實作參考」，需要時再展開。</p>
   <div class="callout teal"><strong>不用一次讀完：</strong>上課先掌握「先懂這個」與「你要判斷什麼」。課後遇到疑問，再用瀏覽器搜尋關鍵字，或從闖關頁直接開啟對應步驟。</div>
-  <div class="callout"><strong>格式範例：</strong>桌牌用 <code>lin</code>；配對 repo 可寫成 <code>teacher-account/thesis-pair-01</code>；夥伴用 <code>chen</code>。這只是格式示意，闖關頁不會預填 repo；上課一定要換成講師實際分配且已測通的資料。</div>
+  <div class="callout"><strong>格式範例：</strong>桌牌用 <code>lin</code>；配對 repo 可寫成 <code>advisor-account/thesis-pair-03</code>；夥伴用 <code>chen</code>。這只是格式示意，闖關頁不會預填 repo；C1 由教授角色現場建好之後，把他回報的實際 <code>owner/repo</code> 填進去。</div>
   <div id="flowGuide"></div>
 </section>
 
@@ -539,11 +539,11 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <tr><td>1:02–1:16</td><td>休息、配對、互報 GitHub 帳號；C1 兩人自建配對 repo＋clone（第二個資料夾）</td><td>C1</td><td>教授建 repo、研究生親自接受邀請；權限 WRITE；闖關頁改連新資料夾</td></tr>
     <tr><td>1:16–1:35</td><td>第一輪：研究生提 PR；教授要求補改；補改後核准合併</td><td>C2–C5</td><td>另一人親自看 Files changed；作者不可自我核准</td></tr>
     <tr><td>1:35–1:47</td><td>交換角色，走一次短流程</td><td>C6</td><td>不能省略 diff 與另一人核准</td></tr>
-    <tr><td>1:47–1:55</td><td>雙方 pull、看歷史、故障排除</td><td>C5＋救援</td><td>兩台電腦都看得到 main 最新內容</td></tr>
+    <tr><td>1:47–1:55</td><td>第二輪合併後雙方最終 pull、看歷史、故障排除</td><td>C6 收尾＋救援</td><td>兩台電腦都看得到 main 最新內容</td></tr>
     <tr><td>1:55–2:00</td><td>小測驗、回顧與帶走資源</td><td>收尾</td><td>說得出 AI／人的分工與三條紅線</td></tr>
   </table></div>
   <h3>開課前講師要完成的準備</h3>
-  <p>配對 repo 改由學員在 C1 <strong>現場自建</strong>（教授角色的 AI 一句話建好、研究生親自接受邀請），講師不必預建。要準備的是：<strong>角色卡</strong>——正面寫組號與第一輪角色，背面留兩格「我的 GitHub 帳號／夥伴的 GitHub 帳號」讓兩人互抄；<strong>配對方式</strong>——建議相鄰兩人一組，奇數人時最後一組三人、第三人在 C6 當第二輪研究生；以及<strong>一個講師示範 repo</strong>——照 C1 規格先建好（<code>paper.md</code> 含「方法」「文獻回顧」、<code>.gitignore</code> 排除 <code>WORKSHOP-RECEIPT*.txt</code>），哪一組 C1 卡超過五分鐘，先把兩人掛進示範 repo 繼續走 C2，課後再補建自己的。</p>
+  <p>配對 repo 改由學員在 C1 <strong>現場自建</strong>（教授角色的 AI 一句話建好、研究生親自接受邀請），講師不必預建。要準備的是：<strong>角色卡</strong>——正面寫組號與第一輪角色，背面留兩格「我的 GitHub 帳號／夥伴的 GitHub 帳號」讓兩人互抄；<strong>配對方式</strong>——建議相鄰兩人一組，奇數人時最後一組三人、第三人在 C6 當第二輪研究生；以及<strong>一個講師示範 repo</strong>——照 C1 規格先建好（<code>paper.md</code> 含「方法」「文獻回顧」、<code>.gitignore</code> 排除 <code>WORKSHOP-RECEIPT*.txt</code>），哪一組 C1 卡超過五分鐘，把<strong>兩人都加為示範 repo 的協作者</strong>（請他們親自接受邀請、確認權限是 WRITE，否則 C2 的 push 會失敗），再讓他們 clone 那一個繼續走 C2，課後補建自己的。</p>
   <p class="small">開課前三天仍建議用兩個帳號完整彩排一次：建 repo、發邀請、接受、clone、指定句修改、push 分支、開 PR、Request changes、補改、Approve、merge、兩端 pull。</p>
   <p class="small">個別學員的 AI 工具或網路臨時出狀況：請他改用 GitHub 網頁版跟完流程（網頁上改檔＋commit；PR 的審查與合併本來就在網頁上做），概念不減量。全場性故障才由講師投影單機示範。</p>
 </section>
@@ -593,7 +593,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 /* ───────── 共用 15 步驟操作手冊 ───────── */
 const FLOW=window.WORKSHOP_FLOW;
 const htmlSafe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const sample={tag:'lin',pairRepo:'teacher-account/thesis-pair-01',partner:'chen',branch:'revise-method-lin',receipt:'WORKSHOP-RECEIPT-lin.txt'};
+const sample={tag:'lin',pairRepo:'advisor-account/thesis-pair-03',partner:'chen',branch:'revise-method-lin',receipt:'WORKSHOP-RECEIPT-lin.txt'};
 const sampleText=s=>Object.entries(sample).reduce((out,[k,v])=>out.replaceAll('{'+k+'}',v),s);
 const termCards=terms=>`<div class="term-grid">${terms.map(item=>`<div class="term-card"><strong>${htmlSafe(item.term)}</strong><p>${htmlSafe(item.meaning)}</p></div>`).join('')}</div>`;
 const situationTable=items=>`<div class="tablewrap situation-table"><table><thead><tr><th>目前情況</th><th>你的目的</th><th>使用方式</th><th>歷史</th></tr></thead><tbody>${items.map(item=>`<tr><td>${htmlSafe(item.state)}</td><td>${htmlSafe(item.goal)}</td><td><code>${htmlSafe(item.method)}</code></td><td>${htmlSafe(item.history)}</td></tr>`).join('')}</tbody></table></div>`;

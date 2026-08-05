@@ -227,8 +227,8 @@
       plan:['互報 GitHub 帳號並決定組號','教授端：AI 建 repo、放 paper.md 與 .gitignore、發協作者邀請','研究生端：親自接受邀請','兩人把 owner/repo 填進闖關頁','各自 clone 到文件資料夾並回報完整路徑','核對 main、origin 與寫入權限','闖關頁改連新資料夾、組號與網址回報講師'],
       human:'教授確認 repo 名稱與邀請的帳號沒打錯；研究生親自按 Accept invitation；兩人都確認自己的權限是 WRITE 或更高，下一關才推得上去。',
       dashboard:'資料夾切換成功；HEAD 是 main；main 與 origin/main 同步；顯示正確配對資訊。',
-      behind:'gh repo create thesis-pair-組號 --public\ngh api repos/{pairRepo}/collaborators/夥伴帳號 -X PUT -f permission=push\ngit clone https://github.com/{pairRepo}.git <文件資料夾中的目標路徑>\ngit -C <clone後完整路徑> status --short --branch\ngit -C <clone後完整路徑> remote -v\ngh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef',
-      rescue:'公開 repo 即使尚未接受邀請也能 clone，但 push 會被拒——先確認邀請已接受、登入的是自己的帳號；邀請信找不到時，直接打開 repo 網址也會出現接受邀請的提示。clone 失敗先核對網址與網路；若目標資料夾已存在，不要刪除或覆蓋，先回報內容再決定。整組卡超過五分鐘就舉手，先掛講師的示範 repo 繼續走 C2，課後再補建自己的。'
+      behind:'# 教授端：先在本機備好內容，再連同檔案一起建遠端 repo\nmkdir thesis-pair-組號\ncd thesis-pair-組號\n# 建立 paper.md（含「方法」「文獻回顧」兩個標題）與 .gitignore（排除 WORKSHOP-RECEIPT*.txt）\ngit init -b main\ngit add paper.md .gitignore\ngit commit -m "建立配對練習論文骨架"\ngh repo create thesis-pair-組號 --public --source=. --push\ngh api repos/{pairRepo}/collaborators/夥伴帳號 -X PUT -f permission=push\n\n# 研究生端：到 github.com 通知或信箱親自按 Accept invitation（這一步網頁做，沒有指令）\n\n# 兩人各自：\ngit clone https://github.com/{pairRepo}.git <文件資料夾中的目標路徑>\ngit -C <clone後完整路徑> status --short --branch\ngit -C <clone後完整路徑> remote -v\ngh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef',
+      rescue:'公開 repo 即使尚未接受邀請也能 clone，但 push 會被拒——先確認邀請已接受、登入的是自己的帳號；邀請信找不到時，直接打開 repo 網址也會出現接受邀請的提示。clone 失敗先核對網址與網路；若目標資料夾已存在，不要刪除或覆蓋，先回報內容再決定。整組卡超過五分鐘就舉手：講師會把你們兩人都加為示範 repo 的協作者（你們仍要親自接受邀請、確認權限是 WRITE），再 clone 那一個繼續走 C2——沒有 WRITE 權限，C2 的 push 一定會失敗。課後再補建自己的。'
     },
     {
       id:'C2',phase:'collab',minutes:8,title:'研究生開分支並提出修改',

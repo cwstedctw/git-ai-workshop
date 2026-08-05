@@ -41,7 +41,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
   </div>
   <div class="setupbar" id="setupbar">
     <label>桌牌<input id="tag" placeholder="例如 lin"></label>
-    <label class="collab-only">配對 repo<input id="pairRepo" placeholder="owner/thesis-pair-01"></label>
+    <label class="collab-only">配對 repo<input id="pairRepo" placeholder="教授建好的 owner/thesis-pair-組號"></label>
     <label class="collab-only">夥伴桌牌<input id="partner" placeholder="例如 chen"></label>
     <label class="collab-only">第一輪角色<select id="role"><option value="student">研究生</option><option value="advisor">指導教授</option></select></label>
   </div>
@@ -74,7 +74,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
     <div class="card callout">
       <p><strong>第一階段不是從範本開始。</strong>請在電腦建立一個空資料夾，例如 <code>research-practice-project</code>，再用你目前使用的 AI 工具開啟它。接著按下方按鈕，讓這一頁讀取同一個資料夾。</p>
       <p>這一頁只讀 Git 狀態，不會修改或上傳檔案。Chrome／Edge 可自動驗收；其他瀏覽器可使用每關下方的「人工驗收備援」。</p>
-      <p><strong>請用講師給的網址開這一頁，不要下載存檔後雙擊開啟</strong>——用 file:// 開啟時，讀資料夾與自動驗收會失效。</p>
+      <p><strong>請從線上版網址開這一頁（自學者用教材首頁的連結，上課用講師給的網址），不要下載存檔後雙擊開啟</strong>——用 file:// 開啟時，讀資料夾與自動驗收會失效。</p>
       <p><button class="btn" id="pick" type="button">📂 連接目前工作資料夾</button> <button class="btn secondary" id="refresh" type="button" hidden>重新檢查</button></p>
       <p id="fsNote" class="small"></p>
     </div>
@@ -141,7 +141,7 @@ cfg.role.value=localStorage.getItem('gq-role')||'student';
 Object.entries(cfg).forEach(([k,el])=>el.oninput=()=>{localStorage.setItem('gq-'+(k==='pairRepo'?'pair':k),el.value.trim().toLowerCase());render()});
 const values=()=>{
   const tag=cfg.tag.value.trim().toLowerCase()||'你的桌牌';
-  return {tag,pairRepo:cfg.pairRepo.value.trim()||'講師分配的 owner/repo',partner:cfg.partner.value.trim()||'夥伴桌牌',branch:'revise-method-'+tag,receipt:'WORKSHOP-RECEIPT-'+tag+'.txt'};
+  return {tag,pairRepo:cfg.pairRepo.value.trim()||'教授角色建好並回報的 owner/repo',partner:cfg.partner.value.trim()||'夥伴桌牌',branch:'revise-method-'+tag,receipt:'WORKSHOP-RECEIPT-'+tag+'.txt'};
 };
 const resolve=s=>Object.entries(values()).reduce((out,[k,v])=>out.replaceAll('{'+k+'}',v),s);
 function phaseFromHash(){

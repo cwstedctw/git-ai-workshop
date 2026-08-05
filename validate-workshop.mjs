@@ -127,6 +127,22 @@ for(const name of ['material','quest','radar']){
   }
 }
 if(!html.material.includes('id="flowGuide"')||!html.material.includes('id="troubleGrid"'))fail('教材缺少完整手冊或故障排除容器');
+{
+  const checkCount=(html.material.match(/class="check"/g)||[]).length;
+  const labels=[...html.material.matchAll(/aria-label="完成第 (\d+) 項"/g)].map(m=>Number(m[1]));
+  const progress=html.material.match(/id="checkProgress"[^>]*>0 \/ (\d+)</);
+  if(!progress||Number(progress[1])!==checkCount)fail(`行前進度初始字串是 0 / ${progress?progress[1]:'?'}，但實際有 ${checkCount} 個項目`);
+  if(labels.length!==checkCount||labels.some((n,i)=>n!==i+1))fail(`行前項目的 aria-label 編號應為 1–${checkCount} 連續，目前是 ${labels.join(',')}`);
+  for(const [n] of [...html.material.matchAll(/第 (\d+) 項/g)].map(m=>[Number(m[1])])){
+    if(n>checkCount)fail(`教材引用了不存在的行前項次：第 ${n} 項（目前只有 ${checkCount} 項）`);
+  }
+  for(const gone of ['viewform','id="projBtn"','.projector','回填檢核表','講師會把你加進','第 9 項回報','第 8 項回報','第 9 項要用','第 8 項註明']){
+    if(html.material.includes(gone))fail(`教材殘留已移除的表單／投影／講師分配 repo 流程：${gone}`);
+  }
+  for(const [page,gone] of [['material','講師實際分配'],['material','講師分配'],['quest','講師分配'],['material','thesis-pair-01'],['quest','講師會分配']]){
+    if(html[page].includes(gone))fail(`${fileFor[page]} 殘留「講師預先分配配對 repo」的舊流程：${gone}`);
+  }
+}
 if(!Array.isArray(flow.phrases)||flow.phrases.length!==12)fail('共用資料缺少 12 句日常用語表（flow.phrases）');
 if(html.material.includes('const PHRASES=')||!html.material.includes('FLOW.phrases'))fail('教材的 12 句表應改用共用資料 FLOW.phrases，不得另存一份');
 for(const name of ['index','quest','radar']){
