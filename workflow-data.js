@@ -240,11 +240,11 @@
         {term:'push -u',meaning:'第一次推送新分支，並記住之後要與哪個遠端分支同步。'},
         {term:'Pull Request（PR）',meaning:'請另一人閱讀 diff、提出意見並決定是否合併的正式提案。'}
       ],
-      prompt:'這一輪我是研究生。先確認 main 工作區乾淨，再以只允許快轉（--ff-only）的方式 pull 最新 main，接著開分支 {branch}。只修改 paper.md：在「方法」段落最後新增「本練習以公開模擬資料示範版本控制。」如果找不到「方法」段落就停下，不要自行改別處。先顯示 diff 並停下；我確認後，才把 paper.md 加入暫存區，再顯示 staged diff。等我再次確認後，才 commit、push 並建立 PR，說明改了什麼、為什麼改，並請指導教授特別確認新增句子的研究表述是否精確。確認 PR 網址可開啟後，在 {receipt} 記錄 C2 done。',
-      plan:['確認 main 乾淨並以 --ff-only 同步','建立個人分支','在 paper.md 的「方法」段落新增指定練習句','顯示 diff 並等待確認','只暫存 paper.md 並顯示 staged diff','再次等待後 commit、push 並建立 PR','回報 PR 編號與網址'],
+      prompt:'這一輪我是研究生。動工前先替我自我檢查三件事：①目前開啟的是配對 repo 的資料夾（不是第一階段那個）②gh auth status 登入的是我的帳號 ③目前在 main 而且工作區乾淨。哪一項不對就停下，說明怎麼修、等我同意再修。三項都過了才開始：以只允許快轉（--ff-only）的方式 pull 最新 main，接著開分支 {branch}。只修改 paper.md：在「方法」段落最後新增「本練習以公開模擬資料示範版本控制。」如果找不到「方法」段落就停下，不要自行改別處。先顯示 diff 並停下；我確認後，才把 paper.md 加入暫存區，再顯示 staged diff。等我再次確認後，才 commit、push 並建立 PR，說明改了什麼、為什麼改，並請指導教授特別確認新增句子的研究表述是否精確。確認 PR 網址可開啟後，在 {receipt} 記錄 C2 done。',
+      plan:['自我檢查：資料夾、帳號、main 乾淨','以 --ff-only 同步 main','建立個人分支','在 paper.md 的「方法」段落新增指定練習句','顯示 diff 並等待確認','只暫存 paper.md 並顯示 staged diff','再次等待後 commit、push 並建立 PR','回報 PR 編號與網址'],
       human:'確認目前不在 main；逐行看完 diff；確認 staged diff 只有 paper.md；自己閱讀 PR 說明後才算完成。',
       dashboard:'HEAD 是 {branch}；分支已有 commit 並推到 origin；PR 已建立並等待另一人審查。',
-      behind:'git switch main\ngit status --short\ngit pull --ff-only origin main\ngit switch -c {branch}\ngit diff -- paper.md\ngit add paper.md\ngit diff --cached -- paper.md\ngit commit -m "<清楚說明為什麼修改>"\ngit push -u origin {branch}\ngh pr create --base main --head {branch} --title "<PR標題>" --body "<修改內容、原因、希望審查處>"',
+      behind:'git rev-parse --show-toplevel\ngh auth status\ngit switch main\ngit status --short\ngit pull --ff-only origin main\ngit switch -c {branch}\ngit diff -- paper.md\ngit add paper.md\ngit diff --cached -- paper.md\ngit commit -m "<清楚說明為什麼修改>"\ngit push -u origin {branch}\ngh pr create --base main --head {branch} --title "<PR標題>" --body "<修改內容、原因、希望審查處>"',
       rescue:'若 main 不乾淨或 pull --ff-only 失敗，立刻停下，只查看 status 與 log；不要 reset、rebase 或 force push。若 push 顯示沒有權限，核對登入帳號與配對 repo 邀請。'
     },
     {
