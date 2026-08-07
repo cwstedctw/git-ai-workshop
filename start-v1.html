@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>［封存草稿 v1］開始之前｜跟 AI 一起用 Git</title>
+<meta name="robots" content="noindex">
+<style>
+:root{
+  --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441; --gold-soft:#F3E3C3;
+  --teal-soft:#DCEFED; --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --bad:#b3441e; --warn-text:#8a5a00;
+  --shadow:0 2px 10px rgba(26,26,26,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+    --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+    --gold-soft:#3a3220; --teal-soft:#173937; --bad:#ff967a; --warn-text:#f0bc58;
+    --shadow:0 2px 10px rgba(0,0,0,.35); }
+}
+:root[data-theme="dark"]{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+  --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+  --gold-soft:#3a3220; --teal-soft:#173937; --bad:#ff967a; --warn-text:#f0bc58;
+  --shadow:0 2px 10px rgba(0,0,0,.35); }
+:root[data-theme="light"]{ --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441;
+  --gold-soft:#F3E3C3; --teal-soft:#DCEFED; --bad:#b3441e; --warn-text:#8a5a00;
+  --shadow:0 2px 10px rgba(26,26,26,.07); }
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.75;
+  font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
+header.hero{background:linear-gradient(150deg,#0E7C7B,#0A5958);color:#F4ECD8;padding:52px 20px 44px}
+header.hero .inner{max-width:920px;margin:0 auto}
+header.hero .kicker{font-size:.9rem;letter-spacing:.08em;opacity:.9;margin:0 0 10px;font-weight:700}
+header.hero h1{margin:0 0 14px;font-size:clamp(1.6rem,4.4vw,2.4rem);line-height:1.35}
+header.hero p{margin:0;max-width:44em;font-size:1.02rem}
+
+nav#topnav{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line);
+  overflow-x:auto;white-space:nowrap;padding:0 12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:2px}
+nav#topnav a{display:inline-flex;align-items:center;min-height:42px;flex:none;padding:9px 13px;
+  color:var(--ink);text-decoration:none;font-size:.9rem;border-radius:8px}
+nav#topnav a:hover{background:var(--teal-soft)}
+nav#topnav a:focus-visible{outline:3px solid var(--teal);outline-offset:-3px}
+
+main{max-width:920px;margin:0 auto;padding:8px 20px 70px}
+section{scroll-margin-top:60px}
+h2{font-size:1.42rem;margin:52px 0 6px;color:var(--teal-deep);line-height:1.4}
+h2 .num{font-size:.82em;opacity:.65;margin-right:.4em}
+h3{font-size:1.06rem;margin:26px 0 4px;color:var(--teal-deep)}
+p{margin:10px 0}
+ul{margin:10px 0;padding-left:1.35em}
+li{margin:5px 0}
+
+.tablewrap{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:.93rem;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--gold-soft);font-weight:700}
+td.step{white-space:nowrap;font-weight:700;color:var(--teal-deep)}
+td.mins{white-space:nowrap;text-align:right;color:var(--ink-soft)}
+tr.phasebar th{background:var(--teal-soft);color:var(--teal-deep);font-size:.96rem}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;box-shadow:var(--shadow)}
+.card .t{font-weight:800;color:var(--teal-deep);margin-bottom:4px}
+.callout{border-left:5px solid var(--gold);background:var(--gold-soft);border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0}
+.callout.red{border-left-color:var(--bad);background:transparent;border:1px solid var(--line);border-left:5px solid var(--bad);border-radius:0 10px 10px 0}
+.callout .t{font-weight:800;margin-bottom:4px}
+.note{font-size:.87rem;color:var(--ink-soft)}
+
+a{color:var(--teal-deep)}
+a:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.linkcards{display:grid;gap:12px;margin:18px 0}
+a.linkcard{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:16px 18px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow)}
+a.linkcard:hover{border-color:var(--teal)}
+a.linkcard .t{font-weight:800;color:var(--teal-deep)}
+a.linkcard .d{font-size:.9rem;margin-top:3px}
+
+.checklist{list-style:none;padding-left:0}
+.checklist li{padding-left:1.9em;position:relative;margin:9px 0}
+.checklist li::before{content:"☐";position:absolute;left:0;font-size:1.15em;color:var(--teal)}
+
+button#themeToggle{position:fixed;right:14px;bottom:14px;z-index:60;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);border-radius:999px;min-height:44px;min-width:44px;
+  font-size:1.05rem;cursor:pointer;box-shadow:var(--shadow)}
+button#themeToggle:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+
+footer{border-top:1px solid var(--line);margin-top:56px;padding:22px 20px 40px;
+  font-size:.83rem;color:var(--ink-soft)}
+footer .inner{max-width:920px;margin:0 auto}
+</style>
+<script>(()=>{const t=localStorage.getItem('gw-theme');if(t)document.documentElement.dataset.theme=t})()</script>
+</head>
+<body>
+
+<header class="hero">
+  <div class="inner">
+    <p class="kicker">跟 AI 一起用 Git｜不背指令的版本控制</p>
+    <h1>開始之前：這條路長什麼樣</h1>
+    <p>教材有點厚，直接點進去容易被淹沒。這一頁先讓你知道自己要走什麼路、需要多久、要先準備什麼，以及哪幾步一定要你自己看過，不能交給 AI。看完再決定從哪裡進去。</p>
+  </div>
+</header>
+
+<nav id="topnav" aria-label="頁內導覽">
+  <a href="#who">給誰</a>
+  <a href="#howlong">要多久</a>
+  <a href="#prep">先準備</a>
+  <a href="#map">15 關全景</a>
+  <a href="#redline">兩條紅線</a>
+  <a href="#limits">誠實限制</a>
+  <a href="#check">我學會了嗎</a>
+  <a href="#next">學完之後</a>
+  <a href="index.html">回入口</a>
+</nav>
+
+<main>
+
+<div class="callout red" style="margin-top:22px">
+  <div class="t">📦 這是封存的第一版草稿，不是正式頁</div>
+  <p style="margin:4px 0 0">正式版請看 <a href="start.html">開始之前</a>。這一版保留只為了對照改版前後，內容可能與教材現況不同步。</p>
+</div>
+
+<section id="who">
+<h2><span class="num">壹</span>這是給誰的</h2>
+<p>給手上有研究專案的大學教師與研究生。判斷方式很簡單：如果你的資料夾裡出現過 <code>論文v3_最終_真的最終.docx</code>，或是你跟共同作者用附件來回改稿改到不確定哪一份才是最新的，這門課就是為你開的。</p>
+
+<h3>你不必先會</h3>
+<ul>
+  <li>任何 Git 指令</li>
+  <li>終端機、命令列</li>
+  <li>任何一種程式語言</li>
+</ul>
+
+<h3>你要有</h3>
+<ul>
+  <li>一台能上網的電腦</li>
+  <li>一個 GitHub 帳號</li>
+  <li>一個你慣用的 AI 助手（本課的示範工具是 Antigravity，換成別的 agent 也走得通）</li>
+</ul>
+
+<div class="callout">
+  <div class="t">這門課不教什麼</div>
+  <p style="margin:4px 0 0">不教你背指令，也不講 Git 內部原理。<strong>stash、rebase、amend、fork 工作流、GitHub Actions 全部跳過</strong>——需要它們的時候，你的 agent 會用，你只要看得懂它的計畫。真正要練的是另一件事：<strong>當它的指導教授，不是它的橡皮圖章。</strong></p>
+</div>
+</section>
+
+<section id="howlong">
+<h2><span class="num">貳</span>要花多久</h2>
+<p>全程約 95 分鐘的實作，分成兩個階段。時間是「順順走完」的估計，第一次做慢一點很正常。</p>
+<div id="phaseCards"></div>
+
+<div class="callout red">
+  <div class="t">⚠️ 一個人自學的話，請先只走第一階段</div>
+  <p style="margin:4px 0 0"><strong>第二階段是工作坊用的，需要兩個人</strong>——一位當研究生、一位當指導教授，輪流提出修改與把關。整段練的就是「兩個人怎麼在同一份稿子上不打架」，一個人做不出那個情境。</p>
+  <p style="margin:8px 0 0">第一階段（P1–P9）本來就是你一個人的研究專案，自己走完全沒問題，而且走完就已經解決最痛的那一半：版本回得去、東西備份在 GitHub、看得懂改了什麼。第二階段等你找到共同作者、指導的學生，或參加正式場次再做。</p>
+  <p style="margin:8px 0 0" class="note">請不要為了湊人數另外註冊一個 GitHub 帳號自己扮兩個角色。<a href="https://docs.github.com/en/site-policy/github-terms/github-terms-of-service" target="_blank" rel="noopener">GitHub 服務條款</a>寫明一人最多只能維持一個免費帳號，這不值得為了練習去踩。</p>
+</div>
+</section>
+
+<section id="prep">
+<h2><span class="num">參</span>開始之前要先準備</h2>
+<p>三件事，全部要在開始之前弄好，不要留到走到一半才發現裝不起來。</p>
+<ol>
+  <li><strong>裝好並登入你的 AI 助手</strong>。完成判準：打得開、登入成功、找得到那個可以打字的輸入框。</li>
+  <li><strong>GitHub 帳號能登入</strong>。</li>
+  <li><strong>做一次「小試身手」</strong>：讓 AI 建一個小資料夾跟一個檔案，順便回報 git 版本與 GitHub 登入身分。<strong>一句話就驗完整條安裝鏈</strong>，而且你要自己把檔案打開看——<em>AI 說做完了，不等於真的做完</em>。</li>
+</ol>
+<p class="note">完整清單、每一步的截圖與「卡住了怎麼問 AI」的求救句，在教材的〈行前準備〉一節。這裡只列最小要件，不重複寫一份。</p>
+<p><a href="material.html#prep">→ 到教材看完整行前準備包</a></p>
+</section>
+
+<section id="map">
+<h2><span class="num">肆</span>15 關全景：每一關做什麼、哪裡要你自己看</h2>
+<p>這張表是整門課的地圖。最右邊那一欄最重要——<strong>那是 AI 做完之後，你一定要自己核對的東西</strong>。這門課的價值不在指令，在這一欄。</p>
+<div class="tablewrap">
+  <table id="mapTable">
+    <caption class="note" style="caption-side:bottom;text-align:left;padding-top:8px">關卡名稱可點，直接跳到教材對應段落。</caption>
+    <thead>
+      <tr>
+        <th scope="col" style="width:5.5em">關卡</th>
+        <th scope="col" style="width:3.6em">分鐘</th>
+        <th scope="col">這一關你會做什麼</th>
+        <th scope="col">你一定要自己看的</th>
+      </tr>
+    </thead>
+    <tbody id="mapBody"></tbody>
+  </table>
+</div>
+<noscript><p class="callout">這張表由教材的流程資料即時產生，需要開啟 JavaScript。你也可以直接看 <a href="material.html">教材頁</a>。</p></noscript>
+</section>
+
+<section id="redline">
+<h2><span class="num">伍</span>兩條資料紅線（跟技術無關，跟你的責任有關）</h2>
+<p>這兩條放在最前面講，因為它們不是技術問題，出事也不是技術能補救的。</p>
+
+<div class="callout red">
+  <div class="t">一、學生個資與未發表資料，不進公開 repo</div>
+  <p style="margin:4px 0 0">成績單、名冊、還在審的稿子，公開版本庫一律不放。研究協作請用私人 repo，公開前仍要逐檔確認。</p>
+  <p style="margin:8px 0 0"><strong><code>.gitignore</code> 不是保密工具</strong>——它只能協助排除「還沒被追蹤」的檔案，不能取代你自己的資料判斷與權限設定。</p>
+</div>
+
+<div class="callout red">
+  <div class="t">二、私人 repo 也不放帳號密碼</div>
+  <p style="margin:4px 0 0">密碼、API 金鑰（API key）<strong>一旦提交過就進了歷史</strong>，事後刪掉目前的檔案不代表舊紀錄消失。敏感資料放在專案資料夾外面。</p>
+</div>
+
+<p>萬一真的存錯了：<strong>先停手，尤其別 push</strong>，然後照教材的〈急救箱〉一步一步處理。已經 push 出去的要當成外洩處理，不是刪一刪就沒事。</p>
+<p><a href="material.html#safety">→ 到教材看急救箱與監督三原則</a></p>
+</section>
+
+<section id="limits">
+<h2><span class="num">陸</span>三條誠實限制</h2>
+<p>先講清楚這門課做不到什麼，你才知道學完之後手上有什麼、沒有什麼。</p>
+<ol>
+  <li><strong>Word 和 Excel 在 Git 裡看不到逐行差異。</strong>它們不是純文字檔，diff 只會說「檔案變了」。Git 對純文字檔（<code>.md</code>、<code>.R</code>、<code>.do</code>、<code>.tex</code>、<code>.csv</code>）才火力全開。Word 一樣可以放進版本庫備份與同步，只是「追蹤修訂」那種體驗要靠 Word 自己。</li>
+  <li><strong>GitHub 的方案功能會變。</strong>分支保護之類的功能在公開／私人 repo 上可用範圍不同，也會隨帳號與組織方案變動。真正的研究資料要先判斷能不能公開，<strong>不能為了拿到某個功能就把敏感資料改成公開</strong>。開始前請以官方頁面現況為準。</li>
+  <li><strong>agent 會犯錯，所以概念才要懂。</strong>它可能改錯檔案、寫錯說明、在你不想動的分支上動工。你不必背指令，但你得看得懂它的計畫和 diff。</li>
+</ol>
+<p class="note">完整版在教材第拾章。</p>
+</section>
+
+<section id="check">
+<h2><span class="num">柒</span>我學會了嗎</h2>
+<p>走完第一階段之後，用這幾句話問自己。答得出來才算真的走過，闖關頁的進度條只是輔助。</p>
+<ul class="checklist">
+  <li>我知道 Git 管的是「一個資料夾」，而且講得出我現在在哪個資料夾。</li>
+  <li>我能讓 AI 把一份修改存成一個版本，而且<strong>存之前我看過它改了哪幾行</strong>。</li>
+  <li>我能把專案推上 GitHub，並在網頁上看到它。</li>
+  <li>我看得懂歷史紀錄，能比較兩個版本差在哪裡。</li>
+  <li>我知道「只是看看」「restore」「revert」是三種不同的回去，也知道哪一種在已經推出去之後才安全。</li>
+  <li>我知道哪些檔案不該進版本庫，也知道 <code>.gitignore</code> 不是保密工具。</li>
+  <li>我知道 agent 說「做完了」不等於做完，我會自己把檔案打開驗。</li>
+  <li>我知道任何時候都可以喊停，也記得那句救援句怎麼說。</li>
+</ul>
+</section>
+
+<section id="next">
+<h2><span class="num">捌</span>學完之後，下一步做什麼</h2>
+<ul>
+  <li><strong>把一個真的研究專案搬進來。</strong>先判斷資料能不能公開；不確定就開私人 repo。</li>
+  <li><strong>把常改的檔案換成純文字。</strong>筆記改 <code>.md</code>、論文改 <code>.tex</code>，逐行差異才看得到——這是第陸節第一條限制的解法。</li>
+  <li><strong>找一位共同作者或你指導的學生，補走第二階段。</strong>兩個人一起做過一次 PR，之後真的協作才不會卡。</li>
+  <li><strong>如果你的期刊要求附上資料與程式</strong>，這套流程就是底層：完整的修改歷史、乾淨的檔案清單、說得清楚每一版差在哪。</li>
+</ul>
+</section>
+
+<div class="linkcards">
+  <a class="linkcard" href="material.html"><div class="t">📘 教材——用讀的</div><div class="d">兩階段全課路線、15 步觀念與完整操作、協作進階、故障排除與自然語言速查。</div></a>
+  <a class="linkcard" href="quest.html"><div class="t">🎮 闖關——用做的</div><div class="d">動手時全程開這頁：可複製的自然語言、Git 儀表板、逐步驗收。請用 Chrome 或 Edge 開。</div></a>
+</div>
+
+</main>
+
+<button id="themeToggle" type="button" aria-label="切換深色或淺色模式">🌗</button>
+
+<footer><div class="inner">
+  <p>跟 AI 一起用 Git——不背指令的版本控制｜<span id="ver">v5.5</span>｜〈開始之前〉導覽頁</p>
+  <p>工具費用與方案會變動，開始前請以各官方頁面現況為準。</p>
+  <p>© 2026 陳文盛（國立東華大學通識教育中心）× AI 協作團隊——洄瀾（組長・Claude）、立霧（Codex）、秀姑巒（Gemini）、木瓜溪（OpenCode）、美崙溪（Grok）｜本教材以 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 授權——歡迎教學與自學使用；改作請同樣開放，請勿商用。</p>
+</div></footer>
+
+<script src="workflow-data.js"></script>
+<script>
+(function(){
+  'use strict';
+  var FLOW = window.WORKSHOP_FLOW;
+  var esc = function(s){ return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;'); };
+
+  var toggle = document.getElementById('themeToggle');
+  toggle.addEventListener('click', function(){
+    var cur = document.documentElement.dataset.theme;
+    if(!cur){
+      cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('gw-theme', next); } catch(e) {}
+  });
+
+  if(!FLOW || !FLOW.steps || !FLOW.phases) return;
+
+  document.getElementById('ver').textContent = FLOW.version || 'v5.5';
+
+  var cards = FLOW.phases.map(function(p){
+    var steps = FLOW.steps.filter(function(s){ return s.phase === p.id; });
+    var ids = steps.map(function(s){ return s.id; });
+    var range = ids.length ? ids[0] + '–' + ids[ids.length - 1] : '';
+    return `<div class="card">
+      <div class="t">${esc(p.label)}</div>
+      <p class="note" style="margin:2px 0 6px">${esc(range)}，共 ${steps.length} 關｜約 ${esc(p.minutes)} 分鐘</p>
+      <p style="margin:0">${esc(p.promise)}</p>
+    </div>`;
+  }).join('');
+  document.getElementById('phaseCards').innerHTML = cards;
+
+  var rows = '';
+  FLOW.phases.forEach(function(p){
+    var steps = FLOW.steps.filter(function(s){ return s.phase === p.id; });
+    rows += `<tr class="phasebar"><th colspan="4" scope="colgroup">${esc(p.label)}（約 ${esc(p.minutes)} 分鐘）</th></tr>`;
+    steps.forEach(function(s){
+      rows += `<tr>
+        <td class="step"><a href="material.html#guide-${esc(s.id)}">${esc(s.id)}</a></td>
+        <td class="mins">${esc(s.minutes)}</td>
+        <td>${esc(s.title)}</td>
+        <td>${esc(s.human)}</td>
+      </tr>`;
+    });
+  });
+  document.getElementById('mapBody').innerHTML = rows;
+})();
+</script>
+</body>
+</html>

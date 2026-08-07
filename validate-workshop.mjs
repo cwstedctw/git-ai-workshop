@@ -98,8 +98,8 @@ for(const phrase of ['回報 PR 編號與網址','核對 repo、作者與來源�
 }
 if(!c6.prompt.includes('相關文獻將於正式研究中補齊'))fail('C6 缺少第二輪明確修改任務');
 
-const html={index:read('./index.html'),material:read('./material.html'),quest:read('./quest.html'),radar:read('./radar.html')};
-const fileFor={index:'index.html',material:'material.html',quest:'quest.html',radar:'radar.html'};
+const html={index:read('./index.html'),start:read('./start.html'),startV1:read('./start-v1.html'),material:read('./material.html'),quest:read('./quest.html'),radar:read('./radar.html')};
+const fileFor={index:'index.html',start:'start.html',startV1:'start-v1.html',material:'material.html',quest:'quest.html',radar:'radar.html'};
 const pageFor=Object.fromEntries(Object.entries(fileFor).map(([key,file])=>[file,key]));
 const idsByPage={};
 for(const [name,source] of Object.entries(html)){
@@ -123,11 +123,11 @@ for(const [name,source] of Object.entries(html)){
     if(hashPart&&!idsByPage[targetName].has(hashPart))fail(`${fileFor[name]} 連到不存在的錨點：${href}`);
   }
 }
-for(const name of ['material','quest']){
+for(const name of ['material','quest','start','startV1']){
   if(!html[name].includes('<script src="workflow-data.js"></script>'))fail(`${name}.html 未載入共用流程`);
 }
 if(html.radar.includes('<script src="workflow-data.js"></script>'))fail('講師雷達不應載入未使用的共用流程');
-for(const name of ['material','quest','radar']){
+for(const name of ['material','quest','radar','start','startV1']){
   const inline=[...html[name].matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
   for(const [i,code] of inline.entries()){
     try{new Function(code)}catch(error){fail(`${name}.html 第 ${i+1} 段 inline script 語法錯誤：${error.message}`)}
@@ -223,6 +223,13 @@ for(const needle of ["items=rows(personal?'personal':'pairs')","allowEmpty&&r.st
 if(!html.radar.includes("localStorage.getItem('gr-settings-schema')!=='real-repos-v1'"))fail('講師雷達沒有一次性清除舊示範設定');
 if(html.radar.includes('id="demo"')||html.radar.includes('已有練習分支'))fail('講師雷達仍有無效示範設定或舊分支流程');
 if(!html.index.includes('15 步'))fail('首頁沒有更新為 15 步');
-if(flow.version!=='2026-08-05-v5.5'||!html.material.includes('v5.5')||!html.quest.includes('v5.5')||!html.radar.includes('v5.5')||!html.index.includes('v5.5'))fail('版本號未同步到 v5.5（四頁都要有）');
+if(flow.version!=='2026-08-05-v5.5'||!html.material.includes('v5.5')||!html.quest.includes('v5.5')||!html.radar.includes('v5.5')||!html.index.includes('v5.5')||!html.start.includes('v5.5')||!html.startV1.includes('v5.5'))fail('版本號未同步到 v5.5（六頁都要有）');
+for(const page of ['start','startV1'])if(!html[page].includes('需要兩個人')||!html[page].includes('請不要為了湊人數另外註冊一個 GitHub 帳號'))fail(`${fileFor[page]} 缺少「第二階段需兩人」或「單一 GitHub 帳號」原則`);
+for(const page of ['start','startV1','material','quest','radar','index']){
+  for(const hit of html[page].matchAll(/自己扮兩(?:個)?角|第二個(?:免費)?帳號|另(?:外)?註冊一個(?:免費)?帳號|兩個帳號/g)){
+    const before=html[page].slice(Math.max(0,hit.index-40),hit.index);
+    if(!/不要|不用|別|不建議|禁止|不可/.test(before))fail(`${fileFor[page]} 出現未加禁止語的雙帳號自扮兩角說法：…${html[page].slice(Math.max(0,hit.index-20),hit.index+16)}…`);
+  }
+}
 
-console.log(`PASS ${flow.version}: ${flow.steps.length} steps, 4 HTML files, shared flow, layout guards and inline JavaScript verified.`);
+console.log(`PASS ${flow.version}: ${flow.steps.length} steps, 6 HTML files, shared flow, layout guards and inline JavaScript verified.`);
