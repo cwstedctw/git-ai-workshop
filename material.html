@@ -238,7 +238,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <!-- ═══════════ 行前準備 ═══════════ -->
 <section id="prep">
   <h2><span class="no">貳</span>行前準備包（請留兩個晚上，別排在開課前一天）</h2>
-  <p>第 1、2 項約 30 分鐘；第 3–7 項要下載安裝，視網速可能要一小時以上。<br><strong>卡住不用硬撐，直接問 AI。</strong>裝好 Antigravity（第 3 項）之後就問它——把錯誤訊息或畫面截圖貼進輸入框，請它一步一步帶你；還沒裝好之前，問你慣用的 AI 助手（ChatGPT、Gemini 都可以）。<br><strong>這些勾只給你自己看</strong>——最後用第 9 項的自我檢查收尾。（勾選狀態存在這台電腦的瀏覽器裡，關掉再開還在。）目前完成：<span id="checkProgress" aria-live="polite">0 / 9</span>　<button id="clearProg" class="copybtn" type="button">清除進度</button></p>
+  <p>第 1、2 項約 30 分鐘；第 3、4、5、8 項要下載安裝（第 6、7 項不用下載），視網速可能要一小時以上。<strong>第 5 項只有 Windows 要做，Mac 直接跳過。</strong><br><strong>卡住不用硬撐，直接問 AI。</strong>裝好 Antigravity（第 3 項）之後就問它——把錯誤訊息或畫面截圖貼進輸入框，請它一步一步帶你；還沒裝好之前，問你慣用的 AI 助手（ChatGPT、Gemini 都可以）。<br><strong>這些勾只給你自己看</strong>——最後用第 10 項的自我檢查收尾。（勾選狀態存在這台電腦的瀏覽器裡，關掉再開還在。）目前完成：<span id="checkProgress" aria-live="polite">0 / 10</span>　<button id="clearProg" class="copybtn" type="button">清除進度</button></p>
 
   <div class="card" id="checklist">
     <div class="check" data-k="c1"><input type="checkbox" aria-label="完成第 1 項">
@@ -272,12 +272,24 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
       <div class="t"><strong>4｜裝 git 本體</strong> <span class="done-mark">✓ 完成</span><br>
       <strong>這步交給 AI 助手做就好，你不用自己去下載。</strong>在第 3 項找到的輸入框裡貼這句：<br>「<strong>請幫我確認這台電腦有沒有裝 git；沒有的話幫我裝好，過程中要我做什麼請一步一步告訴我。</strong>」<br>它會自己判斷你的作業系統、下載安裝。過程中可能出現兩種情況：Mac 會跳出一個寫著「Xcode 命令列工具」的視窗——沒錯，git 就在裡面，按「安裝」，約 5–10 分鐘；Windows 可能會問你要不要允許安裝，按「是」。<br>
       <span class="small">完成判準：它回覆你 git 的版本號（像 git version 2.5x.x）。⚠️ 如果它要你輸入這台電腦的<strong>系統管理員密碼</strong>，先停下來——<strong>密碼不要交給任何 AI</strong>；改用你慣用的 AI 助手問怎麼自己輸入，或找人在旁邊陪你操作。<strong>本課全程你不必自己開終端機</strong>，那是 AI 助手的工具，不是你的。</span></div></div>
-    <div class="check" data-k="c5"><input type="checkbox" aria-label="完成第 5 項">
-      <div class="t"><strong>5｜跟 AI 助手打第一聲招呼（見面測試）</strong> <span class="done-mark">✓ 完成</span><br>
+    <div class="check" data-k="c11"><input type="checkbox" aria-label="完成第 5 項">
+      <div class="t"><strong>5｜裝 PowerShell 7</strong>（<strong>Windows 專用，Mac 直接打勾跳過</strong>）<span class="done-mark">✓ 完成</span><br>
+      <strong>為什麼要多這一步：</strong>Windows 內建的 PowerShell 是 5.1 版。請 AI 用它建中文檔案時，某些寫法會把檔案存成一種 <strong>Git 認不出是文字</strong>的格式——於是你之後的「論文.md」「方法.md」，<strong>Git 會當成一張圖片，完全看不出你改了哪裡</strong>。而「看改了哪裡」正是這門課的主軸。最麻煩的是它<strong>不會報錯</strong>，你只會覺得工具怪怪的。<br>
+      PowerShell 7 沒有這個毛病，而且它跟舊版<strong>並存</strong>、不會蓋掉原本的（這是微軟官方的設計）。<br>
+      <strong>這步一樣交給 AI 助手做。</strong>在第 3 項找到的輸入框裡貼這句：<div class="prep-say">我用的是 Windows。請先幫我確認這台電腦有沒有 winget（跑 winget --version）；有的話用 winget install --id Microsoft.PowerShell --source winget 幫我裝 PowerShell 7，沒有的話改用微軟官網的 MSI 安裝檔帶我裝。裝完告訴我版本號。過程中要我做什麼請一步一步告訴我。<button class="copybtn prep-copy" type="button" data-copy="我用的是 Windows。請先幫我確認這台電腦有沒有 winget（跑 winget --version）；有的話用 winget install --id Microsoft.PowerShell --source winget 幫我裝 PowerShell 7，沒有的話改用微軟官網的 MSI 安裝檔帶我裝。裝完告訴我版本號。過程中要我做什麼請一步一步告訴我。">複製</button></div>
+      裝完<strong>一定要再問這一句</strong>（最容易被跳過，但不問就等於白裝）：<div class="prep-say">請告訴我你現在執行指令用的 PowerShell 是哪一版，跑 $PSVersionTable.PSVersion 給我看。版本號開頭是 7 還是 5？<button class="copybtn prep-copy" type="button" data-copy="請告訴我你現在執行指令用的 PowerShell 是哪一版，跑 $PSVersionTable.PSVersion 給我看。版本號開頭是 7 還是 5？">複製</button></div>
+      <span class="small">完成判準：看到版本號<strong>開頭是 7</strong>（像 7.6.x）。<br>
+      ⚠️ <strong>回你 5.1 的話，代表裝好了但還沒生效</strong>——PowerShell 7 是<strong>與舊版並存、不是取代</strong>，所以 AI 助手可能還在用舊的那支。貼這句叫它改：<div class="prep-say">請你之後執行所有指令都改用 pwsh（PowerShell 7），不要用舊的 powershell。改好後再跑一次 $PSVersionTable.PSVersion 給我確認。<button class="copybtn prep-copy" type="button" data-copy="請你之後執行所有指令都改用 pwsh（PowerShell 7），不要用舊的 powershell。改好後再跑一次 $PSVersionTable.PSVersion 給我確認。">複製</button></div>
+      還是 5.1，就把 Antigravity 整個關掉重開再問一次；仍然不行就截圖問 AI 助手，<strong>不影響你先往下做第 6 項</strong>（當天現場也可以救）。<br>
+      💡 <strong>不論版本是 7 還是 5，這句都值得記起來</strong>：以後請 AI 幫你建中文檔案時，多說一句「<strong>用編輯器建，不要用 &gt; 導出</strong>」。這樣不管它背後跑的是哪一版，檔案都不會壞。<br>
+      ⚠️ 安裝途中若跳出 Windows 的「是否允許」視窗，按<strong>是</strong>就好；但如果它要你輸入這台電腦的<strong>系統管理員密碼</strong>，先停下來——<strong>密碼不要交給任何 AI</strong>，自己輸入，或找人在旁邊陪你。學校統一控管的筆電可能整個擋掉安裝，那就先跳過、當天現場處理。<br>
+      🍎 <strong>Mac 沒有這個問題</strong>（本來就是 UTF-8），這項直接打勾跳過。</span></div></div>
+    <div class="check" data-k="c5"><input type="checkbox" aria-label="完成第 6 項">
+      <div class="t"><strong>6｜跟 AI 助手打第一聲招呼（見面測試）</strong> <span class="done-mark">✓ 完成</span><br>
       打開 Antigravity，在第 3 項找到的那個<strong>輸入框</strong>裡貼這句話，按 Enter：<div class="prep-say">你好，請確認這台電腦的 git 裝好了嗎？版本幾號？<button class="copybtn prep-copy" type="button" data-copy="你好，請確認這台電腦的 git 裝好了嗎？版本幾號？">複製</button></div>它會回你一段話，親眼看到版本號就完成了。<br>
       <span class="small">這句話同時測了三件事：工具會不會動、登入成不成功、網路通不通。</span></div></div>
-    <div class="check" data-k="c9"><input type="checkbox" aria-label="完成第 6 項">
-      <div class="t"><strong>6｜調一下 AI 助手的授權（讓它別每件小事都問你）</strong> <span class="done-mark">✓ 完成</span><br>
+    <div class="check" data-k="c9"><input type="checkbox" aria-label="完成第 7 項">
+      <div class="t"><strong>7｜調一下 AI 助手的授權（讓它別每件小事都問你）</strong> <span class="done-mark">✓ 完成</span><br>
       預設情況下 AI 助手每跑一個指令都會停下來問「可以嗎」——課堂上會很卡。
       打開左下角 <strong>Settings</strong>（Windows 按 <strong>Ctrl+,</strong>、Mac 按 ⌘,），左欄點 <strong>General</strong>，找 <strong>Agent Settings</strong> 這一區：<br>
       <div class="permtable">
@@ -294,8 +306,8 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <figcaption>真實畫面（2026-08-04 截於 Windows 版）。Security Preset 選 <strong>Custom</strong> 之後，底下這兩格才會出現；圖中就是課堂建議值。謹慎派可把 Terminal Command Auto Execution 改選 Require Review。</figcaption>
   </figure>
 
-    <div class="check" data-k="c6"><input type="checkbox" aria-label="完成第 7 項">
-      <div class="t"><strong>7｜GitHub 登入（一樣讓 AI 助手代裝代登）</strong> <span class="done-mark">✓ 完成</span><br>
+    <div class="check" data-k="c6"><input type="checkbox" aria-label="完成第 8 項">
+      <div class="t"><strong>8｜GitHub 登入（一樣讓 AI 助手代裝代登）</strong> <span class="done-mark">✓ 完成</span><br>
       這步讓 AI 助手陪你做。在輸入框貼這句：<div class="prep-say">幫我裝 GitHub CLI（gh），並登入我的 GitHub 帳號。請一步一步告訴我要做什麼。<button class="copybtn prep-copy" type="button" data-copy="幫我裝 GitHub CLI（gh），並登入我的 GitHub 帳號。請一步一步告訴我要做什麼。">複製</button></div>接下來會經過三步，都很單純：<br><span style="display:block;margin-left:1em">一、它會給你一組<strong>八碼</strong>（長得像 A1B2-C3D4），請先複製起來。</span><span style="display:block;margin-left:1em">二、瀏覽器會自動打開 github.com/login/device（沒自動開就自己貼這個網址）：把八碼貼進去，按 Continue。</span><span style="display:block;margin-left:1em">三、按綠色的 Authorize，可能要輸入 GitHub 密碼與手機上的六位數字。完成後回到 Antigravity，會看到 Logged in as 你的帳號。</span>最後對它說：<div class="prep-say">幫我確認 GitHub 登入好了沒<button class="copybtn prep-copy" type="button" data-copy="幫我確認 GitHub 登入好了沒">複製</button></div>親眼看到你的帳號名就完成了。<br>
       <span class="small">完成判準：它回覆你已經登入、看得到你的帳號名。⚠️ 如果卡住、或畫面要你輸入這台電腦的系統管理員密碼，<strong>先停下來，把畫面截圖問你慣用的 AI 助手</strong>——這步沒完成，第一次上傳就會卡住，請務必在動手前（或開課前）解決。</span></div></div>
   <figure class="dia wide-diagram">
@@ -326,20 +338,20 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
       </g>
       <text x="320" y="150" font-size="11.5" text-anchor="middle" fill="currentColor" opacity=".7">中途可能要輸入 GitHub 密碼與手機上的六位數字（第 2 項設定的那支手機）</text>
     </svg>
-    <figcaption>第 7 項的 GitHub 登入，就是這三步。</figcaption>
+    <figcaption>第 8 項的 GitHub 登入，就是這三步。</figcaption>
   </figure>
 
-    <div class="check" data-k="c10"><input type="checkbox" aria-label="完成第 8 項">
-      <div class="t"><strong>8｜小試身手：讓 AI 助手替你做一件小事</strong>（約 5 分鐘）<span class="done-mark">✓ 完成</span><br>
+    <div class="check" data-k="c10"><input type="checkbox" aria-label="完成第 9 項">
+      <div class="t"><strong>9｜小試身手：讓 AI 助手替你做一件小事</strong>（約 5 分鐘）<span class="done-mark">✓ 完成</span><br>
       前面都裝好了？現在讓它真的動手一次。在 Antigravity 輸入框貼這句：<div class="prep-say">幫我在桌面建一個資料夾 warmup-check，在裡面建一個 hello.md，內容寫今天的日期和我的 GitHub 帳號名。做完後告訴我：git 的版本、gh 登入的帳號是誰。只准動這個新資料夾，其他都不要碰。<button class="copybtn prep-copy" type="button" data-copy="幫我在桌面建一個資料夾 warmup-check，在裡面建一個 hello.md，內容寫今天的日期和我的 GitHub 帳號名。做完後告訴我：git 的版本、gh 登入的帳號是誰。只准動這個新資料夾，其他都不要碰。">複製</button></div>
       然後<strong>自己去桌面打開 hello.md 看</strong>——裡面真的有日期和你的帳號名，才算數（AI 說做完 ≠ 做完，這就是這門課要教你的第一件事）。<br>
       <span class="small">完成判準三樣：① 桌面真的出現 warmup-check 資料夾、裡面有 hello.md 且內容正確 ② 它回報了 git 版本 ③ 它回報的 gh 帳號就是你的帳號。三樣都對，代表安裝鏈整條是通的。<br>
       加碼 30 秒（Chrome／Edge）：打開<a href="quest.html" target="_blank" rel="noopener">闖關頁</a>按「連接目前工作資料夾」選 warmup-check，儀表板顯示出資料夾名稱＝讀資料夾功能正常，當天就不會卡。</span></div></div>
 
-    <div class="check" data-k="c7"><input type="checkbox" aria-label="完成第 9 項">
-      <div class="t"><strong>9｜最終自我檢查</strong> <span class="done-mark">✓ 完成</span><br>
+    <div class="check" data-k="c7"><input type="checkbox" aria-label="完成第 10 項">
+      <div class="t"><strong>10｜最終自我檢查</strong> <span class="done-mark">✓ 完成</span><br>
       這份教材是自助式的，不用交任何回報——<strong>把關的人就是你自己</strong>。三件事都成立，行前準備才算完成：<br>
-      ① 上面 1–8 項全部打勾；② 桌面的 <code>warmup-check/hello.md</code> 真的存在、內容正確；③ 你說得出 AI 助手回報的 gh 帳號就是你的 GitHub 帳號。<br>
+      ① 上面 1–9 項準備任務全部打勾（第 5 項 Mac 免做，直接打勾）；② 桌面的 <code>warmup-check/hello.md</code> 真的存在、內容正確；③ 你說得出 AI 助手回報的 gh 帳號就是你的 GitHub 帳號。<br>
       <span class="small">哪一項卡住，先把畫面或錯誤訊息貼給 AI 助手問；要參加現場工作坊的人，講師開場配對前也會快掃一輪，卡住的當場救。</span></div></div>
   </div>
 
@@ -360,7 +372,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <tr><td>Claude Code（Anthropic）</td><td>講師示範機：開場與攔停演示用，順便看到「不同 agent、同一套 git 概念」</td></tr>
   </table></div>
   <div class="callout">
-    <strong>🏁 行前準備到這裡結束。</strong>上面 9 項都打勾＝課前的事全部做完，可以安心闔上電腦。
+    <strong>🏁 行前準備到這裡結束。</strong>上面 10 項都打勾＝課前的事全部做完，可以安心闔上電腦。
     當天只要帶三樣：<strong>筆電、充電器、設定 2FA 的那支手機</strong>。<br>
     <span class="small">從下一節「參」開始是課堂當天的教材——想先翻可以，沒翻也完全不影響上課。</span>
   </div>
@@ -472,7 +484,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <h3 style="margin-top:0">監督三原則</h3>
     <p><strong>一、動手前看計畫。</strong>agent 動手前會先說「我打算怎麼做、為什麼」；沒看懂那段話，先問——<strong>聽得懂才放行</strong>，解釋不通就不准做。</p>
     <p><strong>二、動手後看 diff。</strong>agent 說做完了不算數，逐行差異你掃過一眼才算數。就當審自己學生的修改稿。</p>
-    <p class="small" style="background:var(--gold-soft);padding:8px 12px;border-radius:8px">這三條跟行前第 6 項的授權設定是同一件事：<strong>指令自動執行讓課堂跑得順、要碰工作資料夾以外的檔案保持要問、千萬別選 Turbo mode。</strong>設定是你調的，代表哪些事你願意授權、哪些你要親自把關，是你決定的。</p>
+    <p class="small" style="background:var(--gold-soft);padding:8px 12px;border-radius:8px">這三條跟行前第 7 項的授權設定是同一件事：<strong>指令自動執行讓課堂跑得順、要碰工作資料夾以外的檔案保持要問、千萬別選 Turbo mode。</strong>設定是你調的，代表哪些事你願意授權、哪些你要親自把關，是你決定的。</p>
     <p><strong>三、破壞性動作，agent 必須先問你。</strong>紅線動詞清單：強制推送（force push）、把分支 reset 到舊 commit、硬重設（<code>reset --hard</code>）、改寫歷史（rebase）、刪除檔案或分支、覆蓋遠端。<code>reset --hard</code> 會讓暫存區與已追蹤工作檔對齊目標 commit，未提交修改會被覆蓋；其他 reset 模式若指向舊 commit，也會移動本機歷史。看到這些動詞一律喊停，先問「會動哪一層？會不會弄丟東西？這段歷史是否已經分享？有沒有更安全的做法？」<strong>它沒問就做了，換掉它的設定或換掉它。</strong></p>
   </div>
   <div class="card">
