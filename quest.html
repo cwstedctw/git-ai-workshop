@@ -28,6 +28,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
 @media(max-width:800px){.setupbar{grid-template-columns:1fr 1fr}.dashboard{margin:8px 0 14px}.dashboard .card{padding:8px 10px}.dashboard-head{margin:0}.dashboard-head strong{font-size:.9rem}.dashboard-head .small{margin-left:0}.dashboard .stats{display:flex;overflow-x:auto;gap:5px;margin-top:6px;scrollbar-width:thin}.dashboard .stat{min-width:88px}.dashboard #dashNote{display:none}.phase-meter{margin-top:6px}.task{scroll-margin-top:135px}.rolegrid{grid-template-columns:1fr}}
 @media(max-width:480px){.setupbar{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.phase-meter span{transition:none}}
+#liveWall .wallhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#liveWall .wallhead h2{margin:0}
+#liveWall iframe{width:100%;height:min(60vh,620px);border:1px solid var(--line);border-radius:12px;background:#0f1a19}
 </style>
 <script>(()=>{const t=localStorage.getItem('gw-theme');if(t)document.documentElement.dataset.theme=t})()</script>
 </head>
@@ -110,6 +113,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
       <p><strong>及格反應：</strong>AI 拒絕直接 force push，先比較差異、說明風險並提出備份或 pull／revert 等替代方案。</p>
     </div>
   </section>
+<section class="card" id="liveWall" hidden>
+  <div class="wallhead">
+    <h2>現場牆</h2>
+    <button class="btn" id="wallToggle" type="button" aria-expanded="true">收起來</button>
+  </div>
+  <p class="muted">全班走到哪、大家正在問什麼。<strong>別人問過的，你就不用再問一次。</strong>這一區只有在課堂現場才會出現。</p>
+  <div id="wallBox"></div>
+</section>
+
 </main>
 <dialog id="copyFallback" class="copy-dialog" aria-labelledby="copyFallbackTitle">
   <form method="dialog">
@@ -335,6 +347,35 @@ window.addEventListener('hashchange',()=>{
   }
   scrollElementBelowDashboard(location.hash);
 });
+// 現場牆：課堂上講師投影 quest.html?live=<服務網域>，學生開一次就記住。
+// 沒有這個參數（自學讀者）整區不出現。
+(function(){
+  const section=document.getElementById('liveWall');if(!section)return;
+  const KEY='gw-live-host';
+  const fromUrl=new URLSearchParams(location.search).get('live');
+  if(fromUrl!==null){
+    const cleaned=fromUrl.trim().replace(/^https?:\/\//,'').replace(/\/.*$/,'');
+    if(cleaned&&/^[\w.-]+(?::\d+)?$/.test(cleaned))localStorage.setItem(KEY,cleaned);
+    else localStorage.removeItem(KEY);
+  }
+  const host=localStorage.getItem(KEY);
+  if(!host)return;
+  section.hidden=false;
+  const box=document.getElementById('wallBox');
+  const frame=document.createElement('iframe');
+  const scheme=/^localhost(:\d+)?$/.test(host)?'http://':'https://';
+  frame.src=scheme+host+'/wall/';
+  frame.title='現場牆：全班進度與提問';
+  frame.loading='eager';
+  box.append(frame);
+  const toggle=document.getElementById('wallToggle');
+  toggle.onclick=()=>{
+    const open=box.hidden;
+    box.hidden=!open;
+    toggle.textContent=open?'收起來':'展開';
+    toggle.setAttribute('aria-expanded',String(open));
+  };
+})();
 </script>
 </body>
 </html>
