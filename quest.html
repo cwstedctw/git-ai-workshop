@@ -117,6 +117,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
   <div class="wallhead">
     <h2>現場牆</h2>
     <button class="btn" id="wallToggle" type="button" aria-expanded="true">收起來</button>
+    <button class="btn" id="wallLeave" type="button">下課了，離開這場</button>
   </div>
   <p class="muted">全班走到哪、大家正在問什麼。<strong>別人問過的，你就不用再問一次。</strong>這一區只有在課堂現場才會出現。</p>
   <div id="wallBox"></div>
@@ -370,7 +371,11 @@ window.addEventListener('hashchange',()=>{
   frame.src=scheme+host+'/wall/';
   frame.title='現場牆：全班進度與提問';
   frame.loading='eager';
+  // 就算是自家網域，也不讓被嵌的頁面把上層帶走或跳彈窗
+  frame.setAttribute('sandbox','allow-scripts allow-same-origin');
   box.append(frame);
+  const leave=document.getElementById('wallLeave');
+  if(leave)leave.onclick=()=>{localStorage.removeItem(KEY);section.hidden=true;};
   const toggle=document.getElementById('wallToggle');
   toggle.onclick=()=>{
     const open=box.hidden;
