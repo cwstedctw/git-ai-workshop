@@ -355,7 +355,10 @@ window.addEventListener('hashchange',()=>{
   const fromUrl=new URLSearchParams(location.search).get('live');
   if(fromUrl!==null){
     const cleaned=fromUrl.trim().replace(/^https?:\/\//,'').replace(/\/.*$/,'');
-    if(cleaned&&/^[\w.-]+(?::\d+)?$/.test(cleaned))localStorage.setItem(KEY,cleaned);
+    // 只收得下自家的服務網域。不然有人丟一條帶惡意網址的連結給學生，
+    // 那個網址會被記進 localStorage 並且一直用 iframe 載進教材裡。
+    const allowed=/^[\w-]+(?:\.[\w-]+)*\.workers\.dev$/.test(cleaned)||/^localhost(?::\d+)?$/.test(cleaned);
+    if(cleaned&&allowed)localStorage.setItem(KEY,cleaned);
     else localStorage.removeItem(KEY);
   }
   const host=localStorage.getItem(KEY);
