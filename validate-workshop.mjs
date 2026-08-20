@@ -41,9 +41,10 @@ if(p9.title!=='三種看似「回去」：只看、restore、revert'||p9.why.inc
 for(const phrase of ['我不輸入 Git 指令','只查看證據並回覆「開始」、「繼續」或「停」','看到原有變更、非預期 diff、同步不一致、衝突或 push 被拒絕，立刻停下','第一段｜只查看舊版','第二段｜restore 未 commit 的假錯字','第三段｜revert 已 push 的假錯誤','全程禁止 reset、rebase、force push','若發生衝突，立刻停止','全部完成後，才另更新已被 .gitignore 排除的 WORKSHOP-RECEIPT.txt']){
   if(!p9.prompt.includes(phrase))fail(`P9 缺少清楚的 AI 代操作指示：${phrase}`);
 }
-for(const phrase of ['origin 完整網址','我帳號下的 research-practice-project']){
+for(const phrase of ['origin 完整網址','我帳號下','我在 P2 建的那個練習 repo']){
   if(!p9.prompt.includes(phrase))fail(`P9 缺少推送目的地核對：${phrase}`);
 }
+if(/origin 是我帳號下的 research-practice-project；/.test(p9.prompt))fail('P9 不可把練習 repo 名稱寫死——P2 撞名時教材自己叫學員改名，寫死會在 P9 把人擋下來');
 if(p9.prompt.includes('我新增一行錯字'))fail('P9 不應要求學生自己修改檔案');
 if(p9.plan.some(item=>item.includes('學生')))fail('P9 計畫應直接使用第二人稱「你」');
 if(!Array.isArray(p9.situations)||p9.situations.length!==4)fail('P9 缺少 show／restore／revert／reset 判斷表');

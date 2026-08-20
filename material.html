@@ -537,23 +537,25 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <section id="agenda">
   <h2><span class="no">捌</span>當天 2 小時課表</h2>
   <div class="callout teal"><strong>最低完成線：</strong>完成 P1–P9，包括 2 次 commit、2 次 push，以及 P9 的 show／restore／revert 安全練習；再完整走過 1 次「研究生提 PR → 指導教授要求補改 → 研究生補改 → 教授核准合併 → 雙方 pull」。第二輪交換角色也要完成；時間緊時縮小修改內容，不省略 diff、另一人核准與合併。</div>
-  <p class="small">每關標示的是單人順利操作的估計時間；下面課表把相鄰關卡合併，並把 0:56–1:02 留作共同緩衝，因此各列不會逐格等於每關分鐘數。</p>
+  <p class="small">每關標示的是單人順利操作的估計時間；下面課表把相鄰關卡合併，並把 0:56–1:02 留作共同緩衝，因此各列不會逐格等於每關分鐘數。<strong>1:16–1:41（C2–C5）是全場唯一沒有緩衝的一段</strong>——那裡兩個人要來回等對方，超時就從 1:50–1:56 借。</p><p class="small">最後一欄是<strong>現場回饋</strong>（學員用手機按難度、發問、投票）。沒有部署這個服務就整欄略過，課程照跑不受影響；圈號是學員頁上七組投票的題號，七題一直都看得到，講師只要口播「現在投第幾題」。</p>
   <div class="tablewrap"><table>
-    <tr><th>時間</th><th>教室正在做什麼</th><th>對應步驟</th><th>講師巡桌重點</th></tr>
-    <tr><td>0:00–0:08</td><td>開場：版本災難、AI 與人的分工</td><td>全課路線</td><td>先講安全紅線，不教背指令</td></tr>
-    <tr><td>0:08–0:14</td><td>建立普通資料夾、用 Antigravity 開啟</td><td>P1</td><td>全員確認工作路徑相同</td></tr>
-    <tr><td>0:14–0:22</td><td>加入 Git、.gitignore、建立並連接 GitHub repo</td><td>P2</td><td>公開前確認只有假資料</td></tr>
-    <tr><td>0:22–0:31</td><td>建 notes.md、看狀態、第一個 commit</td><td>P3–P4</td><td>commit 前一定先看檔案與 diff</td></tr>
-    <tr><td>0:31–0:40</td><td>第一次 push；讓 AI 做小修改並看 diff</td><td>P5–P6</td><td>修改前看計畫，修改後逐行驗收</td></tr>
-    <tr><td>0:40–0:47</td><td>第二次 commit 與 push</td><td>P7</td><td>分清 commit 與 push</td></tr>
-    <tr><td>0:47–0:56</td><td>歷史、版本比較、restore 與 revert</td><td>P8–P9</td><td>每個改動步驟都停下確認</td></tr>
-    <tr><td>0:56–1:02</td><td>個人階段補進度</td><td>最低線檢查</td><td>2 commits＋2 pushes</td></tr>
-    <tr><td>1:02–1:06</td><td>休息、配對、發角色卡、兩人互報 GitHub 帳號</td><td>配對</td><td>帳號抄在角色卡背面，C1 立刻要用</td></tr>
-    <tr><td>1:06–1:16</td><td>C1 教授建配對 repo、研究生接受邀請後 clone（第二個資料夾）</td><td>C1</td><td>教授沿用剛建的資料夾不重複 clone；兩人權限都要 WRITE；闖關頁改連新資料夾</td></tr>
-    <tr><td>1:16–1:41</td><td>第一輪：研究生提 PR；教授要求補改；補改後核准合併；雙方 pull</td><td>C2–C5</td><td>另一人親自看 Files changed；作者不可自我核准</td></tr>
-    <tr><td>1:41–1:50</td><td>交換角色，走一次短流程</td><td>C6</td><td>不能省略 diff 與另一人核准</td></tr>
-    <tr><td>1:50–1:56</td><td>第二輪合併後雙方最終 pull、看歷史、故障排除</td><td>C6 收尾＋救援</td><td>兩台電腦都看得到 main 最新內容</td></tr>
-    <tr><td>1:56–2:00</td><td>小測驗、回顧與帶走資源</td><td>收尾</td><td>說得出 AI／人的分工與三條紅線</td></tr>
+    
+    <tr><th>時間</th><th>教室正在做什麼</th><th>對應步驟</th><th>講師巡桌重點</th><th>現場回饋（選用）</th></tr>
+    <tr><td>課前（進場）</td><td>投影現場回饋入場 QR；學員掃碼、投 ①</td><td>—</td><td>看 ① 的分佈決定開場講多細</td><td>投 ①</td></tr>
+    <tr><td>0:00–0:08</td><td>開場：版本災難、AI 與人的分工</td><td>全課路線</td><td>先講安全紅線，不教背指令</td><td>提醒一次：手機放桌邊當求救鈴，卡住就按難度</td></tr>
+    <tr><td>0:08–0:14</td><td>建立普通資料夾、用 Antigravity 開啟</td><td>P1</td><td>全員確認工作路徑相同</td><td>② 常開，換關順手改</td></tr>
+    <tr><td>0:14–0:22</td><td>加入 Git、.gitignore、建立並連接 GitHub repo</td><td>P2</td><td>公開前確認只有假資料</td><td>② 常開</td></tr>
+    <tr><td>0:22–0:31</td><td>建 notes.md、看狀態、第一個 commit</td><td>P3–P4</td><td>commit 前一定先看檔案與 diff</td><td>② 常開</td></tr>
+    <tr><td>0:31–0:40</td><td>第一次 push；讓 AI 做小修改並看 diff</td><td>P5–P6</td><td>修改前看計畫，修改後逐行驗收</td><td>② 常開</td></tr>
+    <tr><td>0:40–0:47</td><td>第二次 commit 與 push</td><td>P7</td><td>分清 commit 與 push</td><td>② 常開</td></tr>
+    <tr><td>0:47–0:56</td><td>歷史、版本比較、restore 與 revert</td><td>P8–P9</td><td>每個改動步驟都停下確認</td><td>② 常開</td></tr>
+    <tr><td>0:56–1:02</td><td>個人階段補進度</td><td>最低線檢查</td><td>2 commits＋2 pushes</td><td>投 ③；看 ② 誰還停在前段</td></tr>
+    <tr><td>1:02–1:06</td><td>休息、配對、發角色卡、兩人互報 GitHub 帳號</td><td>配對</td><td>帳號抄在角色卡背面，C1 立刻要用</td><td>投 ④</td></tr>
+    <tr><td>1:06–1:16</td><td>C1 教授建配對 repo、研究生接受邀請後 clone（第二個資料夾）</td><td>C1</td><td>教授沿用剛建的資料夾不重複 clone；兩人權限都要 WRITE；闖關頁改連新資料夾</td><td>看 ④ 誰卡在「等對方接受邀請」</td></tr>
+    <tr><td>1:16–1:41</td><td>第一輪：研究生提 PR；教授要求補改；補改後核准合併；雙方 pull</td><td>C2–C5</td><td>另一人親自看 Files changed；作者不可自我核准</td><td>⑤ 常開</td></tr>
+    <tr><td>1:41–1:50</td><td>交換角色，走一次短流程</td><td>C6</td><td>不能省略 diff 與另一人核准</td><td>⑤ 常開</td></tr>
+    <tr><td>1:50–1:56</td><td>第二輪合併後雙方最終 pull、看歷史、故障排除</td><td>C6 收尾＋救援</td><td>兩台電腦都看得到 main 最新內容</td><td>⑤ 常開</td></tr>
+    <tr><td>1:56–2:00</td><td>小測驗、回顧與帶走資源</td><td>收尾</td><td>說得出 AI／人的分工與三條紅線</td><td>投 ⑥，最後一分鐘投 ⑦</td></tr>
   </table></div>
   <h3>開課前講師要完成的準備</h3>
   <p>配對 repo 改由學員在 C1 <strong>現場自建</strong>（教授角色的 AI 一句話建好、研究生親自接受邀請），講師不必預建。要準備的是：<strong>角色卡</strong>——正面寫組號與第一輪角色，背面留兩格「我的 GitHub 帳號／夥伴的 GitHub 帳號」讓兩人互抄；<strong>配對方式</strong>——建議相鄰兩人一組，奇數人時最後一組三人、第三人在 C6 當第二輪研究生；以及<strong>一個講師示範 repo</strong>——照 C1 規格先建好（<code>paper.md</code> 含「方法」「文獻回顧」、<code>.gitignore</code> 排除 <code>WORKSHOP-RECEIPT*.txt</code>），哪一組 C1 卡超過五分鐘，把<strong>兩人都加為示範 repo 的協作者</strong>（請他們親自接受邀請、確認權限是 WRITE，否則 C2 的 push 會失敗），再讓他們 clone 那一個繼續走 C2，課後補建自己的。</p>

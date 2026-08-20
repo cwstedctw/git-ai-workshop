@@ -176,7 +176,7 @@
 - 看到原有變更、非預期 diff、同步不一致、衝突或 push 被拒絕，立刻停下，不得自行清理或修復。
 
 開始前：
-1. 回報 repo 完整路徑與 origin 完整網址，確認分支是 main，而且 origin 是我帳號下的 research-practice-project；若名稱或擁有者不符就停下。
+1. 回報 repo 完整路徑與 origin 完整網址，確認分支是 main，而且 origin 是我帳號下、我在 P2 建的那個練習 repo（預設叫 research-practice-project，若當時改過名就以我實際建的為準）；若擁有者不是我，或那不是今天的練習 repo，就停下。
 2. fetch origin 後，證明工作區乾淨，而且 HEAD 與 origin/main 相同；若不相同就停下。
 3. 列出三段計畫，等我回覆「開始」。
 
@@ -196,7 +196,7 @@
 - 我再次回覆「繼續」後，才 revert 該錯誤 commit 並 push。若發生衝突，立刻停止，不得自行選擇內容、commit 或 push。成功後 fetch origin，顯示最近四筆歷史、工作區乾淨、HEAD 與 origin/main 相同。
 
 三段全部成功後，才在 WORKSHOP-RECEIPT.txt 記錄 P9 done。`,
-      plan:['確認正確路徑、origin 是自己的 research-practice-project、分支是 main，以及 fetch 後工作區乾淨且 HEAD 與 origin/main 相同','只讀顯示 notes.md 第一版，證明分支、HEAD 與工作區未變','加入未提交假錯字；你核對唯一 diff 後才 restore','加入假錯誤；你核對後才 commit 並 push','解釋 revert；你放行後新增撤銷 commit、push 並驗證同步'],
+      plan:['確認正確路徑、origin 是自己在 P2 建的練習 repo、分支是 main，以及 fetch 後工作區乾淨且 HEAD 與 origin/main 相同','只讀顯示 notes.md 第一版，證明分支、HEAD 與工作區未變','加入未提交假錯字；你核對唯一 diff 後才 restore','加入假錯誤；你核對後才 commit 並 push','解釋 revert；你放行後新增撤銷 commit、push 並驗證同步'],
       human:'你不用輸入指令。每個停點只核對：路徑、origin 網址與分支正確；第一段狀態沒變；restore 只移除指定假錯字；錯誤 commit 已保留；revert 是另一筆新 commit。證據不符就回覆「停」。',
       dashboard:'第一段狀態不變；restore 後工作區乾淨；最後歷史依序保留錯誤 commit 與 revert commit，main 和 origin/main 同步，收據顯示 P9 done。',
       behind:'git rev-parse --show-toplevel\ngit remote get-url origin\ngit branch --show-current\ngit fetch origin\ngit status --short --branch\ngit rev-parse HEAD\ngit rev-parse origin/main\ngit log --reverse --format=%H -- notes.md\ngit show <第一版commit>:notes.md\ngit rev-parse HEAD\ngit status --short --branch\ngit diff -- notes.md\ngit diff --cached -- notes.md\ngit restore -- notes.md\ngit diff -- notes.md\ngit status --short --branch\ngit diff -- notes.md\ngit add -- notes.md\ngit diff --cached -- notes.md\ngit commit -m "練習：加入錯誤結論"\ngit push origin main\ngit rev-parse HEAD\ngit revert --no-edit <錯誤commit>\ngit push origin main\ngit fetch origin\ngit log --oneline -4\ngit status --short --branch\ngit rev-parse HEAD\ngit rev-parse origin/main',
@@ -215,7 +215,7 @@
       prompt:`請分成兩台電腦依序完成。開始前先跟夥伴互報 GitHub 帳號、講好組號。
 
 指導教授的電腦（這一輪的教授擁有論文 repo）：
-- ⚠️ 新 repo 要獨立、不能蓋在第一階段的專案裡。請先告訴我我的「文件」資料夾（Documents）完整路徑，在那底下建一個全新的空資料夾 thesis-pair-組號（把「組號」換成你們的，例如 thesis-pair-03）；如果你發現目前位置在 research-practice-project 裡面，立刻停下來告訴我。
+- ⚠️ 新 repo 要獨立、不能蓋在第一階段的專案裡。請先告訴我我的「文件」資料夾（Documents）完整路徑，在那底下建一個全新的空資料夾 thesis-pair-組號（把「組號」換成你們的，例如 thesis-pair-03）；如果你發現目前位置在第一階段那個練習專案資料夾裡面（預設叫 research-practice-project），立刻停下來告訴我。
 - 在那個新資料夾裡建兩個檔案：paper.md 要有「方法」與「文獻回顧」兩個標題、各放一句假內容；.gitignore 要排除 WORKSHOP-RECEIPT*.txt；再加一個 .gitattributes、內容一行 * text=auto eol=lf。做成第一個 commit（分支名 main）後建立同名的公開 GitHub repo 並推上去，再把我的夥伴加為可推送（push）的協作者——帳號用夥伴剛報給我的那個。完成後回報 repo 完整網址。
 
 研究生這邊：

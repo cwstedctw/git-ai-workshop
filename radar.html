@@ -13,6 +13,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 :root[data-theme="dark"]{--bg:#151d1c;--card:#1d2726;--ink:#ece6d6;--soft:#b7b0a0;--line:#33403e;--teal:#70d3cc;--deep:#8bd8d2;--gold:#d9a441;--ok:#78cd83;--warn:#f0bc58;--bad:#ff967a;--action:#176762}[data-theme="dark"] .pill{background:#70d3cc1f}
 :root[data-theme="light"]{--bg:#f4ecd8;--card:#fffaf0;--ink:#1d2422;--soft:#615c51;--line:#ded3b8;--teal:#0e7c7b;--deep:#0a5958;--gold:#d9a441;--ok:#2d7c45;--warn:#a46b0b;--bad:#b33c28;--action:#0e7c7b}[data-theme="light"] .pill{background:#0e7c7b18}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+body.privacy .repo h3,body.privacy .repo .pill,body.privacy .alerts strong,body.privacy #personal,body.privacy #pairs{filter:blur(7px);user-select:none}
+body.privacy .maskhint{display:block}.maskhint{display:none;color:var(--warn);font-weight:700}
 </style>
 <script>(()=>{const t=localStorage.getItem('gw-theme');if(t)document.documentElement.dataset.theme=t})()</script>
 </head>
@@ -26,6 +28,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
     <div><label>目前階段<select id="phase"><option value="personal">第一階段｜自己的研究專案</option><option value="collab">第二階段｜研究生 × 指導教授</option></select></label></div>
     <div><label>自動更新<select id="interval"><option value="0">關閉</option><option value="60">每 60 秒</option><option value="300">每 5 分鐘</option></select></label></div>
     <div style="align-self:end"><button class="btn" id="load" type="button">立即讀取目前階段</button><p id="note" class="muted" role="status" aria-live="polite"></p></div>
+    <div style="align-self:end"><button class="btn" id="mask" type="button" aria-pressed="false">遮住名字</button> <button class="btn" id="toPhone" type="button">傳到手機</button><p class="maskhint">名字已遮住——現在投影出去不會點到名。</p><p class="muted">投影機如果是鏡像模式，切過來之前先按「遮住名字」（快捷鍵 <kbd>H</kbd>），紅綠燈與人數照看，只有桌牌與 repo 名會糊掉。想乾脆用手機看雷達，就按「傳到手機」把設定帶過去——<strong>token 不會跟著走</strong>。</p><div id="phoneBox" hidden></div></div>
   </section>
 
   <section class="card" id="liveFeedback">
@@ -111,6 +114,59 @@ $('load').onclick=load;let timer;function schedule(){clearInterval(timer);const 
     img.style.cssText='width:min(260px,60vw);background:#fff;border-radius:10px;padding:10px';
     box.append(tip,img);
   };
+})();
+
+// 隱私遮蔽：鏡像投影時先遮再切
+(function(){
+  const button=$('mask');if(!button)return;
+  const on=()=>document.body.classList.contains('privacy');
+  const set=state=>{document.body.classList.toggle('privacy',state);button.setAttribute('aria-pressed',String(state));button.textContent=state?'顯示名字':'遮住名字';localStorage.setItem('gr-mask',state?'1':'')};
+  set(localStorage.getItem('gr-mask')==='1');
+  button.onclick=()=>set(!on());
+  addEventListener('keydown',event=>{
+    if(event.metaKey||event.ctrlKey||event.altKey)return;
+    if(/^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName))return;
+    if(event.key==='h'||event.key==='H'){event.preventDefault();set(!on())}
+  });
+})();
+
+// 傳到手機：把設定編進網址，token 不帶
+(function(){
+  const button=$('toPhone'),box=$('phoneBox');if(!button)return;
+  const pack=()=>{
+    const ldk=$('ldkUrl');
+    const payload={p:$('personal').value,r:$('pairs').value,ph:$('phase').value,l:ldk?ldk.value.trim():''};
+    return btoa(unescape(encodeURIComponent(JSON.stringify(payload)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  };
+  button.onclick=()=>{
+    const link=location.origin+location.pathname+'#s='+pack();
+    box.hidden=false;box.textContent='';
+    const tip=document.createElement('p');tip.className='muted';
+    tip.textContent='把這個網址用 AirDrop 或訊息傳到自己的手機，打開就有同一份設定。手機上 token 留空即可——沒有 token 每小時仍有 60 次，手動按「立即讀取」夠用。';
+    const field=document.createElement('textarea');field.readOnly=true;field.value=link;field.style.minHeight='64px';
+    const copy=document.createElement('button');copy.className='btn';copy.type='button';copy.textContent='複製連結';
+    copy.onclick=()=>{
+      const done=()=>{copy.textContent='已複製';setTimeout(()=>{copy.textContent='複製連結'},1500)};
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(link).then(done).catch(()=>{field.select();done()})}
+      else{field.select();done()}
+    };
+    box.append(tip,field,copy);
+  };
+})();
+
+// 開頁時吃 #s=：手機掃到／貼到就直接有設定
+(function(){
+  const match=location.hash.match(/[#&]s=([A-Za-z0-9_-]+)/);if(!match)return;
+  try{
+    const data=JSON.parse(decodeURIComponent(escape(atob(match[1].replace(/-/g,'+').replace(/_/g,'/')))));
+    const put=(id,key,value)=>{if(typeof value!=='string'||!$(id))return;$(id).value=value;localStorage.setItem(key,value)};
+    put('personal','gr-personal',data.p);
+    put('pairs','gr-pairs',data.r);
+    put('phase','gr-phase',data.ph);
+    put('ldkUrl','gr-ldk',data.l);
+    history.replaceState(null,'',location.pathname);
+    paintPhase();
+  }catch(error){/* 網址被截斷就當作沒帶設定 */}
 })();
 </script>
 </body>
