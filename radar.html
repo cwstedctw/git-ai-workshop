@@ -28,6 +28,23 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
     <div style="align-self:end"><button class="btn" id="load" type="button">立即讀取目前階段</button><p id="note" class="muted" role="status" aria-live="polite"></p></div>
   </section>
 
+  <section class="card" id="liveFeedback">
+    <h2 style="margin-top:0">現場回饋（選用）</h2>
+    <p class="muted">雷達只看得見已經推上 GitHub 的人。P1 到 P4 還沒有人 push，這裡整片空白——但那正是最多人卡住的時段。現場回饋補的就是這一段：學員用手機按難度、丟問題，不必等 repo 建好。課前沒有部署服務就略過這一區，雷達其他功能不受影響。</p>
+    <div class="row">
+      <label style="flex:1 1 320px">現場回饋服務網址（每場一個，課前部署）<input id="ldkUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://your-worker.workers.dev"></label>
+    </div>
+    <div class="row">
+      <button class="btn" id="ldkBoard" type="button">開看板</button>
+      <button class="btn" id="ldkAudience" type="button">開學員頁</button>
+      <button class="btn" id="ldkQr" type="button">顯示入場 QR</button>
+      <button class="btn" id="ldkEmbed" type="button">就在這頁看看板</button>
+    </div>
+    <div id="ldkQrBox" hidden></div>
+    <div id="ldkBoardBox" hidden></div>
+    <p class="muted">⚠️ 難度是「現在的狀態」、不是紀錄：學員按過「我卡住了」之後如果沒再改，紅色會一直留著。巡完桌解決了，請他順手改一下。</p>
+  </section>
+
   <section class="card phase-note" id="phaseNote" aria-live="polite"></section>
   <section class="summary" aria-label="目前階段摘要" aria-live="polite">
     <div class="metric"><strong id="mRepos">–</strong><span>讀得到的 repo</span></div>
@@ -67,6 +84,34 @@ async function load(){
   $('note').textContent='讀取中……';rate={remaining:null,reset:null};const personal=$('phase').value==='personal',items=rows(personal?'personal':'pairs'),results=await Promise.all(items.map(personal?personalCard:pairCard)),a=personal?results:[],b=personal?[]:results;$('personalGrid').innerHTML=a.length?a.map(x=>x.html).join(''):'<p class="muted">尚未填個人 repo。</p>';$('pairGrid').innerHTML=b.length?b.map(x=>x.html).join(''):'<p class="muted">尚未填配對 repo。</p>';const alerts=results.filter(x=>x.alert);$('alerts').innerHTML=alerts.length?alerts.map(x=>`<div class="card"><strong>${esc(x.label)}</strong>：${x.ok?'目前狀態需要講師看一眼。':'GitHub API 讀取失敗，先核對設定。'}</div>`).join(''):'<div class="card">目前階段沒有紅燈。仍請看教室現場，不要只靠儀表板。</div>';$('mRepos').textContent=results.filter(x=>x.ok).length+'/'+results.length;$('mRecent').textContent=results.filter(x=>x.recent).length;$('mOpen').textContent=b.reduce((n,x)=>n+(x.open||0),0);$('mReview').textContent=b.filter(x=>x.review).length;$('mAlerts').textContent=alerts.length;const rateText=rate.remaining!==null?'；API 剩餘 '+rate.remaining+' 次':'';$('note').textContent='最後更新：'+new Date().toLocaleTimeString('zh-TW')+rateText;
 }
 $('load').onclick=load;let timer;function schedule(){clearInterval(timer);const n=+$('interval').value;if(n&&!$('token').value.trim()){$('interval').value='0';localStorage.setItem('gr-interval','0');$('note').textContent='自動更新需要 token；目前已保持關閉，可按「立即讀取」手動更新。';return}if(n)timer=setInterval(load,n*1000)}paintPhase();schedule();
+(function(){
+  const box=$('ldkQrBox'),url=$('ldkUrl');if(!url)return;
+  url.value=localStorage.getItem('gr-ldk')||'';
+  url.oninput=()=>localStorage.setItem('gr-ldk',url.value.trim());
+  const base=()=>{const v=url.value.trim().replace(/\/$/,'');return /^https:\/\/[\w.-]+(?::\d+)?(?:\/\S*)?$/.test(v)||/^http:\/\/localhost(?::\d+)?$/.test(v)?v:''};
+  const openTab=path=>{const b=base();if(!b){$('ldkQrBox').hidden=false;box.innerHTML='<p class="muted">請先填服務網址（https 開頭）。</p>';url.focus();return}window.open(b+path,'_blank','noopener')};
+  $('ldkBoard').onclick=()=>openTab('/dashboard/');
+  $('ldkAudience').onclick=()=>openTab('/');
+  const boardBox=$('ldkBoardBox');
+  $('ldkEmbed').onclick=()=>{const b=base();if(!b){boardBox.hidden=false;boardBox.innerHTML='<p class="muted">請先填服務網址（https 開頭）。</p>';url.focus();return}
+    boardBox.hidden=!boardBox.hidden;
+    boardBox.textContent='';
+    if(boardBox.hidden)return;
+    const frame=document.createElement('iframe');frame.src=b+'/dashboard/';frame.title='現場回饋看板';frame.loading='lazy';
+    frame.style.cssText='width:100%;height:min(78vh,760px);border:1px solid var(--line);border-radius:11px;background:#0f1a19';
+    const tip=document.createElement('p');tip.className='muted';tip.textContent='看板嵌在這裡，雷達與現場回饋同一個畫面。要投影給全班看就改開新分頁。';
+    boardBox.append(tip,frame);
+  };
+  $('ldkQr').onclick=()=>{const b=base();if(!b){box.hidden=false;box.innerHTML='<p class="muted">請先填服務網址（https 開頭）。</p>';url.focus();return}
+    box.hidden=!box.hidden;
+    box.textContent='';
+    if(box.hidden)return;
+    const tip=document.createElement('p');tip.className='muted';tip.textContent='投影這個碼讓學員掃描進場。';
+    const img=document.createElement('img');img.src=b+'/api/qr.svg';img.alt='現場回饋入場 QR code';
+    img.style.cssText='width:min(260px,60vw);background:#fff;border-radius:10px;padding:10px';
+    box.append(tip,img);
+  };
+})();
 </script>
 </body>
 </html>
