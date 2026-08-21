@@ -10,7 +10,7 @@
 |---|---|
 | [index.html](index.html) | 入口與導覽 |
 | [material.html](material.html) | 完整教材＋行前準備包＋課後手冊（自學從這裡開始） |
-| [quest.html](quest.html) | 15 關闖關頁：可複製 AI 提示、Git 儀表板就地驗收（Chrome／Edge） |
+| [quest.html](quest.html) | 15 關闖關頁：可複製給 AI 的操作文字、Git 儀表板就地驗收（Chrome／Edge） |
 | [workflow-data.js](workflow-data.js) | 15 關課程內容的唯一資料來源（教材與闖關共用） |
 | [validate-workshop.mjs](validate-workshop.mjs) | 內容守門腳本：`node validate-workshop.mjs` |
 

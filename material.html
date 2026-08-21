@@ -285,9 +285,9 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
       ⚠️ 安裝途中若跳出 Windows 的「是否允許」視窗，按<strong>是</strong>就好；但如果它要你輸入這台電腦的<strong>系統管理員密碼</strong>，先停下來——<strong>密碼不要交給任何 AI</strong>，自己輸入，或找人在旁邊陪你。學校統一控管的筆電可能整個擋掉安裝，那就先跳過、當天現場處理。<br>
       🍎 <strong>Mac 沒有這個問題</strong>（本來就是 UTF-8），這項直接打勾跳過。</span></div></div>
     <div class="check" data-k="c5"><input type="checkbox" aria-label="完成第 6 項">
-      <div class="t"><strong>6｜跟 AI 助手打第一聲招呼（見面測試）</strong> <span class="done-mark">✓ 完成</span><br>
+      <div class="t"><strong>6｜跟 AI 助手打第一聲招呼（首次確認）</strong> <span class="done-mark">✓ 完成</span><br>
       打開 Antigravity，在第 3 項找到的那個<strong>輸入框</strong>裡貼這句話，按 Enter：<div class="prep-say">你好，請確認這台電腦的 git 裝好了嗎？版本幾號？<button class="copybtn prep-copy" type="button" data-copy="你好，請確認這台電腦的 git 裝好了嗎？版本幾號？">複製</button></div>它會回你一段話，親眼看到版本號就完成了。<br>
-      <span class="small">這句話同時測了三件事：工具會不會動、登入成不成功、網路通不通。</span></div></div>
+      <span class="small">這句話一次確認三件事：工具會不會動、登入成不成功、網路通不通。</span></div></div>
     <div class="check" data-k="c9"><input type="checkbox" aria-label="完成第 7 項">
       <div class="t"><strong>7｜調一下 AI 助手的授權（讓它別每件小事都問你）</strong> <span class="done-mark">✓ 完成</span><br>
       預設情況下 AI 助手每跑一個指令都會停下來問「可以嗎」——課堂上會很卡。
@@ -441,7 +441,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <!-- ═══════════ 完整操作手冊 ═══════════ -->
 <section id="guide">
   <h2><span class="no">導</span>完整操作手冊：每一步都寫清楚</h2>
-  <p>下面 15 步和課堂闖關使用相同編號、目標與完成標準，但分工不同：<strong>闖關頁帶你做，這份教材幫你看懂。</strong>每一步先說明為什麼需要、Git 正在處理哪個狀態、有哪些新名詞，以及你要判斷什麼；完整 AI 提示、操作計畫與幕後指令收在「實作參考」，需要時再展開。</p>
+  <p>下面 15 步和課堂闖關使用相同編號、目標與完成標準，但分工不同：<strong>闖關頁帶你做，這份教材幫你看懂。</strong>每一步先說明為什麼需要、Git 正在處理哪個狀態、有哪些新名詞，以及你要判斷什麼；給 AI 的完整操作文字、操作計畫與幕後指令收在「實作參考」，需要時再展開。</p>
   <div class="callout teal"><strong>不用一次讀完：</strong>上課先掌握「先懂這個」與「你要判斷什麼」。課後遇到疑問，再用瀏覽器搜尋關鍵字，或從闖關頁直接開啟對應步驟。</div>
   <div class="callout"><strong>格式範例：</strong>桌牌用 <code>lin</code>；配對 repo 可寫成 <code>advisor-account/thesis-pair-03</code>；夥伴用 <code>chen</code>。這只是格式示意，闖關頁不會預填 repo；C1 由教授角色現場建好之後，把他回報的實際 <code>owner/repo</code> 填進去。</div>
   <div id="flowGuide"></div>
@@ -528,7 +528,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 
 <!-- ═══════════ Quiz ═══════════ -->
 <section id="quiz">
-  <h2><span class="no">柒</span>小測驗：考概念與監督判斷，不考指令背誦</h2>
+  <h2><span class="no">柒</span>理解檢核：看概念與監督判斷，不看指令背誦</h2>
   <p>目前得分：<span id="quizScore" aria-live="polite">0 / 8</span></p>
   <div id="quizBox"></div>
 </section>
@@ -555,7 +555,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <tr><td>1:16–1:41</td><td>第一輪：研究生提 PR；教授要求補改；補改後核准合併；雙方 pull</td><td>C2–C5</td><td>另一人親自看 Files changed；作者不可自我核准</td><td>2b 常開</td></tr>
     <tr><td>1:41–1:50</td><td>交換角色，走一次短流程</td><td>C6</td><td>不能省略 diff 與另一人核准</td><td>2b 常開</td></tr>
     <tr><td>1:50–1:56</td><td>第二輪合併後雙方最終 pull、看歷史、故障排除</td><td>C6 收尾＋救援</td><td>兩台電腦都看得到 main 最新內容</td><td>2b 常開</td></tr>
-    <tr><td>1:56–2:00</td><td>小測驗、回顧與帶走資源</td><td>收尾</td><td>說得出 AI／人的分工與三條紅線</td><td>投 3a，最後一分鐘投 3b</td></tr>
+    <tr><td>1:56–2:00</td><td>理解檢核、回顧與帶走資源</td><td>收尾</td><td>說得出 AI／人的分工與三條紅線</td><td>投 3a，最後一分鐘投 3b</td></tr>
   </table></div>
   <h3>開課前講師要完成的準備</h3>
   <p>配對 repo 改由學員在 C1 <strong>現場自建</strong>（教授角色的 AI 一句話建好、研究生親自接受邀請），講師不必預建。要準備的是：<strong>角色卡</strong>——正面寫組號與第一輪角色，背面留兩格「我的 GitHub 帳號／夥伴的 GitHub 帳號」讓兩人互抄；<strong>配對方式</strong>——建議相鄰兩人一組，奇數人時最後一組三人、第三人在 C6 當第二輪研究生；以及<strong>一個講師示範 repo</strong>——照 C1 規格先建好（<code>paper.md</code> 含「方法」「文獻回顧」、<code>.gitignore</code> 排除 <code>WORKSHOP-RECEIPT*.txt</code>），哪一組 C1 卡超過五分鐘，把<strong>兩人都加為示範 repo 的協作者</strong>（請他們親自接受邀請、確認權限是 WRITE，否則 C2 的 push 會失敗），再讓他們 clone 那一個繼續走 C2，課後補建自己的。</p>
@@ -654,9 +654,9 @@ if(FLOW&&guideBox){
           </div>
           ${reset}
           <details class="practice-details">
-            <summary>實作參考｜完整 AI 提示、計畫與救援</summary>
+            <summary>實作參考｜給 AI 的完整操作文字、計畫與救援</summary>
             <div class="practice-body">
-              <div class="prompt"><strong>需要重新操作時，可以這樣對 AI 說</strong><br>${htmlSafe(sampleText(step.prompt))}<br><button class="copybtn flow-copy" type="button" data-flow-copy="${htmlSafe(sampleText(step.prompt))}">複製完整提示</button></div>
+              <div class="prompt"><strong>需要重新操作時，可以這樣對 AI 說</strong><br>${htmlSafe(sampleText(step.prompt))}<br><button class="copybtn flow-copy" type="button" data-flow-copy="${htmlSafe(sampleText(step.prompt))}">複製完整內容</button></div>
               <div class="grid">
                 <div class="box"><h4>AI 動手前應列出的計畫</h4><ol>${step.plan.map(x=>`<li>${htmlSafe(sampleText(x))}</li>`).join('')}</ol></div>
                 <div class="box"><h4>卡住先這樣救</h4><p>${htmlSafe(sampleText(step.rescue))}</p></div>

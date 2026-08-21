@@ -82,7 +82,7 @@ if((p9.behind.match(/git push origin main/g)||[]).length!==2)fail('P9 應有錯�
 const c1=flow.byId('C1'),c2=flow.byId('C2'),c4=flow.byId('C4'),c5=flow.byId('C5');
 if(!c1.behind.includes('<文件資料夾中的目標路徑>')||!c1.rescue.includes('公開 repo 即使尚未接受邀請也能 clone'))fail('C1 clone 位置或權限說明不完整');
 for(const phrase of ['互報 GitHub 帳號','「方法」與「文獻回顧」兩個標題','WORKSHOP-RECEIPT*.txt','Accept invitation','回報 repo 完整網址']){
-  if(!c1.prompt.includes(phrase))fail(`C1 自建配對 repo 提示缺少：${phrase}`);
+  if(!c1.prompt.includes(phrase))fail(`C1 自建配對 repo 操作文字缺少：${phrase}`);
 }
 if(!c1.behind.includes('gh repo create thesis-pair-')||!c1.behind.includes('collaborators'))fail('C1 幕後流程缺少建 repo 或邀請協作者指令');
 for(const phrase of ['git pull --ff-only origin main','git add paper.md','git diff --cached -- paper.md']){
@@ -101,6 +101,10 @@ if(!c6.prompt.includes('相關文獻將於正式研究中補齊'))fail('C6 缺�
 
 const html={index:read('./index.html'),start:read('./start.html'),startV1:read('./start-v1.html'),material:read('./material.html'),quest:read('./quest.html'),radar:read('./radar.html')};
 const fileFor={index:'index.html',start:'start.html',startV1:'start-v1.html',material:'material.html',quest:'quest.html',radar:'radar.html'};
+for(const [file,source] of [...Object.entries(html).map(([name,source])=>[fileFor[name],source]),['workflow-data.js',read('./workflow-data.js')]]){
+  const informal=source.match(/開發|測試|測驗|提示/);
+  if(informal)fail(`${file} 的對外文字仍有非正式成品措辭：${informal[0]}`);
+}
 const pageFor=Object.fromEntries(Object.entries(fileFor).map(([key,file])=>[file,key]));
 const idsByPage={};
 for(const [name,source] of Object.entries(html)){
@@ -191,7 +195,7 @@ if(html.quest.includes("cfg.pairRepo.value=localStorage.getItem('gq-pair')||'cws
 const dashboardAt=html.quest.indexOf('id="dashboard"');
 const personalStartAt=html.quest.indexOf('<section class="personal-only">');
 if(dashboardAt<0||personalStartAt<0||dashboardAt>personalStartAt)fail('闖關儀表板必須放在主要內容最上方');
-for(const needle of ['id="sProgress"','id="phaseProgressLabel"','id="phaseProgressFill"','id="dashRefresh"','id="clearQuest"','data-auto="${step.id}"','function autoCheckStep','function phaseCompletion','function showTaskResult','function scrollElementBelowDashboard','function showCopyFallback','id="copyFallback"','let autoNotices={}','✓ 這一步已完成','再檢查一次','人工驗收備援（自動檢查無法判斷時）','① 複製 AI 驗收提示','② AI 回覆通過，再標記完成','我已核對，標記完成']){
+for(const needle of ['id="sProgress"','id="phaseProgressLabel"','id="phaseProgressFill"','id="dashRefresh"','id="clearQuest"','data-auto="${step.id}"','function autoCheckStep','function phaseCompletion','function showTaskResult','function scrollElementBelowDashboard','function showCopyFallback','id="copyFallback"','let autoNotices={}','✓ 這一步已完成','再檢查一次','人工驗收備援（自動檢查無法判斷時）','① 複製 AI 驗收內容','② AI 回覆通過，再標記完成','我已核對，標記完成']){
   if(!html.quest.includes(needle))fail(`闖關頁缺少就地驗收元件：${needle}`);
 }
 if(html.quest.includes("$('dashboard').style.display=handle?'block':'none'"))fail('未連接資料夾時不應隱藏闖關儀表板');
@@ -199,13 +203,13 @@ if(!html.quest.includes("phase==='personal'?'第一階段':'第二階段'"))fail
 if(!html.quest.includes('@media(max-width:760px)')||!html.quest.includes('.dashboard{position:sticky;top:0;z-index:8;margin:8px 0 14px}'))fail('手機版缺少精簡 sticky 儀表板');
 if(!html.quest.includes("finally{if(b.isConnected){b.disabled=false"))fail('取消資料夾選擇後，自動檢查按鈕不會恢復');
 if(!html.quest.includes("document.execCommand('copy')")||!html.quest.includes('showCopyFallback(b.dataset.copy)'))fail('複製失敗時缺少可操作的手動備援');
-if(!html.quest.includes('.dashboard #sFolder{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}')||!html.quest.includes("$('sFolder').title=state.folder"))fail('長資料夾名稱沒有單行省略或完整名稱提示');
+if(!html.quest.includes('.dashboard #sFolder{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}')||!html.quest.includes("$('sFolder').title=state.folder"))fail('長資料夾名稱沒有單行省略或完整名稱說明');
 if(!html.quest.includes('class="guide-link"')||!html.quest.includes('target="_blank" rel="noopener"')||!html.quest.includes('這一步較長：開啟教材 P9 完整拆解'))fail('關卡缺少明顯的教材詳解連結');
 if(!html.material.includes('學員掃碼、投「前」')||html.material.includes('投 ①'))fail('教材的課前即時投票題號必須使用目前的「前」，不可退回舊版 ①');
 if(!html.quest.includes('/^[\\w-]+\\.wschen\\.workers\\.dev$/')||html.quest.includes('endsWith(\'.workers.dev\')'))fail('現場牆只可接受 wschen 帳號下的 Worker，不可放行任意 workers.dev');
 if(!html.quest.includes('localStorage.removeItem(KEY);frame.remove();section.hidden=true'))fail('離開現場牆時必須同時清掉場次、移除 iframe 並隱藏區塊');
 if(!html.material.includes('function openLinkedGuide()')||!html.material.includes('if(!location.hash)return')||!html.material.includes("target.open=true")||!html.material.includes("window.addEventListener('hashchange',openLinkedGuide)"))fail('教材深連結不會安全地自動展開對應步驟');
-for(const needle of ['闖關頁帶你做，這份教材幫你看懂','先懂這個','本關名詞小抄','你要判斷什麼','完成證據','實作參考｜完整 AI 提示、計畫與救援','resetGuideHTML','安全補充｜看懂 AI 提出的 reset']){
+for(const needle of ['闖關頁帶你做，這份教材幫你看懂','先懂這個','本關名詞小抄','你要判斷什麼','完成證據','實作參考｜給 AI 的完整操作文字、計畫與救援','resetGuideHTML','安全補充｜看懂 AI 提出的 reset']){
   if(!html.material.includes(needle)&&!read('./workflow-data.js').includes(needle))fail(`教材缺少觀念優先結構：${needle}`);
 }
 for(const oldText of ['存過檔的版本永遠救得回來','這是你手上最大的後悔藥','合併點就是一個「有兩個爸爸」','不上傳清單','檔案退回某個存檔點的樣子','reset --hard 毀掉的是']){
@@ -218,7 +222,7 @@ for(const [page,oldText] of [['quest','<strong>人要做：</strong>'],['quest',
   if(html[page].includes(oldText))fail(`${page}.html 仍有對讀者使用第三人稱的文字：${oldText}`);
 }
 if(html.quest.includes("if(map[id]){localStorage.setItem('gq-done-'"))fail('自動證據不得直接把整關標成完成');
-for(const needle of ["if(map[id])return'evidence'",'自動證據已符合；完成仍由你判斷','gq-progress-schema','role="progressbar"','aria-label="待手動複製的 AI 提示"','.task pre{max-width:100%'])if(!html.quest.includes(needle))fail(`闖關頁缺少雙階段驗收或版面修正：${needle}`);
+for(const needle of ["if(map[id])return'evidence'",'自動證據已符合；完成仍由你判斷','gq-progress-schema','role="progressbar"','aria-label="待手動複製給 AI 的內容"','.task pre{max-width:100%'])if(!html.quest.includes(needle))fail(`闖關頁缺少雙階段驗收或版面修正：${needle}`);
 if(!html.material.includes('--teal-soft:#DCEFED')||!html.material.includes('background:var(--panel)')||!html.material.includes("['roadmap','why']")||!html.material.includes("['phrases','troubleshoot','quiz','refs','limits']"))fail('教材缺少色彩 token 或精簡後導覽分組');
 if(/git worktree|<strong>fork<\/strong>|worktree、branch/.test(html.material)||/git worktree/.test(read('./workflow-data.js')))fail('教材仍有未進入主流程的 worktree／fork 延伸內容');
 for(const url of ['https://gitbook.tw/','https://swcarpentry.github.io/git-novice/','https://www.aeaweb.org/journals/data'])if(!html.material.includes(`href="${url}"`))fail(`參考資料不是可點連結：${url}`);

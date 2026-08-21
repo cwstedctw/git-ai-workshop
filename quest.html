@@ -126,9 +126,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
 </main>
 <dialog id="copyFallback" class="copy-dialog" aria-labelledby="copyFallbackTitle">
   <form method="dialog">
-    <h2 id="copyFallbackTitle">請手動複製這段提示</h2>
+    <h2 id="copyFallbackTitle">請手動複製這段內容</h2>
     <p class="small">瀏覽器沒有開放自動複製。下方文字已全選，可按 Ctrl／⌘ + C。</p>
-    <textarea id="copyFallbackText" aria-label="待手動複製的 AI 提示" readonly></textarea>
+    <textarea id="copyFallbackText" aria-label="待手動複製給 AI 的內容" readonly></textarea>
     <div class="actions"><button class="btn" value="close" type="submit">完成</button></div>
   </form>
 </dialog>
@@ -265,14 +265,14 @@ function taskCard(step,n){
 2. 證據：你實際查到什麼
 3. 缺少項目：還差什麼
 4. 建議：如果未完成，提供下一句我可以對 AI 說的話，但先不要執行`;
-  const manualCheck=st==='pass'?'':st==='evidence'?`<div class="manual-check evidence" aria-label="最後人工確認"><span class="manual-check-label">自動證據已符合；完成仍由你判斷</span><button class="manual" type="button" data-id="${step.id}">我已核對，標記完成</button></div>`:`<div class="manual-check" aria-label="人工驗收備援"><span class="manual-check-label">人工驗收備援（自動檢查無法判斷時）</span><button class="copy" type="button" data-copy="${esc(verify)}">① 複製 AI 驗收提示</button><button class="manual" type="button" data-id="${step.id}">② AI 回覆通過，再標記完成</button></div>`;
+  const manualCheck=st==='pass'?'':st==='evidence'?`<div class="manual-check evidence" aria-label="最後人工確認"><span class="manual-check-label">自動證據已符合；完成仍由你判斷</span><button class="manual" type="button" data-id="${step.id}">我已核對，標記完成</button></div>`:`<div class="manual-check" aria-label="人工驗收備援"><span class="manual-check-label">人工驗收備援（自動檢查無法判斷時）</span><button class="copy" type="button" data-copy="${esc(verify)}">① 複製 AI 驗收內容</button><button class="manual" type="button" data-id="${step.id}">② AI 回覆通過，再標記完成</button></div>`;
   const taskClass=st==='pass'?'pass':st==='evidence'?'evidence-state':st==='manual'?'manual-state':'';
   const statusText=st==='pass'?'✓ 已完成':st==='evidence'?'自動證據符合，待你核對':st==='manual'?'需人工驗收':'尚未完成';
   return `<article class="task ${taskClass}" id="task-${step.id}"><div class="taskhead"><span class="taskid">${step.id}｜第 ${n} 步</span><span class="taskname">${esc(step.title)}</span><span class="status">${statusText}</span></div><p>${esc(step.why)}</p>${roleCue(step.id)}<a class="guide-link" href="material.html#guide-${step.id}" target="_blank" rel="noopener">${esc(guideText)} ↗</a><div class="say"><b>對 AI 說</b>${esc(prompt)}<button class="copy" type="button" data-copy="${esc(prompt)}">複製</button></div><p class="human"><strong>你要做：</strong>${esc(human)}</p><details><summary>完成畫面、幕後指令與卡住救援</summary><p><strong>儀表板：</strong>${esc(dashboard)}</p><pre>${esc(resolve(step.behind))}</pre><p class="small"><strong>卡住：</strong>${esc(rescue)}</p></details>${notice}<div class="actions"><button class="auto${autoClass}" type="button" data-auto="${step.id}"${autoDisabled}>${autoLabel}</button>${manualCheck}</div></article>`;
 }
 async function autoCheckStep(id){
   if(!('showDirectoryPicker'in window)){
-    autoNotices[id]={status:'manual',text:'這個瀏覽器無法自動讀取資料夾。請使用下方「人工驗收備援」：先把提示交給 AI，確認通過後再手動打勾。'};
+    autoNotices[id]={status:'manual',text:'這個瀏覽器無法自動讀取資料夾。請使用下方「人工驗收備援」：先把內容交給 AI，確認通過後再手動打勾。'};
     render();showTaskResult(id);return;
   }
   if(!handle){
@@ -280,7 +280,7 @@ async function autoCheckStep(id){
     if(!connected){autoNotices[id]={status:'manual',text:'尚未連接資料夾，這一步還沒檢查。'};render();showTaskResult(id);return}
   }else await scan();
   const result=checker(id);
-  autoNotices[id]={status:result,text:result==='evidence'?'✓ 自動證據符合，但還不算整關完成。請核對上方「你要做」，再按「我已核對，標記完成」。':result==='manual'?'△ 本機紀錄不足以判斷。請使用下方「人工驗收備援」：先把提示交給 AI，確認通過後再標記完成。':result==='pass'?'✓ 這一步已由你確認完成。':'尚未符合頁面可讀的條件。請對照完成標準，完成後再按一次自動檢查。'};
+  autoNotices[id]={status:result,text:result==='evidence'?'✓ 自動證據符合，但還不算整關完成。請核對上方「你要做」，再按「我已核對，標記完成」。':result==='manual'?'△ 本機紀錄不足以判斷。請使用下方「人工驗收備援」：先把內容交給 AI，確認通過後再標記完成。':result==='pass'?'✓ 這一步已由你確認完成。':'尚未符合頁面可讀的條件。請對照完成標準，完成後再按一次自動檢查。'};
   render();showTaskResult(id);
 }
 async function copyText(text){
