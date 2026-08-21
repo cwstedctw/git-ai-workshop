@@ -358,7 +358,7 @@ window.addEventListener('hashchange',()=>{
     const cleaned=fromUrl.trim().replace(/^https?:\/\//,'').replace(/\/.*$/,'');
     // 只收得下自家的服務網域。不然有人丟一條帶惡意網址的連結給學生，
     // 那個網址會被記進 localStorage 並且一直用 iframe 載進教材裡。
-    const allowed=/^[\w-]+(?:\.[\w-]+)*\.workers\.dev$/.test(cleaned)||/^localhost(?::\d+)?$/.test(cleaned);
+    const allowed=/^[\w-]+\.wschen\.workers\.dev$/.test(cleaned)||/^localhost(?::\d+)?$/.test(cleaned);
     if(cleaned&&allowed)localStorage.setItem(KEY,cleaned);
     else localStorage.removeItem(KEY);
   }
@@ -375,7 +375,7 @@ window.addEventListener('hashchange',()=>{
   frame.setAttribute('sandbox','allow-scripts allow-same-origin');
   box.append(frame);
   const leave=document.getElementById('wallLeave');
-  if(leave)leave.onclick=()=>{localStorage.removeItem(KEY);section.hidden=true;};
+  if(leave)leave.onclick=()=>{localStorage.removeItem(KEY);frame.remove();section.hidden=true;};
   const toggle=document.getElementById('wallToggle');
   toggle.onclick=()=>{
     const open=box.hidden;

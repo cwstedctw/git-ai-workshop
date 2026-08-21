@@ -201,6 +201,9 @@ if(!html.quest.includes("finally{if(b.isConnected){b.disabled=false"))fail('取�
 if(!html.quest.includes("document.execCommand('copy')")||!html.quest.includes('showCopyFallback(b.dataset.copy)'))fail('複製失敗時缺少可操作的手動備援');
 if(!html.quest.includes('.dashboard #sFolder{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}')||!html.quest.includes("$('sFolder').title=state.folder"))fail('長資料夾名稱沒有單行省略或完整名稱提示');
 if(!html.quest.includes('class="guide-link"')||!html.quest.includes('target="_blank" rel="noopener"')||!html.quest.includes('這一步較長：開啟教材 P9 完整拆解'))fail('關卡缺少明顯的教材詳解連結');
+if(!html.material.includes('學員掃碼、投「前」')||html.material.includes('投 ①'))fail('教材的課前即時投票題號必須使用目前的「前」，不可退回舊版 ①');
+if(!html.quest.includes('/^[\\w-]+\\.wschen\\.workers\\.dev$/')||html.quest.includes('endsWith(\'.workers.dev\')'))fail('現場牆只可接受 wschen 帳號下的 Worker，不可放行任意 workers.dev');
+if(!html.quest.includes('localStorage.removeItem(KEY);frame.remove();section.hidden=true'))fail('離開現場牆時必須同時清掉場次、移除 iframe 並隱藏區塊');
 if(!html.material.includes('function openLinkedGuide()')||!html.material.includes('if(!location.hash)return')||!html.material.includes("target.open=true")||!html.material.includes("window.addEventListener('hashchange',openLinkedGuide)"))fail('教材深連結不會安全地自動展開對應步驟');
 for(const needle of ['闖關頁帶你做，這份教材幫你看懂','先懂這個','本關名詞小抄','你要判斷什麼','完成證據','實作參考｜完整 AI 提示、計畫與救援','resetGuideHTML','安全補充｜看懂 AI 提出的 reset']){
   if(!html.material.includes(needle)&&!read('./workflow-data.js').includes(needle))fail(`教材缺少觀念優先結構：${needle}`);
