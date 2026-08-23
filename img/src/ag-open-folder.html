@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>在 Antigravity 開啟資料夾</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { width:1280px; height:800px; margin:0; overflow:hidden;
+    font-family:"Segoe UI","Microsoft JhengHei",sans-serif; color:#e6e6e6; }
+  body { background:#e8eaed; padding:22px; }
+  .app { position:relative; width:1236px; height:756px; border-radius:14px; overflow:hidden;
+    background:#1e1f24; border:1px solid #3a3b42; box-shadow:0 16px 40px rgba(28,35,45,.28); }
+  .titlebar { height:40px; background:#26272e; display:flex; align-items:center; justify-content:center; position:relative; }
+  .dots { position:absolute; left:14px; top:13px; display:flex; gap:8px; }
+  .dot { width:12px; height:12px; border-radius:50%; background:#4a4b52; }
+  .pathchip { background:#33343c; border:1px solid #4a4b52; border-radius:8px;
+    padding:6px 18px; font-size:15px; color:#f0f0f0; }
+  .pathchip .caret { opacity:.7; margin-left:8px; }
+  .menu { position:absolute; top:76px; left:50%; transform:translateX(-50%);
+    width:360px; background:#2b2c33; border:1px solid #4a4b52; border-radius:10px;
+    box-shadow:0 12px 30px rgba(0,0,0,.5); padding:6px; font-size:15px; z-index:3; }
+  .mi { padding:10px 14px; border-radius:7px; color:#d9d9de; }
+  .mi.hl { background:#0b57d0; color:#fff; font-weight:700; }
+  .mi.dim { opacity:.55; }
+  .center { position:absolute; top:300px; left:0; right:0; text-align:center; }
+  .ask { width:640px; margin:0 auto; background:#2b2c33; border:1px solid #4a4b52;
+    border-radius:12px; padding:16px 20px; text-align:left; color:#8b8c94; font-size:16px; }
+  .model { margin-top:10px; font-size:12.5px; color:#77787f; }
+  /* 標註 */
+  .ring { position:absolute; border:3px solid #34c759; border-radius:12px; z-index:5; }
+  .ring.r1 { top:66px; left:50%; transform:translateX(-50%); width:330px; height:40px; border-color:#ff5252; border-radius:10px; }
+  .note { position:absolute; z-index:6; font-size:16px; font-weight:700; padding:6px 12px; border-radius:8px; }
+  .note.n1 { top:118px; right:120px; color:#ffb3b3; background:rgba(80,20,20,.85); }
+  .note.n2 { top:236px; left:50%; transform:translateX(210px); color:#b8f5c6; background:rgba(16,64,32,.9); }
+  .note.n3 { bottom:150px; left:50%; transform:translateX(-50%); color:#cfd8ff; background:rgba(24,34,80,.9); font-weight:400; font-size:15px; }
+  .arrow { position:absolute; z-index:6; font-size:26px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="titlebar">
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="pathchip">warmup-check<span class="caret">▾</span></div>
+    </div>
+    <div class="ring" style="top:6px; left:50%; transform:translateX(-50%); width:230px; height:34px;"></div>
+    <div class="note n1">① 點最上面那行資料夾名稱</div>
+    <div class="menu">
+      <div class="mi hl">Open Folder…　（開啟資料夾）</div>
+      <div class="mi dim">Recent　最近開過的專案</div>
+      <div class="mi dim">warmup-check</div>
+    </div>
+    <div class="ring" style="top:82px; left:50%; transform:translateX(-50%); width:352px; height:42px;"></div>
+    <div class="note n2">② 選 Open Folder</div>
+    <div class="center">
+      <div class="ask">Ask anything</div>
+      <div class="model">Gemini 3 Pro</div>
+    </div>
+    <div class="note n3">③ 在跳出的視窗裡，選你剛建立的新資料夾（例如 research-practice-project）→ 按「選擇資料夾」</div>
+  </div>
+</body>
+</html>

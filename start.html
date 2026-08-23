@@ -139,6 +139,7 @@ footer .inner{max-width:920px;margin:0 auto}
 
 <div class="callout red" style="margin-top:22px">
   <div class="t">🔴 動手之前，兩條資料紅線</div>
+  <p style="margin:4px 0 0" class="note">裡面的詞現在看不懂沒關係，上課都會教——先記住「<strong>學生資料不上網、密碼不進專案</strong>」兩件事就好。</p>
   <p style="margin:4px 0 0">一、<strong>學生個資與未發表資料不進公開 repo</strong>——<code>.gitignore</code> 不是保密工具。二、<strong>私人 repo 也不放帳號密碼</strong>——提交過就進了歷史，事後刪檔沒用。</p>
   <p style="margin:8px 0 0" class="note">兩條的完整說明、監督三原則與「存錯了怎麼救」的急救箱，在 <a href="material.html#safety">教材第伍章</a>。</p>
 </div>
@@ -146,8 +147,8 @@ footer .inner{max-width:920px;margin:0 auto}
 <section id="who">
 <h2><span class="num">壹</span>這是給誰的</h2>
 <p>給手上有研究專案的大學教師與研究生。判斷方式很簡單：資料夾裡出現過 <code>論文v3_最終_真的最終.docx</code>，或跟共同作者用附件改稿改到不確定哪份最新，這門課就是為你開的。</p>
-<p><strong>不必先會</strong>任何 Git 指令、終端機或程式語言。<strong>要有</strong>一台能上網的電腦、一個 GitHub 帳號、一個你慣用的 AI 助手。</p>
-<p class="note">這門課不教背指令，也不講 Git 內部原理；stash、rebase、fork 工作流、GitHub Actions 全部跳過。要練的是另一件事：<strong>當 agent 的指導教授，不是它的橡皮圖章</strong>。完整的「為什麼」在 <a href="material.html#why">教材第壹章</a>。</p>
+<p><strong>不必先會</strong>任何 Git 指令、終端機或程式語言。<strong>要有</strong>一台能上網的電腦、一個 GitHub 帳號、一個你慣用的 AI 助手——後兩樣<strong>現在沒有也沒關係</strong>，行前準備包會一步步帶你辦好。</p>
+<p class="note">這門課不教背指令，也不講 Git 內部原理；幾個進階功能（stash、rebase、fork 工作流、GitHub Actions）全部跳過。要練的是另一件事：<strong>當 agent（替你動手的 AI 助手）的指導教授，不是它的橡皮圖章</strong>。完整的「為什麼」在 <a href="material.html#why">教材第壹章</a>。</p>
 </section>
 
 <section id="routes">
@@ -182,7 +183,7 @@ footer .inner{max-width:920px;margin:0 auto}
   <p style="margin:4px 0 0"><strong>完整的十項一定要照 <a href="material.html#prep">教材第貳章〈行前準備〉</a>做完</strong>（含兩步驟驗證、裝 git 本體、裝 PowerShell 7、AI 助手授權設定、GitHub 登入……）。下面三條只是「你現在就能自我判斷有沒有走對方向」的最低門檻，<strong>不是完整清單</strong>。</p>
 </div>
 <p>三個最低門檻：<strong>①</strong> 裝好並登入你的 AI 助手（打得開、登入成功、找得到輸入框）；<strong>②</strong> GitHub 帳號能登入；<strong>③</strong> 做一次「小試身手」——讓 AI 建一個小檔案，<strong>並請它回報 git 版本與 GitHub 帳號</strong>，然後<strong>你自己打開檔案來看</strong>。</p>
-<p class="note">第 ③ 項一句話就驗掉整條安裝鏈——它會回報 git 版本與 gh 帳號，<strong>裝沒裝 git、GitHub 有沒有登入，這一步就看得出來</strong>；而它本身就是這門課的第一課：<em>AI 說做完了，不等於真的做完</em>。⚠️ 但它<strong>驗不到兩步驟驗證（2FA）與 AI 助手的授權設定</strong>，那兩項只能照教材做。教材那邊有十項可勾選的互動清單、每一步的截圖與求救句，這裡不重複寫一份。<strong>請留兩個晚上，別排在開始前一天</strong>——有幾項要下載安裝，視網速可能要一小時以上。</p>
+<p class="note">第 ③ 項一句話就驗掉整條安裝鏈——它會回報 git 版本與 GitHub 登入帳號（工具名叫 gh），<strong>裝沒裝 git、GitHub 有沒有登入，這一步就看得出來</strong>；而它本身就是這門課的第一課：<em>AI 說做完了，不等於真的做完</em>。⚠️ 但它<strong>驗不到兩步驟驗證（2FA）與 AI 助手的授權設定</strong>，那兩項只能照教材做。教材那邊有十項可勾選的互動清單、每一步的截圖與求救句，這裡不重複寫一份。<strong>請留兩個晚上，別排在開始前一天</strong>——有幾項要下載安裝，視網速可能要一小時以上。</p>
 </section>
 
 <section id="map">
@@ -224,7 +225,7 @@ footer .inner{max-width:920px;margin:0 auto}
 <section id="next">
 <h2><span class="num">陸</span>學完之後，下一步做什麼</h2>
 <ul>
-  <li><strong>把一個真的研究專案搬進來。</strong>先判斷資料能不能公開；不確定就開私人 repo——但<strong>私人 repo 一樣不放帳密</strong>，敏感研究資料仍要依校內與計畫規範判斷。</li>
+  <li><strong>把一個真的研究專案搬進來。</strong>先判斷資料能不能公開；不確定就開私人 repo——但<strong>私人 repo 一樣不放帳密</strong>，敏感研究資料仍要依校內與計畫規範判斷。另外記得課堂教過的分工：<strong>大型資料檔（.dta、.csv 動輒幾百 MB）留在雲端硬碟，不進 repo</strong>——GitHub 單一檔案有 100 MB 硬上限，塞進去 push 會被整個擋下。</li>
   <li><strong>把常改的檔案換成純文字。</strong>筆記改 <code>.md</code>、論文改 <code>.tex</code>，逐行差異才看得到。</li>
   <li><strong>找一位共同作者或你指導的學生，補走第二階段。</strong>兩個人一起做過一次 PR，之後真的協作才不會卡。</li>
   <li><strong>如果你的期刊要求附上資料與程式</strong>，這套流程就是底層：完整的修改歷史、乾淨的檔案清單、說得清楚每一版差在哪。</li>
@@ -240,7 +241,7 @@ footer .inner{max-width:920px;margin:0 auto}
 </main>
 
 <footer><div class="inner">
-  <p>跟 AI 一起用 Git——不背指令的版本控制｜<span id="ver">v5.5</span>｜〈開始之前〉導覽頁</p>
+  <p>跟 AI 一起用 Git——不背指令的版本控制｜<span id="ver">v5.6</span>｜〈開始之前〉導覽頁</p>
   <p>工具費用與方案會變動，開始前請以各官方頁面現況為準。</p>
   <p>© 2026 陳文盛（國立東華大學通識教育中心）× AI 協作團隊——洄瀾（組長・Claude）、立霧（Codex）、秀姑巒（Gemini）、木瓜溪（OpenCode）、美崙溪（Grok）｜本教材以 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 授權——歡迎教學與自學使用；改作請同樣開放，請勿商用。</p>
 </div></footer>
@@ -274,7 +275,7 @@ footer .inner{max-width:920px;margin:0 auto}
 
   if(!FLOW || !FLOW.steps || !FLOW.phases) return;
 
-  document.getElementById('ver').textContent = FLOW.version || 'v5.5';
+  document.getElementById('ver').textContent = FLOW.version || 'v5.6';
 
   document.getElementById('phaseCards').innerHTML = FLOW.phases.map(function(p){
     var steps = FLOW.steps.filter(function(s){ return s.phase === p.id; });

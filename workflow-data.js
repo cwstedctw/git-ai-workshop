@@ -32,7 +32,8 @@
       human:'核對 AI 回報的資料夾名稱，並把闖關頁連接到同一個資料夾。',
       dashboard:'資料夾名稱正確；Git 顯示「尚未建立」；commit 為 0。',
       behind:'pwd / Get-Location\nls / Get-ChildItem\ngit status',
-      rescue:'如果 AI 回報的路徑不是剛建立的資料夾，立刻停下，重新用目前使用的 AI 工具開啟正確資料夾。若尚未建立 Git，git status 顯示「not a git repository」是這一步的預期結果，不要急著修。'
+      rescue:'如果 AI 回報的路徑不是剛建立的資料夾，立刻停下，重新用目前使用的 AI 工具開啟正確資料夾（換資料夾的三下，見教材 P1 的示意圖）。若尚未建立 Git，git status 顯示「not a git repository」是這一步的預期結果，不要急著修。',
+      figure:{src:'img/ag-open-folder.png',alt:'示意圖：在 Antigravity 換資料夾的三步——點最上方那行資料夾名稱、選 Open Folder、挑選新資料夾',caption:'示意圖。在 Antigravity 換資料夾就這三下：<strong>點最上方那行資料夾名稱 → Open Folder → 選你剛建立的新資料夾</strong>。'}
     },
     {
       id:'P2',phase:'personal',minutes:8,title:'加入版本控制並連到 GitHub',
@@ -44,7 +45,7 @@
         {term:'remote／origin',meaning:'remote 是遠端版本庫；origin 是本機替主要遠端網址取的慣用名稱。'},
         {term:'.gitignore',meaning:'指定哪些未追蹤檔案不要納入版本；它不會保護已提交內容，也不是保密工具。'}
       ],
-      prompt:'我想替目前資料夾加上 Git 版本控制，建立合適的 .gitignore（請排除 WORKSHOP-RECEIPT*.txt），再建一個 .gitattributes、內容就一行 * text=auto eol=lf（統一換行符號，之後存檔才不會一直跳警告），並在我的 GitHub 建一個公開練習 repo，名稱叫 research-practice-project。先列出計畫、預計建立或修改的東西，以及公開前的資料安全檢查；等我同意再執行。',
+      prompt:'我想替目前資料夾加上 Git 版本控制，建立合適的 .gitignore（請排除 WORKSHOP-RECEIPT*.txt），再建一個 .gitattributes、內容就一行 * text=auto eol=lf（統一換行符號，之後存檔的換行警告會大幅減少），並在我的 GitHub 建一個公開練習 repo，名稱叫 research-practice-project。先列出計畫、預計建立或修改的東西，以及公開前的資料安全檢查；等我同意再執行。',
       plan:['再次確認工作路徑','檢查敏感資料','建立 Git、.gitignore（排除課堂收據）與 .gitattributes（統一換行）','建立公開 GitHub repo','設定 origin','回報 repo 網址'],
       human:'確認路徑、公開範圍與資料都是假的，再明確說「同意執行」。',
       dashboard:'Git 已建立；分支為 main；remote 已連接；歷史仍可為 0。',
@@ -215,7 +216,7 @@
       prompt:`請分成兩台電腦依序完成。開始前先跟夥伴互報 GitHub 帳號、講好組號。
 
 指導教授的電腦（這一輪的教授擁有論文 repo）：
-- ⚠️ 新 repo 要獨立、不能蓋在第一階段的專案裡。請先告訴我我的「文件」資料夾（Documents）完整路徑，在那底下建一個全新的空資料夾 thesis-pair-組號（把「組號」換成你們的，例如 thesis-pair-03）；如果你發現目前位置在第一階段那個練習專案資料夾裡面（預設叫 research-practice-project），立刻停下來告訴我。
+- ⚠️ 新 repo 要獨立、不能蓋在第一階段的專案裡。請先告訴我我的「文件」資料夾（Documents）完整路徑，在那底下建一個全新的空資料夾 thesis-pair-組號（把「組號」換成你們的，例如 thesis-pair-03）；如果「文件」被 OneDrive 之類的雲端同步接管（路徑含 OneDrive 或資料夾圖示帶雲朵），改建在不被同步的位置（例如 C:\\git-practice）並回報實際路徑——雲端同步和 git 兩套機制會打架。如果你發現目前位置在第一階段那個練習專案資料夾裡面（預設叫 research-practice-project），立刻停下來告訴我。
 - 在那個新資料夾裡建兩個檔案：paper.md 要有「方法」與「文獻回顧」兩個標題、各放一句假內容；.gitignore 要排除 WORKSHOP-RECEIPT*.txt；再加一個 .gitattributes、內容一行 * text=auto eol=lf。做成第一個 commit（分支名 main）後建立同名的公開 GitHub repo 並推上去，再把我的夥伴加為可推送（push）的協作者——帳號用夥伴剛報給我的那個。完成後回報 repo 完整網址。
 
 研究生這邊：
@@ -224,14 +225,15 @@
 然後兩人都把教授回報的 owner/thesis-pair-組號 填進闖關頁上方的「配對 repo」欄位，接著各自準備本機工作副本——兩個角色做的事不一樣：
 
 - 指導教授：剛才建立的那個 thesis-pair-組號 資料夾就是你的工作副本，不要再 clone 一次（會撞到「資料夾已存在」）。直接用它，讓闖關頁改連接這個資料夾。
-- 研究生：請 AI 把配對 repo {pairRepo} clone 到你的「文件」資料夾（英文系統顯示為 Documents，請以你系統上實際的名稱為準），回報 clone 後完整路徑，再用 AI 工具開啟它、讓闖關頁改連接這個剛 clone 的資料夾（不是第一階段那個）。
+- 研究生：請 AI 把配對 repo {pairRepo} clone 到你的「文件」資料夾（英文系統顯示為 Documents；若「文件」被 OneDrive 同步接管，改 clone 到不被同步的位置，例如 C:\\git-practice），回報 clone 後完整路徑，再用 AI 工具開啟它、讓闖關頁改連接這個剛 clone 的資料夾（不是第一階段那個）。
 
 最後兩人各自只查看目前分支、origin 與自己的 GitHub 寫入權限，並把組號與 repo 網址回報講師。`,
       plan:['互報 GitHub 帳號並決定組號','教授端：先離開第一階段資料夾，在文件夾底下建獨立新資料夾','教授端：AI 建 repo、放 paper.md 與 .gitignore、發協作者邀請','研究生端：親自接受邀請','兩人把 owner/repo 填進闖關頁','教授沿用剛建好的資料夾（不重複 clone）；研究生 clone 到文件資料夾並回報完整路徑','核對 main、origin 與寫入權限','闖關頁改連新資料夾、組號與網址回報講師'],
       human:'教授確認 repo 名稱與邀請的帳號沒打錯；研究生親自按 Accept invitation；兩人都確認自己的權限是 WRITE 或更高，下一關才推得上去。',
       dashboard:'資料夾切換成功；HEAD 是 main；main 與 origin/main 同步；顯示正確配對資訊。',
-      behind:'# 教授端：⚠️ 一定要離開第一階段的 research-practice-project，在文件夾底下另建獨立資料夾\ncd ~/Documents          # Windows PowerShell 用 cd $HOME\\Documents（中文系統顯示為「文件」，路徑名仍是 Documents）\nmkdir thesis-pair-組號\ncd thesis-pair-組號\n# 建立 paper.md（含「方法」「文獻回顧」兩個標題）、.gitignore（排除 WORKSHOP-RECEIPT*.txt）與 .gitattributes（* text=auto eol=lf）\ngit init -b main\ngit add paper.md .gitattributes .gitignore\ngit commit -m "建立配對練習論文骨架"\ngh repo create thesis-pair-組號 --public --source=. --push\ngh api repos/{pairRepo}/collaborators/夥伴帳號 -X PUT -f permission=push\n\n# 研究生端：到 github.com 通知或信箱親自按 Accept invitation（這一步網頁做，沒有指令）\n\n# 教授端：剛建好的資料夾就是工作副本，不需要也不能再 clone 一次（會撞 destination path already exists）\n\n# 研究生端（與借用示範 repo 的備援組）：\ngit clone https://github.com/{pairRepo}.git <文件資料夾中的目標路徑>\ngit -C <clone後完整路徑> status --short --branch\ngit -C <clone後完整路徑> remote -v\ngh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef',
-      rescue:'⚠️ 若發現 AI 把新資料夾建在 research-practice-project 裡面（出現巢狀的第二個 .git），立刻停下、不要再 commit 或 push，請它先列出那個新資料夾裡有哪些檔案給你看——確認裡面只有這一步剛建的 paper.md 與 .gitignore、沒有你原本的東西，你同意之後才刪，然後改到文件夾底下重建。若 repo 名稱已被占用，換一個組號或加後綴，不要刪掉別人的 repo。公開 repo 即使尚未接受邀請也能 clone，但 push 會被拒——先確認邀請已接受、登入的是自己的帳號；邀請信找不到時，直接打開 repo 網址也會出現接受邀請的選項。clone 失敗先核對網址與網路；若目標資料夾已存在，不要刪除或覆蓋，先回報內容再決定。整組卡超過五分鐘就舉手：講師會把你們兩人都加為示範 repo 的協作者（你們仍要親自接受邀請、確認權限是 WRITE），再 clone 那一個繼續走 C2——沒有 WRITE 權限，C2 的 push 一定會失敗。課後再補建自己的。'
+      behind:'# 教授端：⚠️ 一定要離開第一階段的 research-practice-project，在文件夾底下另建獨立資料夾\n# （文件或桌面被 OneDrive 同步接管時，改用不被同步的位置，例如 C:\\git-practice——雙重同步會打架）\ncd ~/Documents          # Windows PowerShell 用 cd $HOME\\Documents（中文系統顯示為「文件」，路徑名仍是 Documents）\nmkdir thesis-pair-組號\ncd thesis-pair-組號\n# 建立 paper.md（含「方法」「文獻回顧」兩個標題）、.gitignore（排除 WORKSHOP-RECEIPT*.txt）與 .gitattributes（* text=auto eol=lf）\ngit init -b main\ngit add paper.md .gitattributes .gitignore\ngit commit -m "建立配對練習論文骨架"\ngh repo create thesis-pair-組號 --public --source=. --push\ngh api repos/{pairRepo}/collaborators/夥伴帳號 -X PUT -f permission=push\n\n# 研究生端：到 github.com 通知或信箱親自按 Accept invitation（這一步網頁做，沒有指令）\n\n# 教授端：剛建好的資料夾就是工作副本，不需要也不能再 clone 一次（會撞 destination path already exists）\n\n# 研究生端（與借用示範 repo 的備援組）：\ngit clone https://github.com/{pairRepo}.git <文件資料夾中的目標路徑>\ngit -C <clone後完整路徑> status --short --branch\ngit -C <clone後完整路徑> remote -v\ngh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef',
+      rescue:'⚠️ 若發現 AI 把新資料夾建在 research-practice-project 裡面（出現巢狀的第二個 .git），立刻停下、不要再 commit 或 push，請它先列出那個新資料夾裡有哪些檔案給你看——確認裡面只有這一步剛建的 paper.md 與 .gitignore、沒有你原本的東西，你同意之後才刪，然後改到文件夾底下重建。若 repo 名稱已被占用，換一個組號或加後綴，不要刪掉別人的 repo。公開 repo 即使尚未接受邀請也能 clone，但 push 會被拒——先確認邀請已接受、登入的是自己的帳號；邀請信找不到時，直接打開 repo 網址也會出現接受邀請的選項。clone 失敗先核對網址與網路；若目標資料夾已存在，不要刪除或覆蓋，先回報內容再決定。整組卡超過五分鐘就舉手：講師會把你們兩人都加為示範 repo 的協作者（你們仍要親自接受邀請、確認權限是 WRITE），再 clone 那一個繼續走 C2——沒有 WRITE 權限，C2 的 push 一定會失敗。課後再補建自己的。',
+      figure:{src:'img/gh-invite-hint.png',alt:'示意圖：GitHub 協作邀請頁——通知鈴鐺有藍點，頁面中央是 Accept invitation 綠色按鈕',caption:'示意圖（模擬 GitHub 網頁）。研究生收到的邀請長這樣——通知鈴鐺或信箱都找得到；<strong>Accept invitation 這顆綠鈕要親自按</strong>，找不到通知就直接打開教授回報的 repo 網址。'}
     },
     {
       id:'C2',phase:'collab',minutes:8,title:'研究生開分支並提出修改',
@@ -265,7 +267,8 @@
       human:'在 GitHub Files changed 親自核對差異；對指定新增句留下「改成示範可重現研究流程」的行內意見，再選 Request changes。',
       dashboard:'指定 PR 顯示 Changes requested；研究生要回到同一個 PR 補改。',
       behind:'gh pr list --repo {pairRepo} --state open\ngh pr view <PR-number> --repo {pairRepo} --web\ngh pr diff <PR-number> --repo {pairRepo}',
-      rescue:'找不到 PR 時核對 repo、作者、來源分支與 PR 編號。PR 作者不得替自己的內容完成本課核准；若登入的是作者帳號，請停下並交給本輪指導教授。'
+      rescue:'找不到 PR 時核對 repo、作者、來源分支與 PR 編號。在 Files changed 留行內意見時，若按了「Start a review」，意見會先停在 pending 狀態、夥伴看不到——最後務必按「Submit review」送出，對方才收得到。PR 作者不得替自己的內容完成本課核准；若登入的是作者帳號，請停下並交給本輪指導教授。',
+      figure:{src:'img/gh-review-hint.png',alt:'示意圖：GitHub 逐行審查四步——打開 Files changed、點行號旁藍色加號、輸入意見、Review changes 選 Request changes 後按 Submit review',caption:'示意圖（模擬 GitHub 網頁）。這一關唯一要你親手在網頁上做的四步：<strong>① Files changed → ② 行號旁的藍色加號 → ③ 打下意見 → ④ Review changes 選 Request changes、按 Submit review</strong>——沒按 Submit review，夥伴看不到你的意見。'}
     },
     {
       id:'C4',phase:'collab',minutes:7,title:'研究生補改，教授核准並合併',
@@ -429,7 +432,7 @@
   ];
 
   window.WORKSHOP_FLOW={
-    version:'2026-08-05-v5.5',
+    version:'2026-08-23-v5.6',
     phases,steps,resetGuide,troubleshooting,reference,phrases,
     byId:id=>steps.find(s=>s.id===id),
     phaseSteps:id=>steps.filter(s=>s.phase===id)

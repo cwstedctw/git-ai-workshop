@@ -37,13 +37,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
 <body>
 <header class="hero">
   <h1>Git 闖關：自己的專案，到師生共同研究</h1>
-  <p><a href="material.html">教材用來理解與課後查詢</a>；闖關頁一次只顯示目前階段。你用自然語言說需求，AI 先列計畫，你看過再放行。</p>
+  <p><a href="material.html">教材用來理解與課後查詢</a>；闖關頁一次只顯示目前階段。你用自然語言說需求，AI 先列計畫，你看過再放行。<strong>課堂現場通用規則：卡住超過 5 分鐘就舉手</strong>，不用自己熬。</p>
   <div class="phase-switch" role="group" aria-label="課堂階段">
     <button class="phase-tab" id="phasePersonal" type="button">① 第一階段：自己的專案</button>
     <button class="phase-tab" id="phaseCollab" type="button">② 第二階段：中場後開啟</button>
   </div>
   <div class="setupbar" id="setupbar">
-    <label>桌牌<input id="tag" placeholder="例如 lin"></label>
+    <label>桌牌（姓氏英文小寫）<input id="tag" placeholder="例如 lin"></label>
     <label class="collab-only">配對 repo<input id="pairRepo" placeholder="教授建好的 owner/thesis-pair-組號"></label>
     <label class="collab-only">夥伴桌牌<input id="partner" placeholder="例如 chen"></label>
     <label class="collab-only">第一輪角色<select id="role"><option value="student">研究生</option><option value="advisor">指導教授</option></select></label>
@@ -75,7 +75,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
   <section class="personal-only">
     <h2>開始前：先開一個普通資料夾</h2>
     <div class="card callout">
-      <p><strong>第一階段不是從範本開始。</strong>請在電腦建立一個空資料夾，例如 <code>research-practice-project</code>，再用你目前使用的 AI 工具開啟它。接著按下方按鈕，讓這一頁讀取同一個資料夾。</p>
+      <p><strong>第一階段不是從範本開始。</strong>請在電腦建立一個空資料夾，例如 <code>research-practice-project</code>——別放在被 OneDrive 同步接管的「桌面」或「文件」（資料夾圖示帶雲朵就是），兩套同步機制會打架。再用你目前使用的 AI 工具開啟它（Antigravity：點畫面<strong>最上方那行資料夾路徑</strong> → Open Folder → 選這個新資料夾）。接著按下方按鈕，讓這一頁讀取同一個資料夾。</p>
       <p>這一頁只讀 Git 狀態，不會修改或上傳檔案。Chrome／Edge 可自動驗收；其他瀏覽器可使用每關下方的「人工驗收備援」。</p>
       <p><strong>請從線上版網址開這一頁（自學者用教材首頁的連結，上課用講師給的網址），不要下載存檔後雙擊開啟</strong>——用 file:// 開啟時，讀資料夾與自動驗收會失效。</p>
       <p><button class="btn" id="pick" type="button">📂 連接目前工作資料夾</button> <button class="btn secondary" id="refresh" type="button" hidden>重新檢查</button></p>
@@ -133,7 +133,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
   </form>
 </dialog>
 <div id="progress"><div class="track" id="track"></div></div>
-<footer>Git 闖關｜2026-08-05 v5.5 就地驗收版｜© 陳文盛（東華通識）× AI 協作團隊（組長洄瀾）・<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>｜<a href="radar.html">講師救援雷達</a></footer>
+<footer>Git 闖關｜2026-08-23 v5.6 就地驗收版｜© 陳文盛（東華通識）× AI 協作團隊（組長洄瀾）・<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>｜<a href="radar.html">講師救援雷達</a></footer>
 <script src="workflow-data.js"></script>
 <script>
 const FLOW=window.WORKSHOP_FLOW;
@@ -199,7 +199,7 @@ async function scan(){
   const head=await textAt(['.git','HEAD']);
   if(head!==null){
     s.hasGit=true;const hm=head.match(/refs\/heads\/(.+)/);s.head=hm?hm[1].trim():'（分離狀態）';
-    const log=await textAt(['.git','logs','HEAD']);if(log)s.commits=log.split('\n').filter(l=>/\tcommit(?: \(initial\))?:/.test(l)).length;
+    const log=await textAt(['.git','logs','HEAD']);if(log)s.commits=log.split('\n').filter(l=>/\t(?:commit(?: \(initial\))?|revert):/.test(l)).length;
     const config=await textAt(['.git','config']);const rm=config&&config.match(/\[remote "origin"\][\s\S]*?url\s*=\s*(.+)/);s.remote=rm?rm[1].trim():'';
     const local=await textAt(['.git','refs','heads',s.head]);const remote=await textAt(['.git','refs','remotes','origin',s.head]);if(local&&remote)s.synced=local.trim()===remote.trim()?'yes':'no';
     const rb=await textAt(['.git','refs','remotes','origin',s.head]);s.branchPushed=!!(rb&&s.head!=='main');
@@ -268,7 +268,7 @@ function taskCard(step,n){
   const manualCheck=st==='pass'?'':st==='evidence'?`<div class="manual-check evidence" aria-label="最後人工確認"><span class="manual-check-label">自動證據已符合；完成仍由你判斷</span><button class="manual" type="button" data-id="${step.id}">我已核對，標記完成</button></div>`:`<div class="manual-check" aria-label="人工驗收備援"><span class="manual-check-label">人工驗收備援（自動檢查無法判斷時）</span><button class="copy" type="button" data-copy="${esc(verify)}">① 複製 AI 驗收內容</button><button class="manual" type="button" data-id="${step.id}">② AI 回覆通過，再標記完成</button></div>`;
   const taskClass=st==='pass'?'pass':st==='evidence'?'evidence-state':st==='manual'?'manual-state':'';
   const statusText=st==='pass'?'✓ 已完成':st==='evidence'?'自動證據符合，待你核對':st==='manual'?'需人工驗收':'尚未完成';
-  return `<article class="task ${taskClass}" id="task-${step.id}"><div class="taskhead"><span class="taskid">${step.id}｜第 ${n} 步</span><span class="taskname">${esc(step.title)}</span><span class="status">${statusText}</span></div><p>${esc(step.why)}</p>${roleCue(step.id)}<a class="guide-link" href="material.html#guide-${step.id}" target="_blank" rel="noopener">${esc(guideText)} ↗</a><div class="say"><b>對 AI 說</b>${esc(prompt)}<button class="copy" type="button" data-copy="${esc(prompt)}">複製</button></div><p class="human"><strong>你要做：</strong>${esc(human)}</p><details><summary>完成畫面、幕後指令與卡住救援</summary><p><strong>儀表板：</strong>${esc(dashboard)}</p><pre>${esc(resolve(step.behind))}</pre><p class="small"><strong>卡住：</strong>${esc(rescue)}</p></details>${notice}<div class="actions"><button class="auto${autoClass}" type="button" data-auto="${step.id}"${autoDisabled}>${autoLabel}</button>${manualCheck}</div></article>`;
+  return `<article class="task ${taskClass}" id="task-${step.id}"><div class="taskhead"><span class="taskid">${step.id}｜第 ${n} 步</span><span class="taskname">${esc(step.title)}</span><span class="status">${statusText}</span></div><p>${esc(step.why)}</p>${roleCue(step.id)}<a class="guide-link" href="material.html#guide-${step.id}" target="_blank" rel="noopener">${esc(guideText)} ↗</a><div class="say"><b>對 AI 說</b>${esc(prompt)}<button class="copy" type="button" data-copy="${esc(prompt)}">複製</button></div><p class="human"><strong>你要做：</strong>${esc(human)}</p><details><summary>卡住了？救援、完成畫面與幕後指令</summary><p><strong>卡住怎麼辦：</strong>${esc(rescue)}</p><p class="small"><strong>儀表板：</strong>${esc(dashboard)}</p><pre>${esc(resolve(step.behind))}</pre></details>${notice}<div class="actions"><button class="auto${autoClass}" type="button" data-auto="${step.id}"${autoDisabled}>${autoLabel}</button>${manualCheck}</div></article>`;
 }
 async function autoCheckStep(id){
   if(!('showDirectoryPicker'in window)){

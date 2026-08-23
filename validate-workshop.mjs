@@ -99,8 +99,8 @@ for(const phrase of ['回報 PR 編號與網址','核對 repo、作者與來源�
 }
 if(!c6.prompt.includes('相關文獻將於正式研究中補齊'))fail('C6 缺少第二輪明確修改任務');
 
-const html={index:read('./index.html'),start:read('./start.html'),startV1:read('./start-v1.html'),material:read('./material.html'),quest:read('./quest.html'),radar:read('./radar.html')};
-const fileFor={index:'index.html',start:'start.html',startV1:'start-v1.html',material:'material.html',quest:'quest.html',radar:'radar.html'};
+const html={index:read('./index.html'),start:read('./start.html'),material:read('./material.html'),quest:read('./quest.html'),radar:read('./radar.html')};
+const fileFor={index:'index.html',start:'start.html',material:'material.html',quest:'quest.html',radar:'radar.html'};
 for(const [file,source] of [...Object.entries(html).map(([name,source])=>[fileFor[name],source]),['workflow-data.js',read('./workflow-data.js')]]){
   const informal=source.match(/開發|測試|測驗|提示/);
   if(informal)fail(`${file} 的對外文字仍有非正式成品措辭：${informal[0]}`);
@@ -115,6 +115,7 @@ for(const [name,source] of Object.entries(html)){
   const defined=new Set([...source.matchAll(/--([\w-]+)\s*:/g)].map(match=>match[1]));
   for(const used of [...source.matchAll(/var\(--([\w-]+)/g)].map(match=>match[1]))if(!defined.has(used))fail(`${fileFor[name]} 使用未定義 CSS 變數 --${used}`);
   for(const src of [...source.matchAll(/<img\b[^>]*\bsrc="([^"]+)"/gi)].map(match=>match[1])){
+    if(src.includes('${'))continue;
     if(!fs.existsSync(new URL(src,new URL(`./${fileFor[name]}`,import.meta.url))))fail(`${fileFor[name]} 圖片不存在：${src}`);
   }
 }
@@ -128,11 +129,11 @@ for(const [name,source] of Object.entries(html)){
     if(hashPart&&!idsByPage[targetName].has(hashPart))fail(`${fileFor[name]} 連到不存在的錨點：${href}`);
   }
 }
-for(const name of ['material','quest','start','startV1']){
+for(const name of ['material','quest','start']){
   if(!html[name].includes('<script src="workflow-data.js"></script>'))fail(`${name}.html 未載入共用流程`);
 }
 if(html.radar.includes('<script src="workflow-data.js"></script>'))fail('講師雷達不應載入未使用的共用流程');
-for(const name of ['material','quest','radar','start','startV1']){
+for(const name of ['material','quest','radar','start']){
   const inline=[...html[name].matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
   for(const [i,code] of inline.entries()){
     try{new Function(code)}catch(error){fail(`${name}.html 第 ${i+1} 段 inline script 語法錯誤：${error.message}`)}
@@ -231,13 +232,25 @@ for(const needle of ["items=rows(personal?'personal':'pairs')","allowEmpty&&r.st
 if(!html.radar.includes("localStorage.getItem('gr-settings-schema')!=='real-repos-v1'"))fail('講師雷達沒有一次性清除舊示範設定');
 if(html.radar.includes('id="demo"')||html.radar.includes('已有練習分支'))fail('講師雷達仍有無效示範設定或舊分支流程');
 if(!html.index.includes('15 步'))fail('首頁沒有更新為 15 步');
-if(flow.version!=='2026-08-05-v5.5'||!html.material.includes('v5.5')||!html.quest.includes('v5.5')||!html.radar.includes('v5.5')||!html.index.includes('v5.5')||!html.start.includes('v5.5')||!html.startV1.includes('v5.5'))fail('版本號未同步到 v5.5（六頁都要有）');
-for(const page of ['start','startV1'])if(!html[page].includes('需要兩個人')||!html[page].includes('請不要為了湊人數另外註冊一個 GitHub 帳號'))fail(`${fileFor[page]} 缺少「第二階段需兩人」或「單一 GitHub 帳號」原則`);
-for(const page of ['start','startV1','material','quest','radar','index']){
+if(flow.version!=='2026-08-23-v5.6'||!html.material.includes('v5.6')||!html.quest.includes('v5.6')||!html.radar.includes('v5.6')||!html.index.includes('v5.6')||!html.start.includes('v5.6'))fail('版本號未同步到 v5.6（五頁都要有）');
+if(!html.start.includes('需要兩個人')||!html.start.includes('請不要為了湊人數另外註冊一個 GitHub 帳號'))fail('start.html 缺少「第二階段需兩人」或「單一 GitHub 帳號」原則');
+// 洄瀾總查核 2026-08-23（v5.6）的防回歸守門
+if(!html.material.includes('我同意前不要執行')||!html.quest.includes('我同意前不要執行'))fail('force push 演練句缺「我同意前不要執行」護欄——教材與闖關頁都要有（行前第 7 項建議 Always Proceed，沒護欄會真的執行）');
+if(!html.material.includes('100 MB 硬上限')||!html.start.includes('100 MB 硬上限'))fail('缺 GitHub 單檔 100 MB 硬上限警語（教材壹章分工段與 start 課後段都要有）');
+if(!flow.byId('C3').rescue.includes('Submit review'))fail('C3 rescue 缺 pending review 警語：Start a review 後沒按 Submit review，夥伴看不到意見');
+if(!flow.byId('C1').prompt.includes('OneDrive'))fail('C1 缺 OneDrive 同步資料夾警語——桌面與文件被接管時雙重同步會打架');
+if(!html.material.includes('git clean')||!html.material.includes('checkout --'))fail('紅線動詞清單缺 git checkout --（舊版 restore）與 git clean');
+if(!html.material.includes('Win+Shift+S'))fail('行前準備包缺「怎麼截圖」小卡——它是整套救援迴路的地基');
+if(!fs.existsSync(new URL('./LICENSE',import.meta.url)))fail('缺 LICENSE 檔');
+for(const step of flow.steps){
+  if(step.figure&&!fs.existsSync(new URL(step.figure.src,import.meta.url)))fail(`${step.id} 的步驟圖不存在：${step.figure.src}`);
+}
+for(const id of ['P1','C1','C3'])if(!flow.byId(id).figure)fail(`${id} 缺步驟圖——開資料夾／接受邀請／網頁審查是三個非資訊背景學員最容易卡的滑鼠動作`);
+for(const page of ['start','material','quest','radar','index']){
   for(const hit of html[page].matchAll(/自己扮兩(?:個)?角|第二個(?:免費)?帳號|另(?:外)?註冊一個(?:免費)?帳號|兩個帳號/g)){
     const before=html[page].slice(Math.max(0,hit.index-40),hit.index);
     if(!/不要|不用|別|不建議|禁止|不可/.test(before))fail(`${fileFor[page]} 出現未加禁止語的雙帳號自扮兩角說法：…${html[page].slice(Math.max(0,hit.index-20),hit.index+16)}…`);
   }
 }
 
-console.log(`PASS ${flow.version}: ${flow.steps.length} steps, 6 HTML files, shared flow, layout guards and inline JavaScript verified.`);
+console.log(`PASS ${flow.version}: ${flow.steps.length} steps, ${Object.keys(html).length} HTML files, shared flow, layout guards and inline JavaScript verified.`);

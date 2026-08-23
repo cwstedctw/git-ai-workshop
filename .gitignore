@@ -1,0 +1,14 @@
+# 作業系統雜物
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 編輯器
+.vscode/
+.idea/
+
+# 萬一有人在這裡跑 node
+node_modules/
+
+# 課堂收據（與教材教學一致：收據不進版本庫）
+WORKSHOP-RECEIPT*.txt

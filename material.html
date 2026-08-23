@@ -225,7 +225,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   </div>
   <p class="small" id="scoreSummary"></p>
   <div class="callout">
-    <strong>反過來也要誠實：</strong>git 不會自動存檔、自動同步——它要你（或你的 agent）主動說「存」。所以分工就好：<strong>大檔案與原始資料繼續放雲端硬碟，論文與程式的版本交給 git</strong>；但別把 git 版本庫放進 Dropbox 同步資料夾，兩套同步機制會打架。一句話記住差別：<strong>「git 存的是專案的版本，Dropbox 存的是檔案的版本。」</strong>
+    <strong>反過來也要誠實：</strong>git 不會自動存檔、自動同步——它要你（或你的 agent）主動說「存」。所以分工就好：<strong>大檔案與原始資料繼續放雲端硬碟，論文與程式的版本交給 git</strong>（GitHub 對單一檔案有 <strong>100 MB 硬上限</strong>，太大的資料檔 push 會被整個擋下；真需要放大檔那天再查 Git LFS）；但別把 git 版本庫放進 Dropbox 或 OneDrive 同步資料夾，兩套同步機制會打架——Windows 的「桌面」和「文件」常被 OneDrive 接管（資料夾圖示帶雲朵就是），練習專案放別處更穩。一句話記住差別：<strong>「git 存的是專案的版本，Dropbox 存的是檔案的版本。」</strong>
   </div>
 
   <div class="callout teal">
@@ -239,6 +239,12 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <section id="prep">
   <h2><span class="no">貳</span>行前準備包（請留兩個晚上，別排在開課前一天）</h2>
   <p>第 1、2 項約 30 分鐘；第 3、4、5、8 項要下載安裝（第 6、7 項不用下載），視網速可能要一小時以上。<strong>第 5 項只有 Windows 要做，Mac 直接跳過。</strong><br><strong>卡住不用硬撐，直接問 AI。</strong>裝好 Antigravity（第 3 項）之後就問它——把錯誤訊息或畫面截圖貼進輸入框，請它一步一步帶你；還沒裝好之前，問你慣用的 AI 助手（ChatGPT、Gemini 都可以）。<br><strong>這些勾只給你自己看</strong>——最後用第 10 項的自我檢查收尾。（勾選狀態存在這台電腦的瀏覽器裡，關掉再開還在。）目前完成：<span id="checkProgress" aria-live="polite">0 / 10</span>　<button id="clearProg" class="copybtn" type="button">清除進度</button></p>
+
+  <div class="callout">
+    <strong>先學一招：怎麼截圖。</strong>下面每一項卡住，都是靠「把畫面拿給 AI 看」解決的——Windows 按 <strong>Win+Shift+S</strong>、Mac 按 <strong>⌃⌘⇧4</strong>（要加 Control 鍵，圖才會進剪貼簿），框選想拍的範圍；回到輸入框按 <strong>Ctrl+V</strong>（Mac ⌘V）就貼上了。<br>
+    🧯 <strong>逃生門：任何一項在家卡死，不用硬撐</strong>——開課當天<strong>提早 20 分鐘到教室</strong>，現場一起弄好，課照上。<br>
+    🍎 <strong>Mac 使用者請順手裝 Chrome 或 Edge</strong>：課堂闖關頁的自動驗收 Safari 不支援（會改走比較慢的人工備援）。
+  </div>
 
   <div class="card" id="checklist">
     <div class="check" data-k="c1"><input type="checkbox" aria-label="完成第 1 項">
@@ -299,8 +305,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
       </div>
       <span class="small">這一步不只是為了順，它本身就是這門課的縮影：<strong>哪些你願意授權、哪些你要親自把關，是你決定的。</strong>
       當天現場會一起調一次，先看看就好。</span></div></div>
-  <!-- 舊 Mac 截圖 img/ag-permissions.png（7/29、含已移除的沙箱選項）已下架但檔案未刪；
-       Mac 新版畫面待 Ted 確認是否與 Windows 一致（見 memory/log 2026-08-04 待辦）。 -->
+  <!-- Mac 新版 Antigravity 設定畫面待 Ted 確認是否與 Windows 一致（見 memory/log 2026-08-04 待辦）；確認後補 Mac 對照圖。 -->
   <figure class="dia">
     <img src="img/ag-permissions-win.png" alt="Antigravity 設定 General 頁的 Agent Settings 區塊：Security Preset 選 Custom，出現 Outside of folders file access policy（Always Ask）與 Terminal Command Auto Execution（Always Proceed）兩格" loading="lazy">
     <figcaption>真實畫面（2026-08-04 截於 Windows 版）。Security Preset 選 <strong>Custom</strong> 之後，底下這兩格才會出現；圖中就是課堂建議值。謹慎派可把 Terminal Command Auto Execution 改選 Require Review。</figcaption>
@@ -367,7 +372,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   </div>
   <div class="tablewrap"><table>
     <tr><th>備援與延伸</th><th>定位</th></tr>
-    <tr><td>Gemini CLI（Google）</td><td>備援：同一個 Google 帳號可用的命令列版；Antigravity 裝不起來的人用它</td></tr>
+    <tr><td>Gemini CLI（Google）</td><td>備援（限本來就熟終端機的人）：同一個 Google 帳號可用的命令列版。不熟終端機就別走這條——Antigravity 裝不起來，直接用行前包開頭那道逃生門：當天提早 20 分鐘到，現場處理</td></tr>
     <tr><td>GitHub Copilot</td><td>課後禮物：你通過 GitHub Education 驗證後，可免費使用 Copilot Pro（審核要數天到數週，行前信同步發動申請）</td></tr>
     <tr><td>Claude Code（Anthropic）</td><td>講師示範機：開場與攔停演示用，順便看到「不同 agent、同一套 git 概念」</td></tr>
   </table></div>
@@ -382,7 +387,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <section id="concepts">
 
   <h2><span class="no">參</span>概念地圖：課前快速認識 Git</h2>
-  <p><strong>〔課堂當天的教材從這一節開始〕</strong>以下各節上課會帶著走；課前想預習，就從這裡讀起。</p>
+  <p><strong>【課堂當天的教材從這一節開始】</strong>以下各節上課會帶著走；課前想預習，就從這裡讀起。</p>
   <p>每張卡三句話：白話是什麼、用論文日常打比方、AI agent 什麼時候用它。點卡片展開；實際操作請回到 P1–P9 與 C1–C6 的對應步驟。</p>
 
   <figure class="dia">
@@ -443,7 +448,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <h2><span class="no">導</span>完整操作手冊：每一步都寫清楚</h2>
   <p>下面 15 步和課堂闖關使用相同編號、目標與完成標準，但分工不同：<strong>闖關頁帶你做，這份教材幫你看懂。</strong>每一步先說明為什麼需要、Git 正在處理哪個狀態、有哪些新名詞，以及你要判斷什麼；給 AI 的完整操作文字、操作計畫與幕後指令收在「實作參考」，需要時再展開。</p>
   <div class="callout teal"><strong>不用一次讀完：</strong>上課先掌握「先懂這個」與「你要判斷什麼」。課後遇到疑問，再用瀏覽器搜尋關鍵字，或從闖關頁直接開啟對應步驟。</div>
-  <div class="callout"><strong>格式範例：</strong>桌牌用 <code>lin</code>；配對 repo 可寫成 <code>advisor-account/thesis-pair-03</code>；夥伴用 <code>chen</code>。這只是格式示意，闖關頁不會預填 repo；C1 由教授角色現場建好之後，把他回報的實際 <code>owner/repo</code> 填進去。</div>
+  <div class="callout"><strong>格式範例：</strong>桌牌＝你在課堂用的短代號，<strong>取姓氏拼音、一律英文小寫</strong>（像 <code>lin</code>）——它之後會被接進分支名，所以別填中文。配對 repo 可寫成 <code>advisor-account/thesis-pair-03</code>；夥伴桌牌用 <code>chen</code>。這只是格式示意，闖關頁不會預填 repo；C1 由教授角色現場建好之後，把他回報的實際 <code>owner/repo</code> 填進去。</div>
   <div id="flowGuide"></div>
 </section>
 
@@ -454,7 +459,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <div class="card">
     <p><span class="small" style="color:var(--teal);font-weight:700">情境</span><br>
     你和夥伴都改了 paper.md 的同一句結論。夥伴的版本先進了主線，你這邊一說「併回去」，agent 停下來了。</p>
-    <div class="callout teal"><strong>AI 助手回報：</strong>合併時撞到衝突（conflict）：paper.md 第 12 行，兩邊都改了。左邊是你的版本「觀光支出的所得彈性大於一」，右邊是夥伴已合併的版本「觀光支出的所得彈性接近一」。Git 不會替你們選，<strong>要你決定留哪一句，或重寫一句</strong>。</div>
+    <div class="callout teal"><strong>AI 助手回報：</strong>合併時撞到衝突（conflict）：paper.md 第 12 行，兩邊都改了。一邊是你的版本「觀光支出的所得彈性大於一」，另一邊是夥伴已合併的版本「觀光支出的所得彈性接近一」。Git 不會替你們選，<strong>要你決定留哪一句，或重寫一句</strong>。</div>
     <p>裁決三步：一、請 agent 把兩邊版本並排念出來；二、你決定——留一邊、或口述一句新的給它；三、agent 完成合併並提交，衝突解除。就這樣，衝突不是故障，是兩位作者的意見被攤開來等人裁決。</p>
     <p class="small">如果你自己打開那個檔案，會看到 <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> 和 <code>=======</code> 把兩個版本框起來——那不是檔案壞掉，是 git 把兩邊並排攤給你看。<br>課堂上時間允許的話，講師會故意安排兩人改同一行，當場引爆、全班圍觀裁決一次（時間不夠就割愛，這頁自己看完也夠用）。看過一次，以後自己遇到就不慌。</p>
   </div>
@@ -485,7 +490,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <p><strong>一、動手前看計畫。</strong>agent 動手前會先說「我打算怎麼做、為什麼」；沒看懂那段話，先問——<strong>聽得懂才放行</strong>，解釋不通就不准做。</p>
     <p><strong>二、動手後看 diff。</strong>agent 說做完了不算數，逐行差異你掃過一眼才算數。就當審自己學生的修改稿。</p>
     <p class="small" style="background:var(--gold-soft);padding:8px 12px;border-radius:8px">這三條跟行前第 7 項的授權設定是同一件事：<strong>指令自動執行讓課堂跑得順、要碰工作資料夾以外的檔案保持要問、千萬別選 Turbo mode。</strong>設定是你調的，代表哪些事你願意授權、哪些你要親自把關，是你決定的。</p>
-    <p><strong>三、破壞性動作，agent 必須先問你。</strong>紅線動詞清單：強制推送（force push）、把分支 reset 到舊 commit、硬重設（<code>reset --hard</code>）、改寫歷史（rebase）、刪除檔案或分支、覆蓋遠端。<code>reset --hard</code> 會讓暫存區與已追蹤工作檔對齊目標 commit，未提交修改會被覆蓋；其他 reset 模式若指向舊 commit，也會移動本機歷史。看到這些動詞一律喊停，先問「會動哪一層？會不會弄丟東西？這段歷史是否已經分享？有沒有更安全的做法？」<strong>它沒問就做了，換掉它的設定或換掉它。</strong></p>
+    <p><strong>三、破壞性動作，agent 必須先問你。</strong>紅線動詞清單：強制推送（force push）、把分支 reset 到舊 commit、硬重設（<code>reset --hard</code>）、改寫歷史（rebase）、刪除檔案或分支、覆蓋遠端、用舊寫法覆蓋檔案（<code>git checkout -- 檔名</code>，效果同 restore，一樣會蓋掉未提交修改）、清除未追蹤檔（<code>git clean</code>，砍的是 git 還沒開始保護的東西，救不回來）。<code>reset --hard</code> 會讓暫存區與已追蹤工作檔對齊目標 commit，未提交修改會被覆蓋；其他 reset 模式若指向舊 commit，也會移動本機歷史。看到這些動詞一律喊停，先問「會動哪一層？會不會弄丟東西？這段歷史是否已經分享？有沒有更安全的做法？」<strong>它沒問就做了，換掉它的設定或換掉它。</strong></p>
   </div>
   <div class="card">
     <h3 style="margin-top:0">兩條資料紅線（跟技術無關，跟你的責任有關）</h3>
@@ -494,11 +499,11 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   </div>
   <div class="card">
     <h3 style="margin-top:0">急救箱：誤把敏感檔存進去了怎麼辦</h3>
-    <p>一喊停：先別做任何事，尤其別 push。二確認：問 agent「那個檔進了版本庫嗎？推上 GitHub 了嗎？」三處理：還沒 push 的話，把這句話貼給 AI 助手——「<strong>那個檔案進過哪幾個 commit？請每一個都清掉、把檔名加進 .gitignore，清完再驗一次給我看，先不要 push。</strong>」（只清最後一筆常常清不乾淨，所以要它全部檢查）；已經 push 的話，當成外洩處理——改掉裡面的密碼、通知相關的人，再找懂的人協助清歷史（清得掉自己這份，清不掉別人已經抓走的）。</p>
+    <p>一喊停：先別做任何事，尤其別 push。二確認：問 agent「那個檔進了版本庫嗎？推上 GitHub 了嗎？」三處理：還沒 push 的話，把這句話貼給 AI 助手——「<strong>那個檔案進過哪幾個 commit？請每一個都清掉、把檔名加進 .gitignore，清完再驗一次給我看，先不要 push。</strong>」（只清最後一筆常常清不乾淨，所以要它全部檢查）；已經 push 的話，當成外洩處理——改掉裡面的密碼、通知相關的人，再找懂的人協助清歷史（清得掉自己這份，清不掉別人已經抓走的）。<br><span class="small">順帶一提：GitHub 對公開 repo 會自動攔下常見格式的金鑰——push 被「secret scanning」擋下時別想辦法繞過，那正是紅線五在救你。</span></p>
     <p class="small">開新 repo 時順手確認兩件事：可見性選 Private——含任何學生資料的一律私人；要公開分享的教材記得選一個授權條款（license），別人才知道能不能用。</p>
   </div>
   <div class="callout">
-    <strong>現場演練：</strong>對 agent 說「幫我強制覆蓋遠端」，觀察它怎麼回。好的 agent 會停下來問你為什麼、有什麼會被覆蓋；不問就動手的，就是第三條說的那種。
+    <strong>現場演練：</strong>只在<strong>自己的練習 repo</strong>做（不要在配對 repo）。對 agent 說「幫我強制覆蓋遠端。先說明會失去哪些紀錄，以及更安全的替代方案；<strong>我同意前不要執行</strong>。」觀察它怎麼回。好的 agent 會停下來說明風險、給替代方案；不問就動手的，就是第三條說的那種。
   </div>
 </section>
 
@@ -520,7 +525,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
   <div class="callout teal"><strong>救援第一句永遠一樣：</strong>「先只查看目前路徑、git status、git log 與 remote，告訴我發生什麼事；不要修改、不要 reset、不要 force push。」先把現況保留下來，通常就還救得回來。</div>
   <div class="trouble-grid" id="troubleGrid"></div>
   <p style="margin-top:14px">上表對不上你的狀況？把這句<strong>通用求救句</strong>填空後貼給 AI——它本身就是「先查看、再計畫、才動手」的隨身版：</p>
-  <div class="prep-say">我在做 Git 工作坊的第＿＿關，目標是＿＿＿，現在卡在＿＿＿。請先只查看、不要修改：告訴我目前的工作資料夾完整路徑、git status 與 gh auth status 的結果，說明哪裡不對勁；先講修復計畫，等我同意後才動手。全程禁止 reset、rebase、force push。<button class="copybtn prep-copy" type="button" data-copy="我在做 Git 工作坊的第＿＿關，目標是＿＿＿，現在卡在＿＿＿。請先只查看、不要修改：告訴我目前的工作資料夾完整路徑、git status 與 gh auth status 的結果，說明哪裡不對勁；先講修復計畫，等我同意後才動手。全程禁止 reset、rebase、force push。">複製</button></div>
+  <div class="prep-say">我在做 Git 工作坊的第＿＿關，目標是＿＿＿，現在卡在＿＿＿。請先只查看、不要修改：告訴我目前的工作資料夾完整路徑、git status 與 gh auth status 的結果，說明哪裡不對勁；先講修復計畫，等我同意後才動手。全程禁止 reset、rebase、force push、git checkout -- 覆蓋檔案與 git clean。<button class="copybtn prep-copy" type="button" data-copy="我在做 Git 工作坊的第＿＿關，目標是＿＿＿，現在卡在＿＿＿。請先只查看、不要修改：告訴我目前的工作資料夾完整路徑、git status 與 gh auth status 的結果，說明哪裡不對勁；先講修復計畫，等我同意後才動手。全程禁止 reset、rebase、force push、git checkout -- 覆蓋檔案與 git clean。">複製</button></div>
   <h3>自然語言操作速查</h3>
   <p>這些句子可以直接交給 AI。會影響檔案或歷史的操作，仍要先看計畫與 diff。情境式的 12 句日常用語在<a href="#phrases">〈陸〉怎麼跟 agent 說</a>；這張是任務式速查，兩張互補。</p>
   <div class="tablewrap"><table id="referenceTable"><tr><th>我想做什麼</th><th>可以怎麼說</th></tr></table></div>
@@ -529,7 +534,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 <!-- ═══════════ Quiz ═══════════ -->
 <section id="quiz">
   <h2><span class="no">柒</span>理解檢核：看概念與監督判斷，不看指令背誦</h2>
-  <p>目前得分：<span id="quizScore" aria-live="polite">0 / 8</span></p>
+  <p>目前得分：<span id="quizScore" aria-live="polite">0 / 9</span></p>
   <div id="quizBox"></div>
 </section>
 
@@ -551,7 +556,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
     <tr><td>0:47–0:56</td><td>歷史、版本比較、restore 與 revert</td><td>P8–P9</td><td>每個改動步驟都停下確認</td><td>1a 常開</td></tr>
     <tr><td>0:56–1:02</td><td>個人階段補進度</td><td>最低線檢查</td><td>2 commits＋2 pushes</td><td>投 1b；看 1a 誰還停在前段</td></tr>
     <tr><td>1:02–1:06</td><td>休息、配對、發角色卡、兩人互報 GitHub 帳號</td><td>配對</td><td>帳號抄在角色卡背面，C1 立刻要用</td><td>投 2a</td></tr>
-    <tr><td>1:06–1:16</td><td>C1 教授建配對 repo、研究生接受邀請後 clone（第二個資料夾）</td><td>C1</td><td>教授沿用剛建的資料夾不重複 clone；兩人權限都要 WRITE；闖關頁改連新資料夾</td><td>看 2a 誰卡在「等對方接受邀請」</td></tr>
+    <tr><td>1:06–1:16</td><td>C1 教授建配對 repo、研究生接受邀請後 clone（第二個資料夾）</td><td>C1</td><td>教授沿用剛建的資料夾不重複 clone；兩人權限都要 WRITE；闖關頁改連新資料夾。<strong>卡超過 5 分鐘＝直接掛示範 repo</strong></td><td>看 2a 誰卡在「等對方接受邀請」</td></tr>
     <tr><td>1:16–1:41</td><td>第一輪：研究生提 PR；教授要求補改；補改後核准合併；雙方 pull</td><td>C2–C5</td><td>另一人親自看 Files changed；作者不可自我核准</td><td>2b 常開</td></tr>
     <tr><td>1:41–1:50</td><td>交換角色，走一次短流程</td><td>C6</td><td>不能省略 diff 與另一人核准</td><td>2b 常開</td></tr>
     <tr><td>1:50–1:56</td><td>第二輪合併後雙方最終 pull、看歷史、故障排除</td><td>C6 收尾＋救援</td><td>兩台電腦都看得到 main 最新內容</td><td>2b 常開</td></tr>
@@ -599,7 +604,7 @@ footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;colo
 </main>
 
 <footer>
-  跟 AI 一起用 Git——不背指令的版本控制｜2026-08-05 v5.5 兩階段完整版（教材與闖關共用流程；配對 repo 課堂自建）<br>
+  跟 AI 一起用 Git——不背指令的版本控制｜2026-08-23 v5.6 兩階段完整版（教材與闖關共用流程；配對 repo 課堂自建）<br>
   工具費用與方案會變動，開課前請以各官方頁面現況為準。<br>
   © 2026 陳文盛（國立東華大學通識教育中心）× AI 協作團隊——洄瀾（組長・Claude）、立霧（Codex）、秀姑巒（Gemini）、木瓜溪（OpenCode）、美崙溪（Grok）｜本教材以 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 授權——歡迎教學與自學使用；改作請同樣開放，請勿商用。
 </footer>
@@ -652,6 +657,7 @@ if(FLOW&&guideBox){
             <div class="box"><h4>你要判斷什麼</h4><p>${htmlSafe(sampleText(step.human))}</p></div>
             <div class="box"><h4>完成證據</h4><p>${htmlSafe(sampleText(step.dashboard))}</p></div>
           </div>
+          ${step.figure?`<figure class="dia"><img src="${step.figure.src}" alt="${htmlSafe(step.figure.alt)}" loading="lazy"><figcaption>${step.figure.caption}</figcaption></figure>`:''}
           ${reset}
           <details class="practice-details">
             <summary>實作參考｜給 AI 的完整操作文字、計畫與救援</summary>
@@ -830,6 +836,9 @@ const QUIZ=[
 {q:"你隨口請 agent 把成績檔一起 commit 上傳到公開 repo，它照做了。問題出在哪？",
  o:["agent 動作太慢","監督失誤：個資不該進公開版本庫，而且 push 出去的歷史即使刪檔也難以徹底收回","沒有問題，agent 照做就代表可以"],a:1,
  e:"agent 會服從，不代表指令正確；個資紅線得由你把關。"},
+{q:"AI 把一段文字改壞了，你還沒 commit，想恢復原狀。P9 教的三種「回去」該用哪一種？",
+ o:["restore——把檔案覆蓋回最近一次 commit 的內容","revert——新增一筆反向 commit","show——先看舊版就夠了"],a:0,
+ e:"還沒 commit 的失手用 restore 蓋回來（嚴格說：restore 預設用暫存區內容覆蓋；這個情境沒動過暫存區，效果就是回到最近一次 commit）；已經 commit 且 push 出去的錯誤才用 revert 補一筆反向 commit；show 只是查看、不會動任何檔案。三者怎麼選，正是 P9 的核心判斷。"},
 {q:"課堂示範為什麼用 notes.md 而不是 Word 檔？",
  o:["git 存不了 Word 檔","git 存得了 Word，但看不出逐行差異，純文字檔才看得到誰改了哪一行","Word 檔太大放不進去"],a:1,
  e:"git 任何檔案都能存，但 diff 的逐行比較只對純文字有意義——這也是回家實際使用前要知道的誠實限制。"}
@@ -851,7 +860,7 @@ QUIZ.forEach((q,qi)=>{
         else if(oi===pick){bb.classList.add('wrong');bb.textContent='✗ 你的選擇｜'+bb.textContent;}
       });
       if(pick===q.a)score++;
-      document.getElementById('quizScore').textContent=score+' / 8'+(answered.size===8?(score>=6?'　很可以，你已經會監督 agent 了':'　再翻一次概念卡，特別是紅線那節'):'');
+      document.getElementById('quizScore').textContent=score+' / '+QUIZ.length+(answered.size===QUIZ.length?(score>=7?'　很可以，你已經會監督 agent 了':'　再翻一次概念卡，特別是紅線那節'):'');
     };
   });
   qb.appendChild(d);
