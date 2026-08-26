@@ -12,11 +12,11 @@
   var PHASES = {
     personal: {
       label: `Stage 1 | Your own research project`,
-      promise: `Start from a plain folder and go through two edits, two saved versions and two uploads, then learn how to undo safely.`
+      promise: `Start from an empty practice folder and go through two edits, two saved versions and two uploads, then learn how to undo safely.`
     },
     collab: {
       label: `Stage 2 | Graduate student × advisor`,
-      promise: `The two of you take turns proposing changes and reviewing them, going right through a PR, a request for changes, approval, merge and sync. On a shared main you never rewrite history with reset, rebase or force push.`
+      promise: `The two of you take turns proposing changes and reviewing them through a full PR cycle: request changes, approve, merge and sync. On a shared main you never rewrite history with reset, rebase or force push.`
     }
   };
 
@@ -24,7 +24,7 @@
   var STEPS = {
     P1: {
       title: `Open and confirm your working folder`,
-      why: `Git manages one folder. Make sure the AI, the handbook and you are all looking at the same place, so the repo does not end up in the wrong spot later.`,
+      why: `Git manages one folder. Make sure the AI, the quest page and you are all looking at the same place, so the repo does not end up in the wrong spot later.`,
       concept: `Git does not manage your whole computer; its scope is the folder that is open right now. If the AI is standing in the wrong path, then even a perfectly correct operation can end up reading or changing a different project. So the first move is a read-only check of the full path, the files in the root folder and the Git state, which draws a safe boundary around everything that follows.`,
       terms: [
         { term: `working folder`, meaning: `The project folder you have open right now and are about to let the AI work in.` },
@@ -39,12 +39,12 @@
         `Check whether Git is already set up`,
         `Change no files`
       ],
-      human: `Check the folder name the AI reports, and connect this quest page to the same folder.`,
+      human: `Check the folder name the AI reports, and connect the quest page to the same folder.`,
       dashboard: `The folder name is right; Git shows "Not yet"; commits are 0.`,
       behind: `pwd / Get-Location
 ls / Get-ChildItem
 git status`,
-      rescue: `If the path the AI reports is not the folder you just created, stop right there and reopen the correct folder in the AI tool you are using (the three clicks for changing folders are in the P1 figure in the handbook). If Git is not set up yet, "not a git repository" from git status is exactly what this step expects — do not rush to fix it.`,
+      rescue: `If the path the AI reports is not the folder you just created, stop right there and reopen the correct folder in the AI tool you are using (the three clicks for changing folders are in the P1 figure in the material). If Git is not set up yet, "not a git repository" from git status is exactly what this step expects — do not rush to fix it.`,
       figure: {
         src: `img/ag-open-folder.png`,
         alt: `Illustration: the three steps for changing folder in Antigravity — click the folder name on the very top line, choose Open Folder, pick the new folder`,
@@ -162,7 +162,7 @@ git commit -m "Create first version of research notes"`,
         { term: `green plus sign (+)`, meaning: `This line appears after the edit; that does not mean the content is right.` },
         { term: `uncommitted`, meaning: `The change is still in the working area or the staging area and has not become a commit.` }
       ],
-      prompt: `First explain how you plan to change notes.md. After I agree, change the sample number 0.98 to 0.96 and add one more line of made-up research note. Then list the diff line by line and explain the red minus signs and the green plus signs in plain words; do not commit yet. Finally, record P6 done in WORKSHOP-RECEIPT.txt.`,
+      prompt: `First explain how you plan to change notes.md. After I agree, change the sample number 0.98 to 0.96 and add one more line of made-up research notes. Then list the diff line by line and explain the red minus signs and the green plus signs in plain words; do not commit yet. Finally, record P6 done in WORKSHOP-RECEIPT.txt.`,
       plan: [
         `Explain which parts of notes.md will change, and nothing else`,
         `Wait for me to agree`,
@@ -174,7 +174,7 @@ git commit -m "Create first version of research notes"`,
       human: `Before the edit, check that the plan only touches notes.md; after the edit, check that the old number was removed, the new number and the new note were added, and nothing else changed.`,
       dashboard: `Changes that have not been committed are showing; the commit count is still 1.`,
       behind: `git diff -- notes.md`,
-      rescue: `If the diff is empty, first check whether the AI really made the change and saved it. If you see other files, stop right there and make sure your AI tool and this quest page are using the same folder.`
+      rescue: `If the diff is empty, first check whether the AI really made the change and saved it. If you see other files, stop right there and make sure your AI tool and the quest page are using the same folder.`
     },
 
     P7: {
@@ -216,7 +216,7 @@ git status --short --branch`,
         { term: `HEAD`, meaning: `Points at the commit you are on right now; it does not include changes that have not been committed.` },
         { term: `HEAD~1`, meaning: `The first parent of HEAD; in the straight-line history of this course, simply the previous commit.` }
       ],
-      prompt: `Please list the two most recent commits that changed notes.md and summarise each version in plain words; then compare notes.md between those two commits. While comparing, only look at the Git history and notes.md — do not switch branches, and do not change notes.md or the Git state. Show me the evidence that we are still on main and that the working tree has not changed. Once that read-only check is done, the only thing you may write to is WORKSHOP-RECEIPT.txt: record P8 done there; do not stage the receipt and do not commit it.`,
+      prompt: `Please list the two most recent commits that changed notes.md and summarize each version in plain words; then compare notes.md between those two commits. While comparing, only look at the Git history and notes.md — do not switch branches, and do not change notes.md or the Git state. Show me the evidence that we are still on main and that the working tree has not changed. Once that read-only check is done, the only thing you may write to is WORKSHOP-RECEIPT.txt: record P8 done there; do not stage the receipt and do not commit it.`,
       plan: [
         `Record the branch, HEAD and working-area state you start from`,
         `List the two most recent commits for notes.md with their hashes`,
@@ -239,7 +239,7 @@ git status --short --branch`,
     P9: {
       title: `Three things that look like "going back": just look, restore, revert`,
       why: `"Going back" is not one action. Sometimes you only need to look at the old content; a mistake that has not been committed can be thrown away; a mistake that is already published needs an undo that stays in the record. Telling these states apart is how you stop the AI from using the wrong method.`,
-      concept: `These three actions deal with different states: show only reads an old commit and changes nothing about where you are; restore puts a working file that has not been committed back, and anything unsaved in it disappears; revert adds an undo commit for a mistake that is already published, and the original record stays. reset can point the branch somewhere else, and --hard also overwrites the staging area and your working files; this step does not use reset at all.`,
+      concept: `These three actions deal with different states: show only reads an old commit and changes nothing about where you are; restore puts back a working file that has not been committed, and anything unsaved in it disappears; revert adds an undo commit for a mistake that is already published, and the original record stays. reset can point the branch somewhere else, and --hard also overwrites the staging area and your working files; this step does not use reset at all.`,
       terms: [
         { term: `show | read an old version only`, meaning: `git show <commit>:notes.md reads the file straight out of that commit. It does not switch versions, and it changes neither HEAD, nor the staging area, nor your working files.` },
         { term: `restore | throw away changes that have not been committed`, meaning: `git restore -- notes.md overwrites the working file with the content of the staging area by default. This step starts from a clean state, so the staging area matches HEAD, and the practice typo that was never committed disappears.` },
@@ -343,7 +343,7 @@ The graduate student's side:
 Then both of you put the owner/thesis-pair-NN that the advisor reported into the "Paired repo" field at the top of the quest page, and each get a local working copy ready — the two roles do different things here:
 
 - Advisor: the thesis-pair-NN folder you just created is your working copy; do not clone it again (you will hit "folder already exists"). Just use it, and point the quest page at this folder.
-- Graduate student: ask the AI to clone the paired repo {pairRepo} into your Documents folder (if Documents has been taken over by OneDrive sync, clone it somewhere that is not synced, for example C:\\git-practice), report the full path after cloning, then open it in your AI tool and point the quest page at this freshly cloned folder (not the Stage 1 one).
+- Graduate student: ask the AI to clone the paired repo {pairRepo} into your Documents folder (if Documents has been taken over by OneDrive sync, clone it somewhere that is not synced, for example C:\\git-practice), report the full path after cloning, then open it in your AI tool and point the quest page at this freshly cloned folder (not the Stage 1 folder).
 
 Finally, each of you looks — only looks — at the current branch, at origin, and at your own write permission on GitHub, and reports the group number and the repo URL to the instructor.`,
       plan: [
@@ -397,7 +397,7 @@ gh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef`,
         { term: `push -u`, meaning: `Pushes a new branch for the first time and remembers which remote branch it should sync with afterwards.` },
         { term: `Pull Request (PR)`, meaning: `The formal proposal asking another person to read the diff, comment on it and decide whether to merge.` }
       ],
-      prompt: `This round I am the graduate student. Before any work, self-check three things for me: ① the folder open right now is the paired repo (not the Stage 1 one) ② gh auth status shows I am signed in as myself ③ we are on main and the working tree is clean. If any of them is wrong, stop, explain how to fix it and wait for me to agree. Only when all three pass, start: pull the latest main fast-forward only (--ff-only), then create the branch {branch}. Only change paper.md: add "This exercise demonstrates version control with public simulated data." at the end of the "Method" section. If you cannot find the "Method" section, stop — do not change anything else on your own. Show the diff first and stop; after I confirm, stage paper.md and show the staged diff. Only after I confirm again, commit, push and open a PR that explains what changed and why, and ask the advisor to check in particular whether the wording of the new sentence is precise. Once you have confirmed that the PR link opens, record C2 done in {receipt}.`,
+      prompt: `This round I am the graduate student. Before any work, self-check three things for me: ① the folder open right now is the paired repo (not the Stage 1 folder) ② gh auth status shows I am signed in as myself ③ we are on main and the working tree is clean. If any of them is wrong, stop, explain how to fix it and wait for me to agree. Only when all three pass, start: pull the latest main fast-forward only (--ff-only), then create the branch {branch}. Only change paper.md: add "This exercise demonstrates version control with public simulated data." at the end of the "Method" section. If you cannot find the "Method" section, stop — do not change anything else on your own. Show the diff first and stop; after I confirm, stage paper.md and show the staged diff. Only after I confirm again, commit, push and open a PR that explains what changed and why, and ask the advisor to check in particular whether the wording of the new sentence is precise. Once you have confirmed that the PR link opens, record C2 done in {receipt}.`,
       plan: [
         `Self-check: the folder, the account, and a clean main`,
         `Sync main with --ff-only`,
@@ -435,10 +435,10 @@ gh pr create --base main --head {branch} --title "<PR title>" --body "<what chan
         { term: `inline comment`, meaning: `A comment attached directly beside one particular line, so the author knows what to change and why.` },
         { term: `Request changes`, meaning: `Puts on the record that this round needs revising; different from leaving a comment without making a review decision.` }
       ],
-      prompt: `This round I am the advisor. Please find the right PR from my partner {partner}, report the PR number and the link, and summarise which files and sections it changes. Do not leave comments, Request changes, approve or merge on my behalf. I will open Files changed myself and review it line by line: on the new sentence "This exercise demonstrates version control with public simulated data." I will leave an inline comment asking to change "demonstrates version control" to the more precise "demonstrates a reproducible research workflow", and then choose Request changes.`,
+      prompt: `This round I am the advisor. Please find the right PR from my partner {partner}, report the PR number and the link, and summarize which files and sections it changes. Do not leave comments, Request changes, approve or merge on my behalf. I will open Files changed myself and review it line by line: on the new sentence "This exercise demonstrates version control with public simulated data." I will leave an inline comment asking to change "demonstrates version control" to the more precise "demonstrates a reproducible research workflow", and then choose Request changes.`,
       plan: [
         `Check the repo, the author, the source branch and the PR number`,
-        `Summarise what actually changed`,
+        `Summarize what actually changed`,
         `Open the PR URL you were given`,
         `The advisor leaves the specified inline comment themselves and chooses Request changes`
       ],
@@ -520,7 +520,7 @@ gh pr merge <PR-number> --repo {pairRepo} --merge`,
         `Confirm the working area is clean`,
         `Switch back to main`,
         `Sync origin/main with --ff-only`,
-        `Summarise what has just been merged in`,
+        `Summarize what has just been merged in`,
         `Both of you check the file yourselves`,
         `Delete no branch on your own`
       ],
@@ -540,7 +540,7 @@ git log --oneline -4`,
       terms: [
         { term: `author`, meaning: `The person who opens the branch, changes the content and puts the PR forward.` },
         { term: `reviewer`, meaning: `The person who reads the diff independently, comments on it and decides whether to approve.` },
-        { term: `self-approval`, meaning: `The author approving their own PR; this course does not allow it, because nobody else has stood guard.` },
+        { term: `self-approval`, meaning: `The author approving their own PR; this course does not allow it, because nobody else has reviewed or safeguarded it.` },
         { term: `the full cycle`, meaning: `Sync main, branch and edit, PR and review, merge, and then both people sync the official version.` }
       ],
       prompt: `Now swap roles; first confirm who the new graduate student and the new advisor are.
@@ -590,7 +590,7 @@ Both: switch back to main → pull --ff-only → check the latest content`,
   /* ── the reset deep dive shown under P9 ── */
   flow.resetGuide = {
     title: `Safety extra | how to read a reset the AI proposes (this course never runs one)`,
-    intro: `What P9 actually uses is show, restore and revert. reset touches the current branch, the staging area and the working area, so this course only learns to recognise its effects and never runs one. When you see the AI propose a reset, do not give it the go-ahead.`,
+    intro: `What P9 actually uses is show, restore and revert. reset touches the current branch, the staging area and the working area, so this course only learns to recognize its effects and never runs one. When you see the AI propose a reset, do not give it the go-ahead.`,
     syntax: `git reset [--soft | --mixed | --hard] [<commit>]`,
     syntaxNote: `This is a simplified syntax that takes apart only the three common modes aimed at a commit; it is not the full syntax of git reset. Git also has forms that name files, and --patch, --merge, --keep and others.`,
     symbols: [
@@ -707,7 +707,7 @@ Both: switch back to main → pull --ff-only → check the latest content`,
     ],
     [
       `Look at the history`,
-      `List the recent versions, and summarise who changed what, when and why.`
+      `List the recent versions, and summarize who changed what, when and why.`
     ],
     [
       `Compare two versions`,
@@ -734,7 +734,7 @@ Both: switch back to main → pull --ff-only → check the latest content`,
   /* ── the 12 everyday sentences ── */
   flow.phrases = [
     [
-      `Take charge of this folder for me, so that every change from now on is on the record`,
+      `Take charge of this folder for me, so every change from now on is recorded`,
       `Creates the repository, writes a .gitignore, and makes the first commit`,
       `repository, .gitignore, commit`
     ],
@@ -750,7 +750,7 @@ Both: switch back to main → pull --ff-only → check the latest content`,
     ],
     [
       `What did we change in section three last month?`,
-      `Goes through the history, picks out the commits that touched section three, and summarises them for you`,
+      `Goes through the history, picks out the commits that touched section three, and summarizes them for you`,
       `log, diff`
     ],
     [
@@ -764,17 +764,17 @@ Both: switch back to main → pull --ff-only → check the latest content`,
       `pull, push (remote)`
     ],
     [
-      `A colleague sent me a URL; fetch it so I can have a look`,
+      `A colleague sent me a URL; clone it so I can have a look`,
       `Clones it onto your computer, and reports back on how the project is laid out`,
       `clone`
     ],
     [
-      `I want to try switching to a panel data specification, but the version I have now must not be touched`,
+      `I want to try switching to a panel data specification, but leave the current version alone`,
       `Opens a branch, and makes the change on the branch`,
       `branch`
     ],
     [
-      `That trial version came out well; let us merge it back into the official one`,
+      `That trial version came out well; let's merge it back into the official one`,
       `Runs the merge; if there is a conflict it lists it and asks you which side to keep`,
       `merge (conflict)`
     ],

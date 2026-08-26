@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Before you start｜Git with AI</title>
+<title>Before you start｜Using Git with AI</title>
 <style>
 :root{
   --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441; --gold-soft:#F3E3C3;
@@ -113,7 +113,7 @@ footer .inner{max-width:920px;margin:0 auto}
 
 <header class="hero">
   <div class="inner">
-    <p class="kicker">Git with AI｜version control without memorizing commands</p>
+    <p class="kicker">Using Git with AI｜version control without memorizing commands</p>
     <h1>Before you start: what this path looks like</h1>
     <p>The material is thick, and clicking straight into it is a good way to drown. This page tells you first which path you will walk, what to prepare, and which steps you have to check with your own eyes instead of handing them to the AI. A classroom session and solo self-study walk different routes; Part II below makes that clear. One more thing before you begin: the AI assistant understands English (and most other languages) — talk to it in whatever language you think in.</p>
   </div>
@@ -121,13 +121,13 @@ footer .inner{max-width:920px;margin:0 auto}
 
 <nav id="topnav" aria-label="On-page navigation">
   <span class="navlinks">
-    <a href="#who">Who it is for</a>
+    <a href="#who">Who this is for</a>
     <a href="#routes">Two routes</a>
     <a href="#prep">Prepare first</a>
     <a href="#map">The 15-step map</a>
     <a href="#check">Did I learn it?</a>
     <a href="#next">After the course</a>
-    <a href="index.en.html">Back to entry</a>
+    <a href="index.en.html">Home</a>
   </span>
   <span class="tools">
     <a href="start.html" hreflang="zh-Hant" title="Read this page in Chinese">中文版</a>
@@ -142,14 +142,14 @@ footer .inner{max-width:920px;margin:0 auto}
   <div class="t">🔴 Two data red lines before you touch anything</div>
   <p style="margin:4px 0 0" class="note">It is fine if the words below mean nothing to you yet — the course teaches all of them. For now just remember two things: <strong>student data does not go online, and passwords do not go into a project</strong>.</p>
   <p style="margin:4px 0 0">First, <strong>student personal data and unpublished data never go into a public repo</strong> — <code>.gitignore</code> is not a security tool. Second, <strong>not even a private repo holds account names and passwords</strong> — once something has been committed it is in the history, and deleting the file afterwards does not help.</p>
-  <p style="margin:8px 0 0" class="note">The full explanation of both lines, the three supervision principles, and the first-aid kit for "I saved the wrong thing" are in <a href="material.en.html#safety">Part V of the material</a>.</p>
+  <p style="margin:8px 0 0" class="note">The full explanation of both lines, the three rules of supervision, and the first-aid kit for "I saved the wrong thing" are in <a href="material.en.html#safety">Part V of the material</a>.</p>
 </div>
 
 <section id="who">
 <h2><span class="num">I</span>Who this is for</h2>
 <p>For university teachers and graduate students who have a research project in hand. The test is simple: if a file called <code>thesis_v3_final_really_final.docx</code> has ever appeared in your folder, or if you and a co-author have mailed drafts back and forth until nobody is sure which one is newest, this course was made for you.</p>
-<p><strong>You do not need to know</strong> any Git command, any terminal, or any programming language. <strong>You do need</strong> a computer with an internet connection, a GitHub account, and an AI assistant you are used to — and <strong>it is fine if you do not have the last two yet</strong>; the preparation pack walks you through getting them.</p>
-<p class="note">This course does not teach you to memorize commands, and it does not explain how Git works inside; several advanced features (stash, rebase, fork workflows, GitHub Actions) are skipped on purpose. What you practise is something else: <strong>being the supervisor of your agent (the AI assistant that does the work for you), not its rubber stamp</strong>. The full "why" is in <a href="material.en.html#why">Part I of the material</a>.</p>
+<p><strong>You do not need to know</strong> any Git command, any terminal, or any programming language. <strong>You do need</strong> a computer with an internet connection, a GitHub account, and an AI assistant you are used to — and <strong>it is fine if you do not have the last two yet</strong>; the setup pack walks you through getting them.</p>
+<p class="note">This course does not teach you to memorize commands, and it does not explain how Git works inside; several advanced features (stash, rebase, fork workflows, GitHub Actions) are skipped on purpose. What you practice is something else: <strong>being the supervisor of your agent (the AI assistant that does the work for you), not its rubber stamp</strong>. The full "why" is in <a href="material.en.html#why">Part I of the material</a>.</p>
 </section>
 
 <section id="routes">
@@ -166,13 +166,13 @@ footer .inner{max-width:920px;margin:0 auto}
   <div class="route solo">
     <div class="t">🅑 Learning on your own</div>
     <div class="who">At home, by yourself, with no partner</div>
-    <p style="margin:0"><strong>For now, walk Stage 1 only, P1–P9.</strong> That phase is about your own research project anyway, and finishing it already solves the more painful half: you can get an earlier version back, your work is backed up on GitHub, and you can see what changed.</p>
+    <p style="margin:0"><strong>For now, walk Stage 1 only, P1–P9.</strong> That stage is about your own research project anyway, and finishing it already solves the more painful half: you can get an earlier version back, your work is backed up on GitHub, and you can see what changed.</p>
   </div>
 </div>
 
 <div class="callout red">
   <div class="t">⚠️ Stage 2 needs two people; one person cannot pretend</div>
-  <p style="margin:4px 0 0">What C1–C6 practise is exactly how two people work on the same draft without stepping on each other — propose, send back, revise, approve, merge. <strong>One person cannot create that situation</strong>, so wait until you have a co-author, a student you supervise, or a place in a scheduled session.</p>
+  <p style="margin:4px 0 0">What C1–C6 practice is exactly how two people work on the same draft without stepping on each other — propose, send back, revise, approve, merge. <strong>One person cannot create that situation</strong>, so wait until you have a co-author, a student you supervise, or a place in a scheduled session.</p>
   <p style="margin:8px 0 0" class="note">Please do not register a second GitHub account just to fake a partner and play both roles yourself. The <a href="https://docs.github.com/en/site-policy/github-terms/github-terms-of-service" target="_blank" rel="noopener">GitHub Terms of Service</a> state that one person may keep only one free account, and practice is not worth crossing that line for.</p>
 </div>
 </section>
@@ -183,8 +183,8 @@ footer .inner{max-width:920px;margin:0 auto}
   <div class="t">⚠️ The preparation list has ten items, not three</div>
   <p style="margin:4px 0 0"><strong>You have to work through all ten items in <a href="material.en.html#prep">Part II of the material, "The setup pack"</a></strong> (two-factor authentication, installing Git itself, installing PowerShell 7, the permission settings for your AI assistant, signing in to GitHub, and so on). The three lines below are only the lowest bar, the one that lets you judge right now whether you are heading in the right direction — <strong>they are not the full list</strong>.</p>
 </div>
-<p>The three minimum checks: <strong>①</strong> your AI assistant is installed and signed in (it opens, the login works, you can find the input box); <strong>②</strong> you can sign in to your GitHub account; <strong>③</strong> do one warm-up run — ask the AI to create a small file, <strong>and to report the git version and the GitHub account it is signed in as</strong>, then <strong>open the file yourself and look at it</strong>.</p>
-<p class="note">Item ③ tests the whole installation chain in one sentence — the AI reports the git version and the GitHub account it is logged in as (the tool is called gh), so <strong>this one step shows you whether git is installed and whether GitHub is signed in</strong>. And the step is itself the first lesson of this course: <em>the AI saying it is done does not mean it is done</em>. ⚠️ But it <strong>cannot check two-factor authentication (2FA) or the permission settings of your AI assistant</strong>; for those two, follow the material. The material has an interactive ten-item checklist you can tick off, a screenshot for every step, and a sentence to say when you are stuck, so none of that is repeated here. <strong>Give yourself two evenings and do not leave this to the day before</strong> — several items need downloading and installing, which can take more than an hour depending on your connection.</p>
+<p>The three minimum checks: <strong>①</strong> your AI assistant is installed and signed in (it opens, the login works, you can find the input box); <strong>②</strong> you can sign in to your GitHub account; <strong>③</strong> do one warm-up run — ask the AI to create a small file, <strong>and to report the Git version and the GitHub account it is signed in as</strong>, then <strong>open the file yourself and look at it</strong>.</p>
+<p class="note">Item ③ tests the whole installation chain in one sentence — the AI reports the Git version and the GitHub account it is signed in as (the tool is called gh), so <strong>this one step shows you whether Git is installed and whether GitHub is signed in</strong>. And the step is itself the first lesson of this course: <em>the AI saying it is done does not mean it is done</em>. ⚠️ But it <strong>cannot check two-factor authentication (2FA) or the permission settings of your AI assistant</strong>; for those two, follow the material. The material has an interactive ten-item checklist you can tick off, a screenshot for every step, and a sentence to say when you are stuck, so none of that is repeated here. <strong>Give yourself two evenings and do not leave this to the day before</strong> — several items need downloading and installing, which can take more than an hour depending on your connection.</p>
 </section>
 
 <section id="map">
@@ -231,18 +231,18 @@ footer .inner{max-width:920px;margin:0 auto}
   <li><strong>Find a co-author or a student you supervise, and go back for Stage 2.</strong> Once the two of you have done one PR together, real collaboration later will not get stuck.</li>
   <li><strong>If your journal asks you to submit data and code</strong>, this workflow is the layer underneath: a complete history of changes, a clean list of files, and a clear account of how each version differs.</li>
 </ul>
-<p class="note">Before you start, it is worth reading <a href="material.en.html#limits">Part X of the material, "Three honest limits (nothing hidden)"</a> once: Word and Excel do not show line-by-line differences, GitHub plans and features change, and agents make mistakes. Knowing what a tool cannot do is how you find out what you actually have.</p>
+<p class="note">Before you start, it is worth reading <a href="material.en.html#limits">Part X of the material, "Three honest limitations (we are not hiding them)"</a> once: Word and Excel do not show line-by-line differences, GitHub plans and features change, and agents make mistakes. Knowing what a tool cannot do is how you find out what you actually have.</p>
 </section>
 
 <div class="linkcards">
-  <a class="linkcard" href="material.en.html"><div class="t">📘 The material — for reading</div><div class="d">The full two-phase route, the ideas and complete operations behind all 15 steps, advanced collaboration, troubleshooting, and a plain-language phrase table.</div></a>
+  <a class="linkcard" href="material.en.html"><div class="t">📘 The material — for reading</div><div class="d">The full two-stage route, the ideas and complete operations behind all 15 steps, advanced collaboration, troubleshooting, and a plain-language phrase table.</div></a>
   <a class="linkcard" href="quest.en.html"><div class="t">🎮 The quest — for doing</div><div class="d">Keep this page open the whole time you are working: copyable plain-language prompts, a Git dashboard, and step-by-step checks. Please open it in Chrome or Edge.</div></a>
 </div>
 
 </main>
 
 <footer><div class="inner">
-  <p>Git with AI — version control without memorizing commands｜<span id="ver">v5.6</span>｜"Before you start" guide page</p>
+  <p>Using Git with AI — version control without memorizing commands｜<span id="ver">v5.6</span>｜"Before you start" guide page</p>
   <p>Tool prices and plans change; before you start, check each official page for what is true today.</p>
   <p>© 2026 Wen-Sheng (Ted) Chen (Center for General Education, National Dong Hwa University) × the AI collaboration team — Wailan (洄瀾, team lead, Claude), Liwu (立霧, Codex), Xiuguluan (秀姑巒, Gemini), Muguaxi (木瓜溪, OpenCode), Meilunxi (美崙溪, Grok)｜This material is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> — you are welcome to use it for teaching and self-study; share adaptations under the same terms, and please do not use it commercially.</p>
   <p>English edition of the v5.6 material. If anything differs, the Chinese original governs. License: CC BY-NC-SA 4.0.</p>

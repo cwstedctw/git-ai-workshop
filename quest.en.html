@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Git Quest | From your own project to joint research with your advisor</title>
+<title>Git Quest | From your own project to working with your advisor</title>
 <style>
 :root{--teal:#0E7C7B;--deep:#0A5958;--action:#0E7C7B;--action-ink:#fff;--panel:#0A5958;--panel-ink:#fff;--gold:#D9A441;--cream:#F4ECD8;--card:#FDFAF2;--ink:#1A1A1A;--soft:#585247;--line:#ded3b8;--ok:#246238;--warn:#8a5c0d;--bad:#b04426;--warn-action:#8a5c0d;--shadow:0 2px 10px #00000012}
 @media(prefers-color-scheme:dark){:root{--cream:#151d1c;--card:#1e2927;--ink:#eee8d8;--soft:#bbb3a3;--line:#364440;--teal:#70d3cc;--deep:#8bd8d2;--action:#176762;--panel:#164947;--gold:#e0ad49;--ok:#78cd83;--warn:#f0bc58;--bad:#ff967a;--warn-action:#80550c}}
@@ -38,11 +38,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
 <body>
 <header class="hero">
   <div class="lang-switch"><a href="quest.html" lang="zh-Hant-TW" hreflang="zh-Hant-TW">中文版</a></div>
-  <h1>Git Quest: from your own project to joint research with your advisor</h1>
-  <p><a href="material.en.html">The handbook is for understanding and for looking things up after class</a>; this quest page shows only the stage you are on. You say what you want in plain language, the AI lists a plan first, and you look it over before you let it run. The AI assistant understands English (and most languages) — talk to it in whatever language you think in. <strong>One rule for the whole class: if you are stuck for more than 5 minutes, raise your hand</strong> — no need to struggle through it alone.</p>
+  <h1>Git Quest: from your own project to working with your advisor</h1>
+  <p><a href="material.en.html">The material is for understanding the ideas and looking things up after class</a>; this quest page shows only the stage you are on. You say what you want in plain language, the AI lists a plan first, and you look it over before you let it run. The AI assistant understands English (and most other languages) — talk to it in whatever language you think in. <strong>One rule for the whole class: if you are stuck for more than 5 minutes, raise your hand</strong> — no need to struggle through it alone.</p>
   <div class="phase-switch" role="group" aria-label="Class stages">
     <button class="phase-tab" id="phasePersonal" type="button">① Stage 1: your own project</button>
-    <button class="phase-tab" id="phaseCollab" type="button">② Stage 2: opens after the break</button>
+    <button class="phase-tab" id="phaseCollab" type="button">② Stage 2 — after the break</button>
   </div>
   <div class="setupbar" id="setupbar">
     <label>Table tag (surname, lowercase)<input id="tag" placeholder="e.g. lin"></label>
@@ -56,7 +56,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
     <div class="card">
       <div class="dashboard-head">
         <strong>Quest dashboard</strong>
-        <span class="small" id="phaseProgressLabel" aria-live="polite">Stage 1 complete: 0/9</span>
+        <span class="small" id="phaseProgressLabel" aria-live="polite">Stage 1: 0/9</span>
         <button class="btn secondary dashboard-refresh" id="dashRefresh" type="button">Connect folder</button>
         <button class="btn secondary dashboard-refresh" id="clearQuest" type="button" title="Clears the quest check-offs stored in this browser; it does not change your Git folder">Start over</button>
       </div>
@@ -79,7 +79,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
     <div class="card callout">
       <p><strong>Stage 1 does not start from a template.</strong> Create an empty folder on your computer, for example <code>research-practice-project</code> — but not inside a Desktop or Documents folder that OneDrive has taken over (a cloud icon on the folder is the giveaway), because the two sync systems will fight each other. Then open it in the AI tool you are using (in Antigravity: click <strong>the folder path on the very top line</strong> → Open Folder → choose this new folder). After that, press the button below so this page reads the same folder.</p>
       <p>This page only reads Git status; it never changes or uploads your files. Chrome and Edge can check your work automatically; on other browsers, use the "Manual check (backup)" box under each step.</p>
-      <p><strong>Open this page from its online address (self-learners: use the link on the handbook home page; in class: use the address your instructor gives you) — do not download it and double-click the saved file</strong> — opened with file://, folder reading and automatic checking are both blocked by browser security.</p>
+      <p><strong>Open this page from its online address (self-learners: use the link on the material home page; in class: use the address your instructor gives you) — do not download it and double-click the saved file</strong>. If you open it with file://, folder reading and automatic checking are both blocked by browser security.</p>
       <p><button class="btn" id="pick" type="button">📂 Connect your working folder</button> <button class="btn secondary" id="refresh" type="button" hidden>Check again</button></p>
       <p id="fsNote" class="small"></p>
     </div>
@@ -112,7 +112,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
     <div class="card danger">
       <p>Do this <strong>only in your own practice repo</strong>, not in the paired repo. Give the AI the sentence below and watch whether it stops.</p>
       <div class="say"><b>Say to the AI</b>Force-overwrite the remote for me. First explain which records would be lost and what safer alternatives there are; do not run anything before I agree.<button class="copy" type="button" data-copy="Force-overwrite the remote for me. First explain which records would be lost and what safer alternatives there are; do not run anything before I agree.">Copy</button></div>
-      <p><strong>Expected behavior:</strong> the AI refuses to force push straight away — it compares the differences first, explains the risk, and offers alternatives such as a backup, a pull or a revert.</p>
+      <p><strong>Expected behavior:</strong> the AI does not force push straight away — it compares the differences first, explains the risk, and offers alternatives such as a backup, a pull or a revert.</p>
     </div>
   </section>
 <section class="card" id="liveWall" hidden>
@@ -121,7 +121,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
     <button class="btn" id="wallToggle" type="button" aria-expanded="true">Collapse</button>
     <button class="btn" id="wallLeave" type="button">Class is over, leave this session</button>
   </div>
-  <p class="muted">Where the class has got to, and what people are asking right now. <strong>If someone has already asked it, you do not have to ask again.</strong> This section only appears during a live class.</p>
+  <p class="muted">How far the class has got, and what people are asking right now. <strong>If someone has already asked it, you do not have to ask again.</strong> This section only appears during a live class.</p>
   <div id="wallBox"></div>
 </section>
 
@@ -225,9 +225,9 @@ function phaseCompletion(){
 function renderDashboard(){
   const phase=currentPhase(),progress=phaseCompletion(),phaseName=phase==='personal'?'Stage 1':'Stage 2';
   $('sProgress').textContent=progress.done+'/'+progress.total;
-  $('phaseProgressLabel').textContent=phaseName+' complete: '+progress.done+'/'+progress.total;
+  $('phaseProgressLabel').textContent=phaseName+': '+progress.done+'/'+progress.total;
   $('phaseProgressFill').style.width=(progress.total?Math.round(progress.done/progress.total*100):0)+'%';
-  const meter=document.querySelector('.phase-meter');meter.setAttribute('aria-valuemax',progress.total);meter.setAttribute('aria-valuenow',progress.done);meter.setAttribute('aria-valuetext',phaseName+' complete: '+progress.done+'/'+progress.total);
+  const meter=document.querySelector('.phase-meter');meter.setAttribute('aria-valuemax',progress.total);meter.setAttribute('aria-valuenow',progress.done);meter.setAttribute('aria-valuetext',phaseName+': '+progress.done+'/'+progress.total);
   $('dashRefresh').textContent=handle?'Rescan':'Connect folder';
   if(!handle){
     $('sFolder').textContent='Not connected';$('sFolder').removeAttribute('title');$('sGit').textContent='–';$('sBranch').textContent='–';$('sCommits').textContent='–';$('sRemote').textContent='–';$('sSync').textContent='–';
@@ -254,7 +254,7 @@ function taskCard(step,n){
   const st=checker(step.id),prompt=resolve(step.prompt),human=resolve(step.human),dashboard=resolve(step.dashboard),rescue=resolve(step.rescue);
   const check=autoNotices[step.id],notice=check?`<div class="auto-result ${check.status}" role="status">${esc(check.text)}</div>`:'';
   const autoLabel=st==='pass'?'✓ This step is done':st==='evidence'?'Re-check the evidence':check?'Check again':'Check this step automatically',autoClass=st==='pass'?' done':(st==='evidence'||check)?' recheck':'',autoDisabled=st==='pass'?' disabled aria-disabled="true"':'';
-  const guideText=step.id==='P9'?'This step is a long one: open the full P9 walkthrough in the handbook':'Need more detail? Open the handbook notes for '+step.id;
+  const guideText=step.id==='P9'?'This step is a long one: open the full P9 walkthrough in the material':'Need more detail? Open the notes in the material for '+step.id;
   const verify=`Please only check. Do not change any file, any Git state, any GitHub setting or any Pull Request.
 
 I want to verify workshop step ${step.id} "${step.title}".
@@ -262,7 +262,7 @@ What this step is for: ${resolve(step.why)}
 Done means: ${dashboard}
 A human has to confirm: ${human}
 
-First report the full path of the folder you are working in, so we can confirm it is the project I want to verify; then use a read-only method suited to this step to check. If the evidence is missing, do not do the work yourself.
+First report the full path of the folder you are working in, so we can confirm it is the project I want to verify; then use a read-only check suited to this step. If the evidence is missing, do not do the work yourself.
 
 Please report, in order:
 1. Result: done / not done / cannot tell
@@ -271,7 +271,7 @@ Please report, in order:
 4. Suggestion: if it is not done, give me the next sentence I can say to the AI — but do not run it yet`;
   const manualCheck=st==='pass'?'':st==='evidence'?`<div class="manual-check evidence" aria-label="Final human confirmation"><span class="manual-check-label">The automatic evidence matches; whether it is done is still your call</span><button class="manual" type="button" data-id="${step.id}">I have checked it, mark as done</button></div>`:`<div class="manual-check" aria-label="Manual check (backup)"><span class="manual-check-label">Manual check (backup), for when the automatic check cannot tell</span><button class="copy" type="button" data-copy="${esc(verify)}">① Copy the text for the AI to check</button><button class="manual" type="button" data-id="${step.id}">② The AI says it passed, mark as done</button></div>`;
   const taskClass=st==='pass'?'pass':st==='evidence'?'evidence-state':st==='manual'?'manual-state':'';
-  const statusText=st==='pass'?'✓ Done':st==='evidence'?'Evidence matches, your check pending':st==='manual'?'Needs a manual check':'Not done yet';
+  const statusText=st==='pass'?'✓ Done':st==='evidence'?'Evidence matches — your check is pending':st==='manual'?'Needs a manual check':'Not done yet';
   return `<article class="task ${taskClass}" id="task-${step.id}"><div class="taskhead"><span class="taskid">${step.id} | Step ${n}</span><span class="taskname">${esc(step.title)}</span><span class="status">${statusText}</span></div><p>${esc(step.why)}</p>${roleCue(step.id)}<a class="guide-link" href="material.en.html#guide-${step.id}" target="_blank" rel="noopener">${esc(guideText)} ↗</a><div class="say"><b>Say to the AI</b>${esc(prompt)}<button class="copy" type="button" data-copy="${esc(prompt)}">Copy</button></div><p class="human"><strong>What you do:</strong> ${esc(human)}</p><details><summary>Stuck? Rescue, what "done" looks like, and the commands behind it</summary><p><strong>If you get stuck:</strong> ${esc(rescue)}</p><p class="small"><strong>Dashboard:</strong> ${esc(dashboard)}</p><pre>${esc(resolve(step.behind))}</pre></details>${notice}<div class="actions"><button class="auto${autoClass}" type="button" data-auto="${step.id}"${autoDisabled}>${autoLabel}</button>${manualCheck}</div></article>`;
 }
 async function autoCheckStep(id){
@@ -318,11 +318,11 @@ function render(){
   document.querySelectorAll('.role').forEach(x=>x.classList.toggle('active',x.dataset.role===cfg.role.value));
   const phase=FLOW.phases.find(x=>x.id===phaseId);
   let html=`<div class="phase"><h2>${esc(phase.label)}</h2><p>${esc(phase.promise)} (about ${phase.minutes} minutes of core work)</p></div>`;
-  if(phaseId==='collab')html+=`<div class="card callout"><strong>The pairing settings are only used in this stage:</strong> the graduate student proposes a change and the advisor stands guard; once round 1 is finished, C6 swaps the roles.</div>`;
+  if(phaseId==='collab')html+=`<div class="card callout"><strong>The pairing settings are only used in this stage:</strong> the graduate student proposes a change and the advisor reviews and safeguards the merge; once round 1 is finished, C6 swaps the roles.</div>`;
   for(const step of FLOW.phaseSteps(phaseId))html+=taskCard(step,FLOW.steps.findIndex(x=>x.id===step.id)+1);
   if(phaseId==='personal'){
     const done=FLOW.phaseSteps('personal').filter(step=>checker(step.id)==='pass').length;
-    html+=`<div class="phase-complete"><h2>${done===9?'✓ Stage 1 complete':'Stage 1 progress '+done+'/9'}</h2><p>${done===9?'You have been all the way round your own version cycle. When the instructor calls the break and asks you to change seats, move on to working in pairs.':'Finish P1–P9 first; if the instructor has already called the seat change, you can move into Stage 2 now and catch up with the instructor\'s help.'}</p><button class="btn" id="enterCollab" type="button">Go to Stage 2: graduate student × advisor →</button></div>`;
+    html+=`<div class="phase-complete"><h2>${done===9?'✓ Stage 1 complete':'Stage 1 progress '+done+'/9'}</h2><p>${done===9?'You have gone right round your own version cycle. When the instructor calls the break and asks you to change seats, move on to working in pairs.':'Finish P1–P9 first; if the instructor has already called the seat change, you can move into Stage 2 now and catch up with the instructor\'s help.'}</p><button class="btn" id="enterCollab" type="button">Go to Stage 2: graduate student × advisor →</button></div>`;
   }
   $('taskList').innerHTML=html;
   $('roles').hidden=phaseId!=='collab';
