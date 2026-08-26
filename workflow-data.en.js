@@ -46,7 +46,7 @@ ls / Get-ChildItem
 git status`,
       rescue: `If the path the AI reports is not the folder you just created, stop right there and reopen the correct folder in the AI tool you are using (the three clicks for changing folders are in the P1 figure in the material). If Git is not set up yet, "not a git repository" from git status is exactly what this step expects — do not rush to fix it.`,
       figure: {
-        src: `img/ag-open-folder.png`,
+        src: `img/ag-open-folder.en.png`,
         alt: `Illustration: the three steps for changing folder in Antigravity — click the folder name on the very top line, choose Open Folder, pick the new folder`,
         caption: `Illustration. Changing folder in Antigravity takes just these three clicks: <strong>click the folder name on the very top line → Open Folder → choose the folder you have just created</strong>.`
       }
@@ -381,7 +381,7 @@ git -C <full path after cloning> remote -v
 gh repo view {pairRepo} --json viewerPermission,url,defaultBranchRef`,
       rescue: `⚠️ If you find the AI created the new folder inside research-practice-project (a second, nested .git appears), stop at once and do not commit or push again. Ask it to list what is inside that new folder first — check that it holds only the paper.md and .gitignore this step just created and nothing of your own, delete it only once you agree, then rebuild it under Documents. If the repo name is taken, use a different group number or add a suffix; do not delete anybody else's repo. A public repo can be cloned even before the invitation is accepted, but the push will be rejected — check first that the invitation has been accepted and that you are signed in as yourself; if you cannot find the invitation email, opening the repo URL directly also offers the accept option. If clone fails, check the URL and your network first; if the target folder already exists, do not delete or overwrite it — report what is inside and decide afterwards. If your pair is stuck for more than five minutes, raise your hand: the instructor will add you both as collaborators on the demo repo (you still have to accept the invitation yourself and confirm your permission is WRITE), and you clone that one to carry on with C2 — without WRITE permission the push in C2 will always fail. Build your own repo after class.`,
       figure: {
-        src: `img/gh-invite-hint.png`,
+        src: `img/gh-invite-hint.en.png`,
         alt: `Illustration: the GitHub collaboration invitation page — a blue dot on the notification bell, and a green Accept invitation button in the middle of the page`,
         caption: `Illustration (a mock-up of the GitHub page). This is what the invitation looks like to the graduate student — you will find it either at the notification bell or in your email; <strong>you have to press the green Accept invitation button yourself</strong>. If you cannot find the notification, just open the repo URL the advisor reported.`
       }
@@ -449,7 +449,7 @@ gh pr view <PR-number> --repo {pairRepo} --web
 gh pr diff <PR-number> --repo {pairRepo}`,
       rescue: `If you cannot find the PR, check the repo, the author, the source branch and the PR number. When you leave an inline comment in Files changed, pressing "Start a review" leaves your comment pending and your partner cannot see it — you have to press "Submit review" at the end for it to reach them. The author of a PR must not approve their own content in this class; if you are signed in as the author, stop and hand it to this round's advisor.`,
       figure: {
-        src: `img/gh-review-hint.png`,
+        src: `img/gh-review-hint.en.png`,
         alt: `Illustration: the four steps of a line-by-line review on GitHub — open Files changed, click the blue plus sign beside the line number, type your comment, then under Review changes choose Request changes and press Submit review`,
         caption: `Illustration (a mock-up of the GitHub page). These four steps are the only thing this step asks you to do by hand on the web: <strong>① Files changed → ② the blue plus sign beside the line number → ③ type your comment → ④ under Review changes choose Request changes and press Submit review</strong> — without Submit review, your partner cannot see your comment.`
       }
