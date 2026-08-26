@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-Hant-TW">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Git 闖關｜自己的專案，到師生共同研究</title>
+<title>Git Quest | From your own project to joint research with your advisor</title>
 <style>
 :root{--teal:#0E7C7B;--deep:#0A5958;--action:#0E7C7B;--action-ink:#fff;--panel:#0A5958;--panel-ink:#fff;--gold:#D9A441;--cream:#F4ECD8;--card:#FDFAF2;--ink:#1A1A1A;--soft:#585247;--line:#ded3b8;--ok:#246238;--warn:#8a5c0d;--bad:#b04426;--warn-action:#8a5c0d;--shadow:0 2px 10px #00000012}
 @media(prefers-color-scheme:dark){:root{--cream:#151d1c;--card:#1e2927;--ink:#eee8d8;--soft:#bbb3a3;--line:#364440;--teal:#70d3cc;--deep:#8bd8d2;--action:#176762;--panel:#164947;--gold:#e0ad49;--ok:#78cd83;--warn:#f0bc58;--bad:#ff967a;--warn-action:#80550c}}
@@ -36,109 +36,111 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,su
 <script>(()=>{const t=localStorage.getItem('gw-theme');if(t)document.documentElement.dataset.theme=t})()</script>
 </head>
 <body>
-  <div class="lang-switch"><a href="quest.en.html" lang="en" hreflang="en">EN</a></div>
 <header class="hero">
-  <h1>Git 闖關：自己的專案，到師生共同研究</h1>
-  <p><a href="material.html">教材用來理解與課後查詢</a>；闖關頁一次只顯示目前階段。你用自然語言說需求，AI 先列計畫，你看過再放行。<strong>課堂現場通用規則：卡住超過 5 分鐘就舉手</strong>，不用自己熬。</p>
-  <div class="phase-switch" role="group" aria-label="課堂階段">
-    <button class="phase-tab" id="phasePersonal" type="button">① 第一階段：自己的專案</button>
-    <button class="phase-tab" id="phaseCollab" type="button">② 第二階段：中場後開啟</button>
+  <div class="lang-switch"><a href="quest.html" lang="zh-Hant-TW" hreflang="zh-Hant-TW">中文版</a></div>
+  <h1>Git Quest: from your own project to joint research with your advisor</h1>
+  <p><a href="material.en.html">The handbook is for understanding and for looking things up after class</a>; this quest page shows only the stage you are on. You say what you want in plain language, the AI lists a plan first, and you look it over before you let it run. The AI assistant understands English (and most languages) — talk to it in whatever language you think in. <strong>One rule for the whole class: if you are stuck for more than 5 minutes, raise your hand</strong> — no need to struggle through it alone.</p>
+  <div class="phase-switch" role="group" aria-label="Class stages">
+    <button class="phase-tab" id="phasePersonal" type="button">① Stage 1: your own project</button>
+    <button class="phase-tab" id="phaseCollab" type="button">② Stage 2: opens after the break</button>
   </div>
   <div class="setupbar" id="setupbar">
-    <label>桌牌（姓氏英文小寫）<input id="tag" placeholder="例如 lin"></label>
-    <label class="collab-only">配對 repo<input id="pairRepo" placeholder="教授建好的 owner/thesis-pair-組號"></label>
-    <label class="collab-only">夥伴桌牌<input id="partner" placeholder="例如 chen"></label>
-    <label class="collab-only">第一輪角色<select id="role"><option value="student">研究生</option><option value="advisor">指導教授</option></select></label>
+    <label>Table tag (surname, lowercase)<input id="tag" placeholder="e.g. lin"></label>
+    <label class="collab-only">Paired repo<input id="pairRepo" placeholder="owner/thesis-pair-NN, created by the advisor"></label>
+    <label class="collab-only">Partner's table tag<input id="partner" placeholder="e.g. chen"></label>
+    <label class="collab-only">Role for round 1<select id="role"><option value="student">Graduate student</option><option value="advisor">Advisor</option></select></label>
   </div>
 </header>
 <main class="wrap">
-  <section id="dashboard" class="dashboard" aria-label="目前進度與 Git 狀態">
+  <section id="dashboard" class="dashboard" aria-label="Current progress and Git status">
     <div class="card">
       <div class="dashboard-head">
-        <strong>闖關儀表板</strong>
-        <span class="small" id="phaseProgressLabel" aria-live="polite">第一階段完成 0／9</span>
-        <button class="btn secondary dashboard-refresh" id="dashRefresh" type="button">連接資料夾</button>
-        <button class="btn secondary dashboard-refresh" id="clearQuest" type="button" title="清除這台瀏覽器的闖關勾選，不會修改 Git 資料夾">重新開始</button>
+        <strong>Quest dashboard</strong>
+        <span class="small" id="phaseProgressLabel" aria-live="polite">Stage 1 complete: 0/9</span>
+        <button class="btn secondary dashboard-refresh" id="dashRefresh" type="button">Connect folder</button>
+        <button class="btn secondary dashboard-refresh" id="clearQuest" type="button" title="Clears the quest check-offs stored in this browser; it does not change your Git folder">Start over</button>
       </div>
       <div class="stats">
-        <div class="stat"><strong id="sProgress">0／9</strong><span>本階段闖關紀錄</span></div>
-        <div class="stat"><strong id="sFolder">未連接</strong><span>資料夾</span></div>
+        <div class="stat"><strong id="sProgress">0/9</strong><span>Steps done in this stage</span></div>
+        <div class="stat"><strong id="sFolder">Not connected</strong><span>Folder</span></div>
         <div class="stat"><strong id="sGit">–</strong><span>Git</span></div>
-        <div class="stat"><strong id="sBranch">–</strong><span>目前分支</span></div>
-        <div class="stat"><strong id="sCommits">–</strong><span>本機 commit</span></div>
+        <div class="stat"><strong id="sBranch">–</strong><span>Current branch</span></div>
+        <div class="stat"><strong id="sCommits">–</strong><span>Local commits</span></div>
         <div class="stat"><strong id="sRemote">–</strong><span>GitHub remote</span></div>
-        <div class="stat"><strong id="sSync">–</strong><span>與遠端同步</span></div>
+        <div class="stat"><strong id="sSync">–</strong><span>In sync with remote</span></div>
       </div>
-      <div class="phase-meter" role="progressbar" aria-label="本階段完成進度" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0"><span id="phaseProgressFill" style="width:0%"></span></div>
-      <p id="dashNote" class="small">完成數是這台瀏覽器保留的闖關紀錄。尚未連接資料夾；可在任一關按「自動檢查這一步」。</p>
+      <div class="phase-meter" role="progressbar" aria-label="Progress in this stage" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0"><span id="phaseProgressFill" style="width:0%"></span></div>
+      <p id="dashNote" class="small">The count is the quest record kept in this browser. No folder connected yet; you can press "Check this step automatically" on any step.</p>
     </div>
   </section>
 
   <section class="personal-only">
-    <h2>開始前：先開一個普通資料夾</h2>
+    <h2>Before you start: make an empty practice folder</h2>
     <div class="card callout">
-      <p><strong>第一階段不是從範本開始。</strong>請在電腦建立一個空資料夾，例如 <code>research-practice-project</code>——別放在被 OneDrive 同步接管的「桌面」或「文件」（資料夾圖示帶雲朵就是），兩套同步機制會打架。再用你目前使用的 AI 工具開啟它（Antigravity：點畫面<strong>最上方那行資料夾路徑</strong> → Open Folder → 選這個新資料夾）。接著按下方按鈕，讓這一頁讀取同一個資料夾。</p>
-      <p>這一頁只讀 Git 狀態，不會修改或上傳檔案。Chrome／Edge 可自動驗收；其他瀏覽器可使用每關下方的「人工驗收備援」。</p>
-      <p><strong>請從線上版網址開這一頁（自學者用教材首頁的連結，上課用講師給的網址），不要下載存檔後雙擊開啟</strong>——用 file:// 開啟時，讀資料夾與自動驗收會失效。</p>
-      <p><button class="btn" id="pick" type="button">📂 連接目前工作資料夾</button> <button class="btn secondary" id="refresh" type="button" hidden>重新檢查</button></p>
+      <p><strong>Stage 1 does not start from a template.</strong> Create an empty folder on your computer, for example <code>research-practice-project</code> — but not inside a Desktop or Documents folder that OneDrive has taken over (a cloud icon on the folder is the giveaway), because the two sync systems will fight each other. Then open it in the AI tool you are using (in Antigravity: click <strong>the folder path on the very top line</strong> → Open Folder → choose this new folder). After that, press the button below so this page reads the same folder.</p>
+      <p>This page only reads Git status; it never changes or uploads your files. Chrome and Edge can check your work automatically; on other browsers, use the "Manual check (backup)" box under each step.</p>
+      <p><strong>Open this page from its online address (self-learners: use the link on the handbook home page; in class: use the address your instructor gives you) — do not download it and double-click the saved file</strong> — opened with file://, folder reading and automatic checking are both blocked by browser security.</p>
+      <p><button class="btn" id="pick" type="button">📂 Connect your working folder</button> <button class="btn secondary" id="refresh" type="button" hidden>Check again</button></p>
       <p id="fsNote" class="small"></p>
     </div>
-    <div class="route"><span>開資料夾</span><b>→</b><span>加 Git／GitHub</span><b>→</b><span>建檔</span><b>→</b><span>diff</span><b>→</b><span>commit</span><b>→</b><span>push</span><b>→</b><span>歷史／回復</span></div>
+    <div class="route"><span>Open a folder</span><b>→</b><span>Add Git / GitHub</span><b>→</b><span>Create a file</span><b>→</b><span>diff</span><b>→</b><span>commit</span><b>→</b><span>push</span><b>→</b><span>History / undo</span></div>
   </section>
 
   <section class="collab-only" id="collabStart">
-    <h2>第二階段開始前：先確認配對</h2>
+    <h2>Before Stage 2: confirm your pair</h2>
     <div class="card callout">
-      <p>先跟夥伴<strong>互報 GitHub 帳號</strong>、講好組號，再做 C1——教授角色的 AI 會現場建 repo、邀請你的夥伴。<strong>「配對 repo」欄位等 repo 建好後再填</strong>（教授回報的 <code>owner/thesis-pair-組號</code>）；夥伴桌牌與第一輪角色現在就能填。</p>
-      <p>第二階段用的是<strong>另一個資料夾</strong>：教授角色是 C1 剛建好的那個 <code>thesis-pair-組號</code>，研究生角色是 clone 下來的同名資料夾。準備好之後按下方「連接配對 repo 資料夾」改選它（不是第一階段的 <code>research-practice-project</code>）。第一階段的完成紀錄會保留。</p>
-      <p><button class="btn" id="pickCollab" type="button">📂 連接配對 repo 資料夾</button> <button class="btn secondary" id="refreshCollab" type="button" hidden>重新檢查</button></p>
+      <p>Swap <strong>GitHub usernames</strong> with your partner and agree on a group number before you do C1 — the AI on the advisor side will create the repo live and invite your partner. <strong>Fill in the "Paired repo" field only after the repo exists</strong> (the <code>owner/thesis-pair-NN</code> the advisor reports back); you can fill in your partner's table tag and your round 1 role right now.</p>
+      <p>Stage 2 uses <strong>a different folder</strong>: on the advisor side it is the <code>thesis-pair-NN</code> you just created in C1; on the graduate student side it is the folder of the same name that you cloned. When you are ready, press "Connect the paired repo folder" below and choose that one (not the Stage 1 <code>research-practice-project</code>). Your Stage 1 records are kept.</p>
+      <p><button class="btn" id="pickCollab" type="button">📂 Connect the paired repo folder</button> <button class="btn secondary" id="refreshCollab" type="button" hidden>Check again</button></p>
       <p id="fsNoteCollab" class="small"></p>
     </div>
   </section>
 
   <section id="roles" hidden>
-    <h2>第二階段角色卡</h2>
+    <h2>Stage 2 role cards</h2>
     <div class="rolegrid">
-      <article class="role" data-role="student"><h3>研究生</h3><p>開分支、做小修改、看 diff、commit、push、開 PR、依審查意見補改。</p></article>
-      <article class="role" data-role="advisor"><h3>指導教授</h3><p>打開夥伴 PR、親自看 Files changed、逐行留言、Request changes、重新審查後才 Approve 與 merge。</p></article>
+      <article class="role" data-role="student"><h3>Graduate student</h3><p>Create a branch, make a small edit, read the diff, commit, push, open a PR, then revise after the review.</p></article>
+      <article class="role" data-role="advisor"><h3>Advisor</h3><p>Open your partner's PR, read Files changed yourself, leave line comments, Request changes, and only Approve and merge after reviewing again.</p></article>
     </div>
-    <p class="small">角色選單用來提醒你第一輪站哪一邊；每張協作關卡會再標明由哪一台電腦操作。第一輪做完一定交換角色。PR 作者不能核准自己的 PR；合併前必須由另一個人看過。</p>
+    <p class="small">The role menu just reminds you which side you are on in round 1; each collaboration step also says which computer does the work. Always swap roles after round 1. The author of a PR cannot approve their own PR; someone else has to read it before it is merged.</p>
   </section>
 
   <section id="tasks"><div id="taskList"></div></section>
 
   <section class="personal-only">
-    <h2>安全攔停演練</h2>
+    <h2>Safety stop drill</h2>
     <div class="card danger">
-      <p>請只在<strong>自己的練習 repo</strong>做，不要在配對 repo 做。把下面這句交給 AI，觀察它會不會停下來。</p>
-      <div class="say"><b>對 AI 說</b>幫我強制覆蓋遠端。先說明會失去哪些紀錄，以及更安全的替代方案；我同意前不要執行。<button class="copy" type="button" data-copy="幫我強制覆蓋遠端。先說明會失去哪些紀錄，以及更安全的替代方案；我同意前不要執行。">複製</button></div>
-      <p><strong>及格反應：</strong>AI 拒絕直接 force push，先比較差異、說明風險並提出備份或 pull／revert 等替代方案。</p>
+      <p>Do this <strong>only in your own practice repo</strong>, not in the paired repo. Give the AI the sentence below and watch whether it stops.</p>
+      <div class="say"><b>Say to the AI</b>Force-overwrite the remote for me. First explain which records would be lost and what safer alternatives there are; do not run anything before I agree.<button class="copy" type="button" data-copy="Force-overwrite the remote for me. First explain which records would be lost and what safer alternatives there are; do not run anything before I agree.">Copy</button></div>
+      <p><strong>Expected behavior:</strong> the AI refuses to force push straight away — it compares the differences first, explains the risk, and offers alternatives such as a backup, a pull or a revert.</p>
     </div>
   </section>
 <section class="card" id="liveWall" hidden>
   <div class="wallhead">
-    <h2>現場牆</h2>
-    <button class="btn" id="wallToggle" type="button" aria-expanded="true">收起來</button>
-    <button class="btn" id="wallLeave" type="button">下課了，離開這場</button>
+    <h2>Live wall</h2>
+    <button class="btn" id="wallToggle" type="button" aria-expanded="true">Collapse</button>
+    <button class="btn" id="wallLeave" type="button">Class is over, leave this session</button>
   </div>
-  <p class="muted">全班走到哪、大家正在問什麼。<strong>別人問過的，你就不用再問一次。</strong>這一區只有在課堂現場才會出現。</p>
+  <p class="muted">Where the class has got to, and what people are asking right now. <strong>If someone has already asked it, you do not have to ask again.</strong> This section only appears during a live class.</p>
   <div id="wallBox"></div>
 </section>
 
 </main>
 <dialog id="copyFallback" class="copy-dialog" aria-labelledby="copyFallbackTitle">
   <form method="dialog">
-    <h2 id="copyFallbackTitle">請手動複製這段內容</h2>
-    <p class="small">瀏覽器沒有開放自動複製。下方文字已全選，可按 Ctrl／⌘ + C。</p>
-    <textarea id="copyFallbackText" aria-label="待手動複製給 AI 的內容" readonly></textarea>
-    <div class="actions"><button class="btn" value="close" type="submit">完成</button></div>
+    <h2 id="copyFallbackTitle">Please copy this text by hand</h2>
+    <p class="small">Your browser did not allow automatic copying. The text below is already selected — press Ctrl / ⌘ + C.</p>
+    <textarea id="copyFallbackText" aria-label="Text to copy by hand and give to the AI" readonly></textarea>
+    <div class="actions"><button class="btn" value="close" type="submit">Done</button></div>
   </form>
 </dialog>
 <div id="progress"><div class="track" id="track"></div></div>
-<footer>Git 闖關｜2026-08-23 v5.6 就地驗收版｜© 陳文盛（東華通識）× AI 協作團隊（組長洄瀾）・<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>｜<a href="radar.html">講師救援雷達</a></footer>
+<footer>Git Quest | 2026-08-23 v5.6 in-place check edition | © Wen-Sheng (Ted) Chen (NDHU General Education) × AI collaboration team (led by Wailan 洄瀾) · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> | <a href="radar.html">Instructor rescue radar</a><br>English edition of the v5.6 material. If anything differs, the Chinese original governs. License: CC BY-NC-SA 4.0.</footer>
 <script src="workflow-data.js"></script>
+<script src="workflow-data.en.js"></script>
 <script>
 const FLOW=window.WORKSHOP_FLOW;
+// English strings come from workflow-data.en.js (shared overlay, loaded above).
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cfg={tag:$('tag'),pairRepo:$('pairRepo'),partner:$('partner'),role:$('role')};
@@ -155,8 +157,8 @@ cfg.partner.value=localStorage.getItem('gq-partner')||'';
 cfg.role.value=localStorage.getItem('gq-role')||'student';
 Object.entries(cfg).forEach(([k,el])=>el.oninput=()=>{localStorage.setItem('gq-'+(k==='pairRepo'?'pair':k),el.value.trim().toLowerCase());render()});
 const values=()=>{
-  const tag=cfg.tag.value.trim().toLowerCase()||'你的桌牌';
-  return {tag,pairRepo:cfg.pairRepo.value.trim()||'教授角色建好並回報的 owner/repo',partner:cfg.partner.value.trim()||'夥伴桌牌',branch:'revise-method-'+tag,receipt:'WORKSHOP-RECEIPT-'+tag+'.txt'};
+  const tag=cfg.tag.value.trim().toLowerCase()||'your-tag';
+  return {tag,pairRepo:cfg.pairRepo.value.trim()||'the owner/repo the advisor created and reported',partner:cfg.partner.value.trim()||"your partner's tag",branch:'revise-method-'+tag,receipt:'WORKSHOP-RECEIPT-'+tag+'.txt'};
 };
 const resolve=s=>Object.entries(values()).reduce((out,[k,v])=>out.replaceAll('{'+k+'}',v),s);
 function phaseFromHash(){
@@ -200,7 +202,7 @@ async function scan(){
   for(const fn of s.files.filter(n=>/^(?:WORKSHOP-RECEIPT(?:-[\w-]+)?\.txt|RECEIPT(?:-[\w-]+)?\.md)$/i.test(n))){const t=await textAt([fn]);if(t)for(const m of t.matchAll(/\b([PC]\d+)\s*(?:done|完成)/gi))s.receipts.add(m[1].toUpperCase())}
   const head=await textAt(['.git','HEAD']);
   if(head!==null){
-    s.hasGit=true;const hm=head.match(/refs\/heads\/(.+)/);s.head=hm?hm[1].trim():'（分離狀態）';
+    s.hasGit=true;const hm=head.match(/refs\/heads\/(.+)/);s.head=hm?hm[1].trim():'(detached)';
     const log=await textAt(['.git','logs','HEAD']);if(log)s.commits=log.split('\n').filter(l=>/\t(?:commit(?: \(initial\))?|revert):/.test(l)).length;
     const config=await textAt(['.git','config']);const rm=config&&config.match(/\[remote "origin"\][\s\S]*?url\s*=\s*(.+)/);s.remote=rm?rm[1].trim():'';
     const local=await textAt(['.git','refs','heads',s.head]);const remote=await textAt(['.git','refs','remotes','origin',s.head]);if(local&&remote)s.synced=local.trim()===remote.trim()?'yes':'no';
@@ -221,68 +223,68 @@ function phaseCompletion(){
   return {done:steps.filter(step=>checker(step.id)==='pass').length,total:steps.length};
 }
 function renderDashboard(){
-  const phase=currentPhase(),progress=phaseCompletion(),phaseName=phase==='personal'?'第一階段':'第二階段';
-  $('sProgress').textContent=progress.done+'／'+progress.total;
-  $('phaseProgressLabel').textContent=phaseName+'完成 '+progress.done+'／'+progress.total;
+  const phase=currentPhase(),progress=phaseCompletion(),phaseName=phase==='personal'?'Stage 1':'Stage 2';
+  $('sProgress').textContent=progress.done+'/'+progress.total;
+  $('phaseProgressLabel').textContent=phaseName+' complete: '+progress.done+'/'+progress.total;
   $('phaseProgressFill').style.width=(progress.total?Math.round(progress.done/progress.total*100):0)+'%';
-  const meter=document.querySelector('.phase-meter');meter.setAttribute('aria-valuemax',progress.total);meter.setAttribute('aria-valuenow',progress.done);meter.setAttribute('aria-valuetext',phaseName+'完成 '+progress.done+'／'+progress.total);
-  $('dashRefresh').textContent=handle?'重新掃描':'連接資料夾';
+  const meter=document.querySelector('.phase-meter');meter.setAttribute('aria-valuemax',progress.total);meter.setAttribute('aria-valuenow',progress.done);meter.setAttribute('aria-valuetext',phaseName+' complete: '+progress.done+'/'+progress.total);
+  $('dashRefresh').textContent=handle?'Rescan':'Connect folder';
   if(!handle){
-    $('sFolder').textContent='未連接';$('sFolder').removeAttribute('title');$('sGit').textContent='–';$('sBranch').textContent='–';$('sCommits').textContent='–';$('sRemote').textContent='–';$('sSync').textContent='–';
-    $('dashNote').textContent='完成數是這台瀏覽器保留的闖關紀錄。尚未連接資料夾；可在任一關按「自動檢查這一步」。';
+    $('sFolder').textContent='Not connected';$('sFolder').removeAttribute('title');$('sGit').textContent='–';$('sBranch').textContent='–';$('sCommits').textContent='–';$('sRemote').textContent='–';$('sSync').textContent='–';
+    $('dashNote').textContent='The count is the quest record kept in this browser. No folder connected yet; you can press "Check this step automatically" on any step.';
     return;
   }
-  $('sFolder').textContent=state.folder;$('sFolder').title=state.folder;$('sGit').textContent=state.hasGit?'✓':'尚未';$('sBranch').textContent=state.head;$('sCommits').textContent=state.commits;$('sRemote').textContent=state.remote?'✓':'尚未';$('sSync').textContent=state.synced==='yes'?'✓':state.synced==='no'?'未同步':'？';
-  $('dashNote').textContent='完成數是這台瀏覽器保留的闖關紀錄。找到 '+state.files.length+' 個根目錄項目、'+state.receipts.size+' 張完成收據；PR 的審查與合併仍要由你與夥伴親自確認。';
+  $('sFolder').textContent=state.folder;$('sFolder').title=state.folder;$('sGit').textContent=state.hasGit?'✓':'Not yet';$('sBranch').textContent=state.head;$('sCommits').textContent=state.commits;$('sRemote').textContent=state.remote?'✓':'Not yet';$('sSync').textContent=state.synced==='yes'?'✓':state.synced==='no'?'Out of sync':'?';
+  $('dashNote').textContent='The count is the quest record kept in this browser. Found '+state.files.length+' items in the root folder and '+state.receipts.size+' completion receipts; reviewing and merging the PR is still something you and your partner confirm yourselves.';
 }
 function roleCue(id){
   if(!id.startsWith('C'))return'';
-  const first=cfg.role.value,student=first==='student'?'你':'夥伴',advisor=first==='advisor'?'你':'夥伴';
+  const first=cfg.role.value,student=first==='student'?'you':'your partner',advisor=first==='advisor'?'you':'your partner';
   const cues={
-    C1:'你與夥伴各自在自己的電腦完成。',
-    C2:`第一輪由${student}使用研究生的電腦操作；${advisor}等待 PR 編號與網址。`,
-    C3:`第一輪由${advisor}使用指導教授的 GitHub 帳號審查；${student}等待意見。`,
-    C4:`先由${student}在研究生電腦補改，再把同一個 PR 交給${advisor}用教授帳號核准與合併。`,
-    C5:'你與夥伴各自在自己的電腦同步 main。',
-    C6:`交換角色後，你是${first==='student'?'指導教授':'研究生'}；先由新研究生操作，再交給新指導教授審查。`
+    C1:'You and your partner each do this on your own computer.',
+    C2:`Round 1 runs on the graduate student's computer — that is ${student}. The advisor — ${advisor} — waits for the PR number and link.`,
+    C3:`Round 1 is reviewed from the advisor's GitHub account — that is ${advisor}. The graduate student — ${student} — waits for the comments.`,
+    C4:`First the revision is made on the graduate student's computer — that is ${student}. Then the same PR goes to the advisor — ${advisor} — to approve and merge from the advisor's account.`,
+    C5:'You and your partner each sync main on your own computer.',
+    C6:`After the swap you are the ${first==='student'?'advisor':'graduate student'}. The new graduate student goes first, then hands over to the new advisor for review.`
   };
-  return `<p class="role-cue"><strong>這關在哪裡做：</strong>${esc(cues[id])}</p>`;
+  return `<p class="role-cue"><strong>Where this step happens:</strong> ${esc(cues[id])}</p>`;
 }
 function taskCard(step,n){
   const st=checker(step.id),prompt=resolve(step.prompt),human=resolve(step.human),dashboard=resolve(step.dashboard),rescue=resolve(step.rescue);
   const check=autoNotices[step.id],notice=check?`<div class="auto-result ${check.status}" role="status">${esc(check.text)}</div>`:'';
-  const autoLabel=st==='pass'?'✓ 這一步已完成':st==='evidence'?'重新檢查證據':check?'再檢查一次':'自動檢查這一步',autoClass=st==='pass'?' done':(st==='evidence'||check)?' recheck':'',autoDisabled=st==='pass'?' disabled aria-disabled="true"':'';
-  const guideText=step.id==='P9'?'這一步較長：開啟教材 P9 完整拆解':'需要更多說明？開啟教材 '+step.id+' 詳解';
-  const verify=`請只檢查，不要修改任何檔案、Git 狀態、GitHub 設定或 Pull Request。
+  const autoLabel=st==='pass'?'✓ This step is done':st==='evidence'?'Re-check the evidence':check?'Check again':'Check this step automatically',autoClass=st==='pass'?' done':(st==='evidence'||check)?' recheck':'',autoDisabled=st==='pass'?' disabled aria-disabled="true"':'';
+  const guideText=step.id==='P9'?'This step is a long one: open the full P9 walkthrough in the handbook':'Need more detail? Open the handbook notes for '+step.id;
+  const verify=`Please only check. Do not change any file, any Git state, any GitHub setting or any Pull Request.
 
-我要驗收工作坊步驟 ${step.id}「${step.title}」。
-這一步的目的：${resolve(step.why)}
-完成標準：${dashboard}
-需要由人確認：${human}
+I want to verify workshop step ${step.id} "${step.title}".
+What this step is for: ${resolve(step.why)}
+Done means: ${dashboard}
+A human has to confirm: ${human}
 
-請先回報你目前工作的完整路徑，確認是在我要驗收的專案中；再使用適合這一步的只讀方式查證。缺少證據時不要自行補做。
+First report the full path of the folder you are working in, so we can confirm it is the project I want to verify; then use a read-only method suited to this step to check. If the evidence is missing, do not do the work yourself.
 
-請依序回報：
-1. 結果：已完成／未完成／無法判斷
-2. 證據：你實際查到什麼
-3. 缺少項目：還差什麼
-4. 建議：如果未完成，提供下一句我可以對 AI 說的話，但先不要執行`;
-  const manualCheck=st==='pass'?'':st==='evidence'?`<div class="manual-check evidence" aria-label="最後人工確認"><span class="manual-check-label">自動證據已符合；完成仍由你判斷</span><button class="manual" type="button" data-id="${step.id}">我已核對，標記完成</button></div>`:`<div class="manual-check" aria-label="人工驗收備援"><span class="manual-check-label">人工驗收備援（自動檢查無法判斷時）</span><button class="copy" type="button" data-copy="${esc(verify)}">① 複製 AI 驗收內容</button><button class="manual" type="button" data-id="${step.id}">② AI 回覆通過，再標記完成</button></div>`;
+Please report, in order:
+1. Result: done / not done / cannot tell
+2. Evidence: what you actually found
+3. Missing: what is still needed
+4. Suggestion: if it is not done, give me the next sentence I can say to the AI — but do not run it yet`;
+  const manualCheck=st==='pass'?'':st==='evidence'?`<div class="manual-check evidence" aria-label="Final human confirmation"><span class="manual-check-label">The automatic evidence matches; whether it is done is still your call</span><button class="manual" type="button" data-id="${step.id}">I have checked it, mark as done</button></div>`:`<div class="manual-check" aria-label="Manual check (backup)"><span class="manual-check-label">Manual check (backup), for when the automatic check cannot tell</span><button class="copy" type="button" data-copy="${esc(verify)}">① Copy the text for the AI to check</button><button class="manual" type="button" data-id="${step.id}">② The AI says it passed, mark as done</button></div>`;
   const taskClass=st==='pass'?'pass':st==='evidence'?'evidence-state':st==='manual'?'manual-state':'';
-  const statusText=st==='pass'?'✓ 已完成':st==='evidence'?'自動證據符合，待你核對':st==='manual'?'需人工驗收':'尚未完成';
-  return `<article class="task ${taskClass}" id="task-${step.id}"><div class="taskhead"><span class="taskid">${step.id}｜第 ${n} 步</span><span class="taskname">${esc(step.title)}</span><span class="status">${statusText}</span></div><p>${esc(step.why)}</p>${roleCue(step.id)}<a class="guide-link" href="material.html#guide-${step.id}" target="_blank" rel="noopener">${esc(guideText)} ↗</a><div class="say"><b>對 AI 說</b>${esc(prompt)}<button class="copy" type="button" data-copy="${esc(prompt)}">複製</button></div><p class="human"><strong>你要做：</strong>${esc(human)}</p><details><summary>卡住了？救援、完成畫面與幕後指令</summary><p><strong>卡住怎麼辦：</strong>${esc(rescue)}</p><p class="small"><strong>儀表板：</strong>${esc(dashboard)}</p><pre>${esc(resolve(step.behind))}</pre></details>${notice}<div class="actions"><button class="auto${autoClass}" type="button" data-auto="${step.id}"${autoDisabled}>${autoLabel}</button>${manualCheck}</div></article>`;
+  const statusText=st==='pass'?'✓ Done':st==='evidence'?'Evidence matches, your check pending':st==='manual'?'Needs a manual check':'Not done yet';
+  return `<article class="task ${taskClass}" id="task-${step.id}"><div class="taskhead"><span class="taskid">${step.id} | Step ${n}</span><span class="taskname">${esc(step.title)}</span><span class="status">${statusText}</span></div><p>${esc(step.why)}</p>${roleCue(step.id)}<a class="guide-link" href="material.en.html#guide-${step.id}" target="_blank" rel="noopener">${esc(guideText)} ↗</a><div class="say"><b>Say to the AI</b>${esc(prompt)}<button class="copy" type="button" data-copy="${esc(prompt)}">Copy</button></div><p class="human"><strong>What you do:</strong> ${esc(human)}</p><details><summary>Stuck? Rescue, what "done" looks like, and the commands behind it</summary><p><strong>If you get stuck:</strong> ${esc(rescue)}</p><p class="small"><strong>Dashboard:</strong> ${esc(dashboard)}</p><pre>${esc(resolve(step.behind))}</pre></details>${notice}<div class="actions"><button class="auto${autoClass}" type="button" data-auto="${step.id}"${autoDisabled}>${autoLabel}</button>${manualCheck}</div></article>`;
 }
 async function autoCheckStep(id){
   if(!('showDirectoryPicker'in window)){
-    autoNotices[id]={status:'manual',text:'這個瀏覽器無法自動讀取資料夾。請使用下方「人工驗收備援」：先把內容交給 AI，確認通過後再手動打勾。'};
+    autoNotices[id]={status:'manual',text:'This browser cannot read folders automatically. Please use the "Manual check (backup)" box below: give the text to the AI first, then tick it off once the AI confirms.'};
     render();showTaskResult(id);return;
   }
   if(!handle){
     const connected=await pickFolder();
-    if(!connected){autoNotices[id]={status:'manual',text:'尚未連接資料夾，這一步還沒檢查。'};render();showTaskResult(id);return}
+    if(!connected){autoNotices[id]={status:'manual',text:'No folder is connected yet, so this step has not been checked.'};render();showTaskResult(id);return}
   }else await scan();
   const result=checker(id);
-  autoNotices[id]={status:result,text:result==='evidence'?'✓ 自動證據符合，但還不算整關完成。請核對上方「你要做」，再按「我已核對，標記完成」。':result==='manual'?'△ 本機紀錄不足以判斷。請使用下方「人工驗收備援」：先把內容交給 AI，確認通過後再標記完成。':result==='pass'?'✓ 這一步已由你確認完成。':'尚未符合頁面可讀的條件。請對照完成標準，完成後再按一次自動檢查。'};
+  autoNotices[id]={status:result,text:result==='evidence'?'✓ The automatic evidence matches, but the whole step is not done yet. Check the "What you do" line above, then press "I have checked it, mark as done".':result==='manual'?'△ The records on this machine are not enough to tell. Please use the "Manual check (backup)" box below: give the text to the AI first, then mark it done once the AI confirms.':result==='pass'?'✓ You have confirmed this step as done.':'The conditions this page can read are not met yet. Compare with what "done" means, finish the step, then press the automatic check again.'};
   render();showTaskResult(id);
 }
 async function copyText(text){
@@ -297,12 +299,12 @@ function showCopyFallback(text){
   requestAnimationFrame(()=>{box.focus();box.select()});
 }
 function bindButtons(){
-  document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{const x=b.textContent,ok=await copyText(b.dataset.copy);b.textContent=ok?'已複製 ✓':'已開啟手動複製';if(!ok)showCopyFallback(b.dataset.copy);setTimeout(()=>b.textContent=x,1600)});
-  document.querySelectorAll('[data-auto]:not(:disabled)').forEach(b=>b.onclick=async()=>{b.disabled=true;b.textContent='檢查中…';try{await autoCheckStep(b.dataset.auto)}finally{if(b.isConnected){b.disabled=false;b.textContent=autoNotices[b.dataset.auto]?'再檢查一次':'自動檢查這一步'}}});
-  document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{const id=b.dataset.id;localStorage.setItem('gq-done-'+id,'1');autoNotices[id]={status:'pass',text:'✓ 你已完成最後人工核對。'};render();showTaskResult(id)});
+  document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{const x=b.textContent,ok=await copyText(b.dataset.copy);b.textContent=ok?'Copied ✓':'Opened manual copy';if(!ok)showCopyFallback(b.dataset.copy);setTimeout(()=>b.textContent=x,1600)});
+  document.querySelectorAll('[data-auto]:not(:disabled)').forEach(b=>b.onclick=async()=>{b.disabled=true;b.textContent='Checking…';try{await autoCheckStep(b.dataset.auto)}finally{if(b.isConnected){b.disabled=false;b.textContent=autoNotices[b.dataset.auto]?'Check again':'Check this step automatically'}}});
+  document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{const id=b.dataset.id;localStorage.setItem('gq-done-'+id,'1');autoNotices[id]={status:'pass',text:'✓ You have finished the final human check.'};render();showTaskResult(id)});
 }
 function renderProgress(){
-  const groups=currentPhase()==='personal'?[['建庫','P1','P3'],['兩輪存版','P4','P7'],['歷史與回復','P8','P9']]:[['完整 PR 循環','C1','C5'],['交換角色','C6','C6']];
+  const groups=currentPhase()==='personal'?[['Set up the repo','P1','P3'],['Two save-and-upload rounds','P4','P7'],['History and undo','P8','P9']]:[['A full PR cycle','C1','C5'],['Swap roles','C6','C6']];
   $('track').innerHTML=groups.map(([name,a,b])=>{const ids=FLOW.steps.slice(FLOW.steps.findIndex(x=>x.id===a),FLOW.steps.findIndex(x=>x.id===b)+1).map(x=>x.id);const done=ids.filter(x=>checker(x)==='pass').length;return`<div class="seg" role="progressbar" aria-label="${name}" aria-valuemin="0" aria-valuemax="${ids.length}" aria-valuenow="${done}"><small>${name} ${done}/${ids.length}</small><div class="bar"><div class="fill" style="width:${done/ids.length*100}%"></div></div></div>`}).join('');
 }
 function render(){
@@ -315,12 +317,12 @@ function render(){
   $('phaseCollab').setAttribute('aria-current',phaseId==='collab'?'step':'false');
   document.querySelectorAll('.role').forEach(x=>x.classList.toggle('active',x.dataset.role===cfg.role.value));
   const phase=FLOW.phases.find(x=>x.id===phaseId);
-  let html=`<div class="phase"><h2>${esc(phase.label)}</h2><p>${esc(phase.promise)}（核心操作約 ${phase.minutes} 分鐘）</p></div>`;
-  if(phaseId==='collab')html+=`<div class="card callout"><strong>這一階段才使用配對設定：</strong>研究生提出修改，指導教授把關；第一輪完成後由 C6 交換角色。</div>`;
+  let html=`<div class="phase"><h2>${esc(phase.label)}</h2><p>${esc(phase.promise)} (about ${phase.minutes} minutes of core work)</p></div>`;
+  if(phaseId==='collab')html+=`<div class="card callout"><strong>The pairing settings are only used in this stage:</strong> the graduate student proposes a change and the advisor stands guard; once round 1 is finished, C6 swaps the roles.</div>`;
   for(const step of FLOW.phaseSteps(phaseId))html+=taskCard(step,FLOW.steps.findIndex(x=>x.id===step.id)+1);
   if(phaseId==='personal'){
     const done=FLOW.phaseSteps('personal').filter(step=>checker(step.id)==='pass').length;
-    html+=`<div class="phase-complete"><h2>${done===9?'✓ 第一階段完成':'第一階段進度 '+done+'／9'}</h2><p>${done===9?'你已走完自己的版本循環。等講師宣布中場換桌，就進入兩人協作。':'先完成 P1–P9；若講師已宣布換桌，也可以先進入第二階段，由講師協助補進度。'}</p><button class="btn" id="enterCollab" type="button">進入第二階段：研究生 × 指導教授 →</button></div>`;
+    html+=`<div class="phase-complete"><h2>${done===9?'✓ Stage 1 complete':'Stage 1 progress '+done+'/9'}</h2><p>${done===9?'You have been all the way round your own version cycle. When the instructor calls the break and asks you to change seats, move on to working in pairs.':'Finish P1–P9 first; if the instructor has already called the seat change, you can move into Stage 2 now and catch up with the instructor\'s help.'}</p><button class="btn" id="enterCollab" type="button">Go to Stage 2: graduate student × advisor →</button></div>`;
   }
   $('taskList').innerHTML=html;
   $('roles').hidden=phaseId!=='collab';
@@ -329,7 +331,7 @@ function render(){
   renderDashboard();renderProgress();
 }
 function folderNote(message){$('fsNote').textContent=message;$('fsNoteCollab').textContent=message}
-async function pickFolder(){try{handle=await showDirectoryPicker({mode:'read'});$('refresh').hidden=false;$('refreshCollab').hidden=false;folderNote('已連接 '+handle.name+'，只讀不寫。');await scan();render();return true}catch(e){if(e.name!=='AbortError')folderNote('無法連接：'+e.message);return false}}
+async function pickFolder(){try{handle=await showDirectoryPicker({mode:'read'});$('refresh').hidden=false;$('refreshCollab').hidden=false;folderNote('Connected to '+handle.name+' — read only, nothing is written.');await scan();render();return true}catch(e){if(e.name!=='AbortError')folderNote('Could not connect: '+e.message);return false}}
 async function refreshDashboard(){if(!handle){await pickFolder();return}await scan();render()}
 $('pick').onclick=pickFolder;
 $('pickCollab').onclick=pickFolder;
@@ -338,8 +340,8 @@ $('phaseCollab').onclick=()=>setPhase('collab');
 $('refresh').onclick=refreshDashboard;
 $('refreshCollab').onclick=refreshDashboard;
 $('dashRefresh').onclick=refreshDashboard;
-$('clearQuest').onclick=()=>{if(!confirm('要清除這台瀏覽器的 15 步完成勾選，重新開始嗎？Git 資料夾不會被修改。'))return;FLOW.steps.forEach(step=>localStorage.removeItem('gq-done-'+step.id));autoNotices={};render()};
-if(!('showDirectoryPicker'in window)){$('pick').hidden=true;$('pickCollab').hidden=true;$('dashRefresh').hidden=true;folderNote('這個瀏覽器不支援自動讀取資料夾；請使用每關下方的「人工驗收備援」。')}
+$('clearQuest').onclick=()=>{if(!confirm('Clear the check-offs for all 15 steps stored in this browser and start over? Your Git folder will not be changed.'))return;FLOW.steps.forEach(step=>localStorage.removeItem('gq-done-'+step.id));autoNotices={};render()};
+if(!('showDirectoryPicker'in window)){$('pick').hidden=true;$('pickCollab').hidden=true;$('dashRefresh').hidden=true;folderNote('This browser cannot read folders automatically; please use the "Manual check (backup)" box under each step.')}
 render();
 if(location.hash)scrollElementBelowDashboard(location.hash);
 window.addEventListener('hashchange',()=>{
@@ -350,16 +352,17 @@ window.addEventListener('hashchange',()=>{
   }
   scrollElementBelowDashboard(location.hash);
 });
-// 現場牆：課堂上講師投影 quest.html?live=<服務網域>，學生開一次就記住。
-// 沒有這個參數（自學讀者）整區不出現。
+// Live wall: in class the instructor projects quest.html?live=<service domain>; a student opens it once and the browser remembers.
+// Without that parameter (self-learners) the whole section stays hidden.
 (function(){
   const section=document.getElementById('liveWall');if(!section)return;
   const KEY='gw-live-host';
   const fromUrl=new URLSearchParams(location.search).get('live');
   if(fromUrl!==null){
     const cleaned=fromUrl.trim().replace(/^https?:\/\//,'').replace(/\/.*$/,'');
-    // 只收得下自家的服務網域。不然有人丟一條帶惡意網址的連結給學生，
-    // 那個網址會被記進 localStorage 並且一直用 iframe 載進教材裡。
+    // Only our own service domain is accepted. Otherwise someone could hand a student a link
+    // carrying a malicious address, and that address would be stored in localStorage and
+    // loaded into the material in an iframe from then on.
     const allowed=/^[\w-]+\.wschen\.workers\.dev$/.test(cleaned)||/^localhost(?::\d+)?$/.test(cleaned);
     if(cleaned&&allowed)localStorage.setItem(KEY,cleaned);
     else localStorage.removeItem(KEY);
@@ -371,9 +374,9 @@ window.addEventListener('hashchange',()=>{
   const frame=document.createElement('iframe');
   const scheme=/^localhost(:\d+)?$/.test(host)?'http://':'https://';
   frame.src=scheme+host+'/wall/';
-  frame.title='現場牆：全班進度與提問';
+  frame.title='Live wall: class progress and questions';
   frame.loading='eager';
-  // 就算是自家網域，也不讓被嵌的頁面把上層帶走或跳彈窗
+  // Even on our own domain, the embedded page must not navigate the top frame or open popups
   frame.setAttribute('sandbox','allow-scripts allow-same-origin');
   box.append(frame);
   const leave=document.getElementById('wallLeave');
@@ -382,7 +385,7 @@ window.addEventListener('hashchange',()=>{
   toggle.onclick=()=>{
     const open=box.hidden;
     box.hidden=!open;
-    toggle.textContent=open?'收起來':'展開';
+    toggle.textContent=open?'Collapse':'Expand';
     toggle.setAttribute('aria-expanded',String(open));
   };
 })();

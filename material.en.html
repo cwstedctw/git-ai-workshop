@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Using Git with AI — Version Control Without Memorizing Commands</title>
+<style>
+:root{
+  --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441; --gold-soft:#F3E3C3;
+  --teal-soft:#DCEFED; --panel:#0A5958; --panel-ink:#fff; --action:#0E7C7B; --action-ink:#fff;
+  --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --ok:#256428; --bad:#b3441e; --warn-text:#76550f; --status-ok:#2e7d32; --status-bad:#b3441e;
+  --code-bg:#10201f; --code-ink:#d7ece9;
+  --r:14px; --shadow:0 2px 10px rgba(26,26,26,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+    --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+    --gold-soft:#3a3220; --teal-soft:#173937; --panel:#164947; --action:#176762;
+    --ok:#78cd83; --bad:#ff967a; --warn-text:#f0bc58; --status-ok:#246238; --status-bad:#873722;
+    --shadow:0 2px 10px rgba(0,0,0,.35); }
+}
+:root[data-theme="dark"]{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+  --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+  --gold-soft:#3a3220; --teal-soft:#173937; --panel:#164947; --action:#176762;
+  --ok:#78cd83; --bad:#ff967a; --warn-text:#f0bc58; --status-ok:#246238; --status-bad:#873722;
+  --shadow:0 2px 10px rgba(0,0,0,.35); }
+:root[data-theme="light"]{ --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441;
+  --gold-soft:#F3E3C3; --teal-soft:#DCEFED; --panel:#0A5958; --action:#0E7C7B;
+  --ok:#256428; --bad:#b3441e; --warn-text:#76550f; --status-ok:#2e7d32; --status-bad:#b3441e;
+  --shadow:0 2px 10px rgba(26,26,26,.07); }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:18px;line-height:1.75;}
+main{max-width:900px;margin:0 auto;padding:0 20px 80px}
+h1,h2,h3{line-height:1.35}
+h2{font-size:1.55rem;margin:72px 0 8px;color:var(--teal-deep)}
+h2 .no{color:var(--gold);font-size:1rem;display:block;letter-spacing:.15em}
+h3{font-size:1.15rem;margin:28px 0 6px}
+p{margin:.6em 0}
+a{color:var(--teal)}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.skip-link{position:fixed;left:12px;top:8px;z-index:100;transform:translateY(-150%);background:var(--card);color:var(--ink);padding:8px 12px;border-radius:8px}
+.skip-link:focus{transform:none}
+.btn{display:inline-block;background:var(--action);color:var(--action-ink);padding:8px 14px;border-radius:9px;text-decoration:none;font-weight:700}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;
+  background:var(--gold-soft);padding:.08em .35em;border-radius:5px}
+pre{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:10px;
+  overflow-x:auto;font-size:.88rem;line-height:1.6}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--gold-soft);font-weight:700}
+.tablewrap{overflow-x:auto;border-radius:10px;box-shadow:var(--shadow)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px 24px;box-shadow:var(--shadow);margin:16px 0}
+.callout{border-left:5px solid var(--gold);background:var(--card);padding:14px 18px;
+  border-radius:0 var(--r) var(--r) 0;margin:18px 0;box-shadow:var(--shadow)}
+.callout.teal{border-left-color:var(--teal)}
+.warn{border-left:5px solid var(--bad)}
+.permtable{margin:10px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.permrow{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:.9rem}
+.permrow:last-child{border-bottom:none}
+.permrow .pl{font-weight:700}
+.permrow.ok{background:rgba(46,125,50,.10)} .permrow.ok .pl{color:var(--ok)}
+.permrow.warn{background:rgba(217,164,65,.14)} .permrow.warn .pl{color:var(--warn-text)}
+.permrow.bad{background:rgba(179,68,30,.10)}
+@media (max-width:520px){.permrow{grid-template-columns:1fr;gap:2px}}
+figure.dia{margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px 16px;box-shadow:var(--shadow)}
+figure.dia svg,figure.dia img{width:100%;height:auto;display:block;border-radius:8px}
+figure.dia figcaption{font-size:.85rem;color:var(--ink-soft);margin-top:8px;text-align:center}
+.small{font-size:.88rem;color:var(--ink-soft)}
+header.hero{background:linear-gradient(150deg,#0E7C7B 0%,#0A5958 100%);
+  color:#F4ECD8;padding:64px 20px 56px;text-align:center}
+header.hero h1{font-size:clamp(1.6rem,4.5vw,2.5rem);margin:0 0 10px}
+header.hero .sub{font-size:1.05rem;opacity:.92;max-width:640px;margin:0 auto}
+header.hero .keyline{display:inline-block;margin-top:22px;background:rgba(244,236,216,.14);
+  border:1px solid rgba(244,236,216,.4);border-radius:12px;padding:12px 22px;font-size:1.02rem}
+nav#topnav{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line);
+  overflow-x:auto;white-space:nowrap;padding:0 12px;box-shadow:var(--shadow);
+  display:flex;align-items:center}
+nav#topnav a{display:inline-flex;align-items:center;min-height:40px;flex:none;padding:9px 12px;color:var(--ink);text-decoration:none;font-size:.9rem}
+nav#topnav a:hover{color:var(--teal)}
+nav#topnav a.cur{color:var(--teal);font-weight:700;box-shadow:inset 0 -3px 0 var(--gold)}
+body.tabbed main>section{display:none}
+body.tabbed main>section.active{display:block;animation:gwfade .25s}
+@keyframes gwfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+body.tabbed main>section.active h2{margin-top:44px}
+*[id]{scroll-margin-top:64px}
+#duoStrip{background:var(--gold-soft);border-bottom:1px solid var(--line);text-align:center;
+  padding:7px 14px;font-size:.88rem}
+@media print{body.tabbed main>section{display:block!important}nav#topnav,#duoStrip{display:none}}
+#themeToggle,#expandBtn,#fullBtn{flex:none;margin:6px 4px;background:none;border:1px solid var(--line);
+  border-radius:8px;padding:6px 10px;min-height:36px;cursor:pointer;color:var(--ink);font-size:.85rem}
+#fullBtn{margin-left:auto}
+/* needs scorecard */
+.scorecard .row{display:grid;grid-template-columns:1fr 84px 84px 84px;gap:6px;align-items:center;
+  padding:9px 4px;border-bottom:1px dashed var(--line);font-size:.94rem}
+.scorecard .row.head{font-weight:700;border-bottom:2px solid var(--line)}
+.scorecard .cell{text-align:center;font-size:1.05rem;min-height:28px}
+.scorecard .cell.pend{color:var(--ink-soft);font-size:.8rem}
+.scorecard button.reveal{background:var(--gold);border:none;border-radius:8px;padding:6px 10px;
+  cursor:pointer;font-family:inherit;font-size:.85rem}
+@media (max-width:600px){.scorecard .row{grid-template-columns:1fr 56px 56px 56px}}
+/* concept cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:20px 0}
+details.concept{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:0;overflow:hidden}
+details.concept summary{cursor:pointer;padding:14px 18px;font-weight:700;list-style:none;position:relative}
+details.concept summary::after{content:"＋";position:absolute;right:16px;color:var(--gold);font-weight:400}
+details.concept[open] summary::after{content:"－"}
+details.concept .body{padding:0 18px 16px;font-size:.93rem}
+details.concept .tagline{color:var(--teal);font-size:.85rem;font-weight:400}
+.concept .lbl{display:inline-block;background:var(--gold-soft);border-radius:6px;
+  padding:0 8px;font-size:.8rem;margin:8px 0 2px;font-weight:700}
+/* setup checklist */
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px 4px;border-bottom:1px dashed var(--line)}
+.check:last-child{border-bottom:none}
+.check input{width:28px;height:28px;margin-top:3px;accent-color:var(--teal);flex:none;cursor:pointer}
+.check .t{flex:1}
+.check .done-mark{color:var(--ok);font-size:.85rem;display:none}
+.check.checked .t{opacity:.6;text-decoration:line-through}
+.check.checked .done-mark{display:inline}
+#checkProgress{font-weight:700;color:var(--teal)}
+/* quiz */
+.q{margin:22px 0;padding:18px 20px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r);box-shadow:var(--shadow)}
+.q .stem{font-weight:700}
+.q .opts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.q .opts button{text-align:left;background:var(--bg);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px;font-size:.95rem;cursor:pointer;color:var(--ink);font-family:inherit;line-height:1.6}
+.q .opts button.right{background:var(--status-ok);color:#fff;border-color:var(--status-ok)}
+.q .opts button.wrong{background:var(--status-bad);color:#fff;border-color:var(--status-bad)}
+.q .expl{display:none;margin-top:10px;font-size:.9rem;border-top:1px dashed var(--line);padding-top:8px}
+.q.answered .expl{display:block}
+#quizScore{font-weight:800;color:var(--teal)}
+.copybtn{background:none;border:1px solid var(--line);border-radius:6px;font-size:.75rem;
+  padding:4px 9px;min-height:32px;cursor:pointer;color:var(--teal);margin-left:6px}
+.prep-say{background:#d9a44122;border:1px solid var(--gold);border-radius:10px;padding:10px 13px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-weight:700}
+.prep-say .copybtn{font-weight:400;background:var(--card)}
+.layer-key{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.layer-key span{padding:5px 10px;border-radius:999px;font-size:.82rem;border:1px solid var(--line);background:var(--card)}
+.route-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}.route-card{border:1px solid var(--line);border-radius:var(--r);padding:18px;background:var(--card);box-shadow:var(--shadow)}.route-card h3{margin-top:0;color:var(--teal-deep)}
+.route-line{display:flex;flex-wrap:wrap;gap:6px;align-items:center;line-height:1.8}.route-line span{background:var(--teal-soft);padding:3px 8px;border-radius:8px}.route-line b{color:var(--gold)}
+.guide-phase{margin:24px 0 12px;padding:14px 18px;border-radius:var(--r);background:var(--panel);color:var(--panel-ink)}.guide-phase h3{margin:0 0 4px;color:var(--panel-ink)}.guide-phase p{margin:0;opacity:.95}
+.guide-step{border:1px solid var(--line);border-radius:var(--r);background:var(--card);margin:12px 0;overflow:hidden;box-shadow:var(--shadow)}.guide-step>summary{cursor:pointer;list-style:none;padding:15px 18px;font-weight:800;display:flex;gap:10px;align-items:center}.guide-step>summary::-webkit-details-marker{display:none}.guide-step>summary::after{content:'＋';margin-left:auto;color:var(--teal)}.guide-step[open]>summary::after{content:'－'}
+.guide-step .inside{padding:0 18px 18px}.step-meta{font-size:.82rem;color:var(--ink-soft);font-weight:500}.guide-step .why{margin-top:4px}.guide-step .concept-box{background:var(--teal-soft);border-left:4px solid var(--teal);padding:13px 15px;border-radius:0 10px 10px 0;margin:12px 0}.guide-step .concept-box h4,.guide-step .term-section>h4{margin:0 0 6px;color:var(--teal-deep)}.term-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.term-card{padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg)}.term-card strong{display:block;color:var(--teal-deep);margin-bottom:3px}.term-card p{margin:0;font-size:.9rem}.guide-step .prompt{background:var(--gold-soft);border-left:4px solid var(--gold);padding:12px 14px;border-radius:0 9px 9px 0;white-space:pre-wrap}.guide-step .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.guide-step .box{padding:12px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}.guide-step .box h4{margin:0 0 6px;color:var(--teal-deep)}.guide-step pre{white-space:pre-wrap;margin:8px 0 0;font-size:.8rem}.guide-step details.practice-details,.guide-step details.reset-deep-dive{border:1px solid var(--line);border-radius:10px;margin-top:14px;background:var(--card);overflow:hidden}.guide-step details.practice-details>summary,.guide-step details.reset-deep-dive>summary{cursor:pointer;padding:12px 14px;font-weight:800;color:var(--teal-deep);background:var(--bg)}.practice-body,.reset-body{padding:14px}.command-details{margin-top:12px}.command-details>summary{cursor:pointer;font-weight:700}.situation-table{margin:14px 0}.syntax-line{font-size:1rem;background:#111827;color:#f8fafc;padding:12px 14px;border-radius:8px;overflow-wrap:anywhere}.reset-body h4{margin:18px 0 8px}.reset-body .callout{margin:10px 0}.reset-note{font-size:.88rem;color:var(--ink-soft)}
+.guide-step pre{max-width:100%;overflow-wrap:anywhere}
+.trouble-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.trouble{border:1px solid var(--line);border-radius:10px;padding:13px 15px;background:var(--card)}.trouble h3{margin:0 0 6px;font-size:1rem;color:var(--bad)}
+footer{margin-top:70px;padding:26px 20px;text-align:center;font-size:.85rem;color:var(--ink-soft);
+  border-top:1px solid var(--line)}
+@media (max-width:760px){.route-grid,.guide-step .grid,.term-grid,.trouble-grid{grid-template-columns:1fr}}
+@media (max-width:600px){ body{font-size:16.5px} }
+@media (max-width:600px){figure.wide-diagram{overflow-x:auto}figure.wide-diagram svg{width:640px;max-width:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}body.tabbed main>section.active{animation:none}}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#roadmap">Skip to main content</a>
+
+<header class="hero">
+  <h1>Using Git with AI<br>— Version Control Without Memorizing Commands</h1>
+  <p class="sub">A hands-on 2-hour workshop for university teachers</p>
+  <div class="keyline">The concepts stay in your head; the commands go to the AI. <strong>You are its thesis advisor, not its rubber stamp.</strong></div>
+</header>
+
+<nav id="topnav" aria-label="Course sections">
+  <a href="#roadmap">Roadmap</a>
+  <a href="#prep">Before class</a>
+  <a href="#concepts">Concept map</a>
+  <a href="#guide">Full manual</a>
+  <a href="#conflict">Collaboration</a>
+  <a href="#safety">Red lines</a>
+  <a href="#phrases">Phrasebook</a>
+  <a href="#agenda">Agenda</a>
+  <button id="fullBtn" type="button" title="Switch between one-page and tabbed view">🗒 One page</button>
+  <button id="expandBtn" type="button" title="Expand everything that is collapsed, for searching and printing">⊞ Expand all</button>
+  <button id="themeToggle" type="button" title="Switch light / dark">🌗</button>
+  <a href="material.html" hreflang="zh-Hant" title="Chinese version of this page">中文版</a>
+</nav>
+<div id="duoStrip">📘 This page is the <strong>full course material plus a manual you keep afterwards</strong>: follow the main line in class, expand a block whenever you want the reason behind it, and come back to troubleshooting when you get stuck at home. For the hands-on work in class, open the <a href="quest.en.html">🎮 quest page</a>.</div>
+
+<main>
+
+<section id="roadmap">
+  <h2><span class="no">00</span>Start here: what you will finish today</h2>
+  <div class="callout teal"><strong>In one sentence:</strong> in stage one you turn an ordinary folder of your own into a GitHub project you can rewind; in stage two, two of you take turns as graduate student and advisor, using a Pull Request (PR) to submit, send back, revise and merge.</div>
+  <p class="small"><strong>One practical note before you start:</strong> the AI assistant understands English — and most other languages — so talk to it in whatever language you think in; the example sentences below are a starting point, not a script you have to copy word for word.</p>
+  <div class="layer-key"><span>🟢 Read in class: understand it now</span><span>🔵 Expand for details: the reasons and the commands behind the scenes</span><span>🟡 Reference for later: come back when you really use it</span><span>🔴 Red line: stop and check before you act</span></div>
+  <div class="route-grid">
+    <article class="route-card"><h3>Stage 1 | Your own research project</h3><p>Start from nothing and walk the full everyday cycle twice.</p><div class="route-line"><span>open a folder</span><b>→</b><span>add Git</span><b>→</b><span>connect GitHub</span><b>→</b><span>create a file</span><b>→</b><span>diff</span><b>→</b><span>commit</span><b>→</b><span>push</span></div><div class="route-line" style="margin-top:8px"><span>edit again</span><b>→</b><span>read the diff again</span><b>→</b><span>save / push again</span><b>→</b><span>history</span><b>→</b><span>show / restore / revert</span></div></article>
+    <article class="route-card"><h3>Stage 2 | Graduate student × advisor</h3><p>Two people share one fake-paper repo and swap roles, each doing it once.</p><div class="route-line"><span>student opens a branch</span><b>→</b><span>edit / PR</span><b>→</b><span>advisor reads the diff</span><b>→</b><span>asks for changes</span><b>→</b><span>approves and merges</span><b>→</b><span>both pull</span></div></article>
+  </div>
+  <div class="card"><h3 style="margin-top:0">Who does what: the AI and you</h3><p><strong>The AI does:</strong> turn plain language into actions, lay out a plan first, run Git, report the state, and draft the commit and PR messages.</p><p><strong>You do:</strong> confirm which folder you are in and how public it is, read the diff, judge the research content, and decide on restore, revert, merge and deletion.</p><p class="small">Rule of thumb: <strong>the AI proposes and operates; you understand, verify and decide.</strong></p></div>
+  <p><a class="btn" href="quest.en.html">Start the classroom quest</a>&nbsp;&nbsp;<a href="#guide">Read the full manual first ↓</a></p>
+</section>
+
+<!-- ═══════════ why ═══════════ -->
+<section id="why">
+  <h2><span class="no">01</span>Why economists need this course</h2>
+
+  <div class="callout" style="font-size:1.1rem">
+    “This coefficient was 0.98 three weeks ago. <strong>Why is it 0.96 now?</strong>”<br>
+    <span class="small">— every empirical researcher has been haunted by that question. (Adapted from Michael Stepner, <em>git vs. Dropbox</em>, CC-BY 4.0)</span>
+  </div>
+
+  <div class="card">
+    <h3>Pain point 1: version chaos</h3>
+    <p>Your folder is full of <code>paper_v2_final_really.docx</code> and <code>final_v3_this_time_really_final.docx</code>. Which one runs, and which one you submitted, is now a question for archaeology; and “last month's version was actually better” cannot be found again.</p>
+  </div>
+  <div class="card">
+    <h3>Pain point 2: messy collaboration</h3>
+    <p>Co-authors mail attachments back and forth. Two people edit the same version at the same time, nobody can say whose paragraph got overwritten, and “what did you change?” has to be checked by reading line by line.</p>
+  </div>
+  <div class="card">
+    <h3>Pain point 3: what journals require</h3>
+    <p>Journals such as the AEA already treat a reproducible data and code bundle (replication package) as a condition of submission. You have to be able to point back at “the complete state of the project on the day I submitted” at any time — a folder backup cannot carry that.</p>
+  </div>
+
+  <h3>“I already have Dropbox and Word track changes. Why do I need git?”</h3>
+  <p>Good question. Here are the five things research really needs. <strong>Press the buttons yourself</strong> and see how many of them each of the three tools can do:</p>
+  <div class="card scorecard" id="scorecard">
+    <div class="row head"><div>What research actually needs…</div><div class="cell">Word<br>track changes</div><div class="cell">Dropbox</div><div class="cell">git</div></div>
+  </div>
+  <p class="small" id="scoreSummary"></p>
+  <div class="callout">
+    <strong>To be fair, the other way round:</strong> git does not save or sync by itself — it waits for you (or your agent) to say “save”. So just divide the work: <strong>keep large files and raw data on your cloud drive, and let git look after the versions of your paper and your code</strong> (GitHub has a <strong>hard limit of 100 MB per file</strong>, and one oversized data file gets the whole push rejected; look up Git LFS on the day you really do need to store big files). But do not put a git repository inside a Dropbox or OneDrive sync folder — two sync systems will fight each other. On Windows, “Desktop” and “Documents” are often taken over by OneDrive (a cloud icon on the folder is the giveaway), so keep your practice project somewhere else. One line for the difference: <strong>“git stores versions of a project; Dropbox stores versions of a file.”</strong>
+  </div>
+
+  <div class="callout teal">
+    <h3 style="margin-top:0">So why now, and why learn it together with AI?</h3>
+    <p>The AI tools you have been using lately (Claude Code, GitHub Copilot and the like) run git all day long behind the scenes — saving, opening branches, comparing differences are their daily routine. An AI agent editing a dozen files in one go is normal, and without git as a safety net you cannot even say what it just changed.</p>
+    <p>The AI knows the commands, so you do not have to memorize them. But it can edit the wrong file, work on the wrong branch, or upload something that should never have left your computer. <strong>If you do not understand the concepts, all you can do is accept whatever it hands you; once you do understand them, you can read its plan, verify its diff, and stop its dangerous moves.</strong> What this course teaches is the language for directing and supervising an AI.</p>
+  </div>
+</section>
+
+<!-- ═══════════ before class ═══════════ -->
+<section id="prep">
+  <h2><span class="no">02</span>The setup pack (give it two evenings; do not leave it to the night before)</h2>
+  <p>Items 1 and 2 take about 30 minutes. Items 3, 4, 5 and 8 involve downloading and installing (6 and 7 do not), which can take an hour or more depending on your connection. <strong>Item 5 is for Windows only; on a Mac, skip it.</strong><br><strong>If you get stuck, do not push through alone — just ask the AI.</strong> Once Antigravity is installed (item 3), ask it directly: paste the error message or a screenshot into the input box and ask it to walk you through step by step. Before that, ask whichever AI assistant you already use (ChatGPT or Gemini are both fine).<br><strong>These ticks are only for you</strong> — finish with the self-check in item 10. (They are stored in this computer's browser, so they are still there after you close it.) Done so far: <span id="checkProgress" aria-live="polite">0 / 10</span>&nbsp;&nbsp;<button id="clearProg" class="copybtn" type="button">Clear progress</button></p>
+
+  <div class="callout">
+    <strong>One skill first: how to take a screenshot.</strong> Every item below, when it goes wrong, is solved by showing the AI your screen — on Windows press <strong>Win+Shift+S</strong>, on Mac press <strong>⌃⌘⇧4</strong> (you need the Control key, or the image will not go to the clipboard), then drag over the area you want. Back in the input box, press <strong>Ctrl+V</strong> (⌘V on Mac) to paste it.<br>
+    🧯 <strong>Escape hatch: if any item is hopelessly stuck at home, do not fight it</strong> — <strong>come to the classroom 20 minutes early</strong> on the day, we will sort it out together, and the class runs as planned.<br>
+    🍎 <strong>Mac users, please install Chrome or Edge while you are at it</strong>: Safari does not support the automatic checking on the classroom quest page (you would fall back to the slower manual route).
+  </div>
+
+  <div class="card" id="checklist">
+    <div class="check" data-k="c1"><input type="checkbox" aria-label="Item 1 done">
+      <div class="t"><strong>1 | A GitHub account</strong> <span class="done-mark">✓ done</span><br>
+      Sign up at <a href="https://github.com" target="_blank" rel="noopener">github.com</a> <strong>with your university email</strong> (you will need it later for the education plan) and verify the address.<br>
+      How to be sure the verification worked: click your avatar at the top right <strong>inside the web page</strong> (which one is it? see the picture below) → <strong>Settings → Emails</strong>; a green <strong>Verified</strong> next to the address means you are done.<br>
+      If a big “Join GitHub Education!” card appears in the middle of the screen after you sign in, just close it with the ✕ at its top right — that is the education plan for later, and it is not part of this setup.<br>
+      <span class="small">Done when: you can sign in and see your own profile page.</span></div></div>
+  <figure class="dia">
+    <img src="img/gh-avatar-hint.png" alt="Illustration: the browser account button at the top right of an Edge window marked with a red cross, and the round avatar at the far right of the GitHub page circled in green" loading="lazy">
+    <figcaption>Illustration (simulating Edge on Windows). There are <strong>two similar-looking icons</strong> at the top right of your screen:
+    <strong style="color:#bd2028">✗ the upper row belongs to the browser (Edge) itself, not to GitHub</strong>;
+    <strong style="color:#087a34">○ the GitHub avatar is inside the page, at the far right of the same row as the search box</strong>.
+    Wherever this material says “click the avatar at the top right”, it means the one inside the page.</figcaption>
+  </figure>
+    <div class="check" data-k="c2"><input type="checkbox" aria-label="Item 2 done">
+      <div class="t"><strong>2 | Two-factor authentication (2FA)</strong> <span class="done-mark">✓ done</span><br>
+      First install “Google Authenticator” from the App Store / Play Store on your phone (<strong>do not choose SMS</strong>). Then, on the GitHub site, <strong>click your avatar at the top right</strong> (the one inside the page, see above) → <strong>Settings → Password and authentication</strong>, find Two-factor authentication and press Enable. The page shows a square pattern (a QR code): open that app on your phone, press “+”, scan it, and type the six digits from your phone back into the page. At the end you get a set of <strong>recovery codes</strong> — they are what saves you if you lose the phone, so put them in a password manager or print them out.<br>
+      <span class="small">Done when: <strong>on the computer</strong>, that page (GitHub's Password and authentication settings) says 2FA is enabled and shows “Configured” next to Authenticator app. The app on your phone will never say “enabled”; its only job is to show six digits. Bring that phone on the day.</span></div></div>
+    <div class="check" data-k="c3"><input type="checkbox" aria-label="Item 3 done">
+      <div class="t"><strong>3 | Install Antigravity (our AI workspace)</strong> <span class="done-mark">✓ done</span><br>
+      Google's AI workspace (an editor and an AI assistant in one), free. Download it from <a href="https://antigravity.google" target="_blank" rel="noopener">antigravity.google</a> — <strong>only the site whose address starts with antigravity.google is the official one</strong>, so do not click the look-alike sites in the search results.<br>Open it and sign in with a Google account: <strong>try your university address @gms.ndhu.edu.tw first</strong>, and if it is blocked, use a personal Gmail (everything this course needs works either way).<br><strong>What you see when it opens:</strong> the project list on the left, and <strong>one wide input box right in the middle</strong> (it says Ask anything) — that is where all your instructions go from now on. There is an “Install IDE” button at the top right for the advanced editor; <strong>this course does not use it, so leave it alone</strong>.<br>
+      <span class="small">Done when: it opens, you are signed in, and you can find the box you type into. If you cannot find it, take a screenshot and ask the AI assistant you normally use rather than losing time to it.</span></div></div>
+  <figure class="dia">
+    <img src="img/ag-input.png" alt="The input box on the Antigravity main screen: the project folder menu on top, the Ask anything box in the middle, and the model name below" loading="lazy">
+    <figcaption>Real screen (captured on a Mac, 2026-07-29). <strong>That “Ask anything” box in the middle is where all your instructions go</strong>;
+    the folder path above it opens up so you can switch projects, and the line below shows which model is in use.</figcaption>
+  </figure>
+
+    <div class="check" data-k="c4"><input type="checkbox" aria-label="Item 4 done">
+      <div class="t"><strong>4 | Install git itself</strong> <span class="done-mark">✓ done</span><br>
+      <strong>Hand this one to the AI assistant; you do not have to download anything yourself.</strong> Paste this into the input box you found in item 3:<br>“<strong>Please check whether git is installed on this computer. If it is not, install it for me, and tell me step by step whenever you need me to do something.</strong>”<br>It works out your operating system and does the download and the install. Two things can happen along the way: on a Mac, a window about “Xcode command line tools” appears — yes, git is in there, press “Install”, it takes about 5–10 minutes; on Windows you may be asked whether to allow the installation, so press “Yes”.<br>
+      <span class="small">Done when: it reports a git version number back to you (something like git version 2.5x.x). ⚠️ If it asks you to type this computer's <strong>administrator password</strong>, stop right there — <strong>never hand a password to an AI</strong>; ask the AI assistant you normally use how to type it in yourself, or find someone to sit beside you. <strong>You never have to open a terminal yourself in this course</strong>: that is the AI assistant's tool, not yours.</span></div></div>
+    <div class="check" data-k="c11"><input type="checkbox" aria-label="Item 5 done">
+      <div class="t"><strong>5 | Install PowerShell 7</strong> (<strong>Windows only — on a Mac, just tick it and move on</strong>)<span class="done-mark">✓ done</span><br>
+      <strong>Why this extra step:</strong> the PowerShell built into Windows is version 5.1. When you ask an AI to create files that contain non-English text with it, some ways of writing save the file in a format <strong>Git does not recognize as text</strong> — so your later “paper.md” and “method.md” are <strong>treated by Git as if they were pictures, and you cannot see what you changed at all</strong>. And seeing what changed is the whole point of this course. The worst part: it <strong>never reports an error</strong>, so the tool just feels vaguely broken.<br>
+      PowerShell 7 does not have this problem, and it <strong>sits alongside</strong> the old version instead of replacing it (that is Microsoft's own design).<br>
+      <strong>Hand this one to the AI assistant too.</strong> Paste this into the input box you found in item 3:<div class="prep-say">I am on Windows. First check whether this computer has winget (run winget --version). If it does, install PowerShell 7 with winget install --id Microsoft.PowerShell --source winget; if it does not, walk me through the MSI installer from Microsoft's official site instead. Tell me the version number when you are done. Tell me step by step whenever you need me to do something.<button class="copybtn prep-copy" type="button" data-copy="I am on Windows. First check whether this computer has winget (run winget --version). If it does, install PowerShell 7 with winget install --id Microsoft.PowerShell --source winget; if it does not, walk me through the MSI installer from Microsoft's official site instead. Tell me the version number when you are done. Tell me step by step whenever you need me to do something.">Copy</button></div>
+      When it is installed, <strong>always ask this next</strong> (the easiest thing to skip, and skipping it makes the whole step pointless):<div class="prep-say">Which PowerShell are you actually using to run commands right now? Run $PSVersionTable.PSVersion and show me. Does the version number start with 7 or with 5?<button class="copybtn prep-copy" type="button" data-copy="Which PowerShell are you actually using to run commands right now? Run $PSVersionTable.PSVersion and show me. Does the version number start with 7 or with 5?">Copy</button></div>
+      <span class="small">Done when: you see a version number that <strong>starts with 7</strong> (like 7.6.x).<br>
+      ⚠️ <strong>If it answers 5.1, it is installed but not in use yet</strong> — PowerShell 7 <strong>sits alongside the old one rather than replacing it</strong>, so the AI assistant may still be calling the old one. Paste this to make it switch:<div class="prep-say">From now on, please run every command with pwsh (PowerShell 7), not the old powershell. After you switch, run $PSVersionTable.PSVersion again so I can confirm.<button class="copybtn prep-copy" type="button" data-copy="From now on, please run every command with pwsh (PowerShell 7), not the old powershell. After you switch, run $PSVersionTable.PSVersion again so I can confirm.">Copy</button></div>
+      Still 5.1? Close Antigravity completely, open it again and ask once more; if it still will not budge, screenshot it and ask the AI assistant. <strong>It does not stop you moving on to item 6</strong> (we can also rescue it on the day).<br>
+      💡 <strong>Whether you end up on 7 or on 5, this sentence is worth keeping</strong>: whenever you ask an AI to create a file with non-English text in it, add one line — “<strong>create it with the editor, do not redirect with &gt;</strong>”. Then the file survives whichever version is running underneath.<br>
+      ⚠️ If Windows pops up an “do you want to allow this?” window during the install, press <strong>Yes</strong>; but if it asks for this computer's <strong>administrator password</strong>, stop — <strong>never hand a password to an AI</strong>, type it in yourself or have someone with you. A university-managed laptop may block the install completely; if so, skip it and we will deal with it on the day.<br>
+      🍎 <strong>Macs do not have this problem</strong> (they are UTF-8 already), so tick this item and move on.</span></div></div>
+    <div class="check" data-k="c5"><input type="checkbox" aria-label="Item 6 done">
+      <div class="t"><strong>6 | Say hello to the AI assistant (first check)</strong> <span class="done-mark">✓ done</span><br>
+      Open Antigravity, paste this into the <strong>input box</strong> you found in item 3, and press Enter:<div class="prep-say">Hello — could you check whether git is installed on this computer? Which version is it?<button class="copybtn prep-copy" type="button" data-copy="Hello — could you check whether git is installed on this computer? Which version is it?">Copy</button></div>It answers with a sentence or two, and seeing the version number with your own eyes is enough.<br>
+      <span class="small">That one question confirms three things at once: the tool runs, you are signed in, and the network works.</span></div></div>
+    <div class="check" data-k="c9"><input type="checkbox" aria-label="Item 7 done">
+      <div class="t"><strong>7 | Adjust the AI assistant's permissions (so it stops asking about every small thing)</strong> <span class="done-mark">✓ done</span><br>
+      By default the AI assistant stops and asks “is this all right?” before every single command — in class that gets painful.
+      Open <strong>Settings</strong> at the bottom left (<strong>Ctrl+,</strong> on Windows, ⌘, on Mac), click <strong>General</strong> in the left column, and find the <strong>Agent Settings</strong> block:<br>
+      <div class="permtable">
+        <div class="permrow ok"><div class="pl">Suggested</div><div class="pd"><strong>Set Security Preset to Custom</strong> and two more boxes appear below. Set <strong>Outside of folders file access policy to Always Ask</strong> — when the agent wants to touch files outside your working folder, it should still ask you first.</div></div>
+        <div class="permrow warn"><div class="pl">Pick one</div><div class="pd"><strong>Terminal Command Auto Execution</strong> has only two options. For class we suggest <strong>Always Proceed</strong> — commands no longer stop for approval one at a time, which is what keeps the class moving; the checking then happens where it was always meant to, in the “read the plan before you let it run, read the diff when it is done” habit and the three red lines. If you would rather look at every single command first, choose <strong>Require Review</strong>: one more layer of safety, at the cost of a few extra clicks per step.</div></div>
+        <div class="permrow bad"><div class="pd" style="grid-column:1/-1"><strong>✗ Never choose Turbo mode</strong> — its own description says, in black and white, that it “Disables all safety barriers”. This course teaches exactly the opposite: you are its thesis advisor, not its rubber stamp.</div></div>
+      </div>
+      <span class="small">This step is not only about speed; it is this whole course in miniature: <strong>what you delegate and what you check yourself is your decision.</strong>
+      We will set it together on the day, so a look is enough for now.</span></div></div>
+  <!-- The newer Mac Antigravity settings screen still has to be confirmed against the Windows one (see the to-do in memory/log, 2026-08-04); the Mac counterpart picture will be added once it is. -->
+  <figure class="dia">
+    <img src="img/ag-permissions-win.png" alt="The Agent Settings block on the General page of the Antigravity settings: Security Preset set to Custom, with Outside of folders file access policy (Always Ask) and Terminal Command Auto Execution (Always Proceed) below it" loading="lazy">
+    <figcaption>Real screen (captured on the Windows version, 2026-08-04). The two boxes below only appear once Security Preset is set to <strong>Custom</strong>; the picture shows the values we suggest for class. If you prefer to be careful, switch Terminal Command Auto Execution to Require Review.</figcaption>
+  </figure>
+
+    <div class="check" data-k="c6"><input type="checkbox" aria-label="Item 8 done">
+      <div class="t"><strong>8 | Sign in to GitHub (again, let the AI assistant install and sign in)</strong> <span class="done-mark">✓ done</span><br>
+      Let the AI assistant do this one with you. Paste this into the input box:<div class="prep-say">Please install the GitHub CLI (gh) and sign me in to my GitHub account. Tell me step by step what I need to do.<button class="copybtn prep-copy" type="button" data-copy="Please install the GitHub CLI (gh) and sign me in to my GitHub account. Tell me step by step what I need to do.">Copy</button></div>Three simple steps follow:<br><span style="display:block;margin-left:1em">1. It gives you an <strong>eight-character code</strong> (it looks like A1B2-C3D4) — copy it first.</span><span style="display:block;margin-left:1em">2. The browser opens github.com/login/device by itself (if it does not, paste that address in yourself): put the eight characters in and press Continue.</span><span style="display:block;margin-left:1em">3. Press the green Authorize; you may need your GitHub password and the six digits on your phone. When it is done, go back to Antigravity and you will see Logged in as your account name.</span>Finally, tell it:<div class="prep-say">Please confirm whether I am signed in to GitHub.<button class="copybtn prep-copy" type="button" data-copy="Please confirm whether I am signed in to GitHub.">Copy</button></div>Seeing your own account name with your own eyes is all it takes.<br>
+      <span class="small">Done when: it reports that you are signed in and you can see your account name. ⚠️ If you get stuck, or the screen asks for this computer's administrator password, <strong>stop and screenshot it for the AI assistant you normally use</strong> — without this step your first upload will fail, so please get it sorted before you start (or before class).</span></div></div>
+  <figure class="dia wide-diagram">
+    <svg viewBox="0 0 640 170" role="img" aria-label="Three-step GitHub sign-in diagram: get the eight-character code, paste it into the page, press Authorize">
+      <g>
+        <rect x="10" y="26" width="180" height="96" rx="10" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.6"/>
+        <text x="100" y="50" font-size="12" text-anchor="middle" fill="currentColor" font-weight="700">① AI gives you a code</text>
+        <rect x="42" y="62" width="116" height="30" rx="6" fill="currentColor" opacity=".1"/>
+        <text x="100" y="83" font-size="16" text-anchor="middle" fill="currentColor" font-family="ui-monospace,monospace" font-weight="700">A1B2-C3D4</text>
+        <text x="100" y="110" font-size="11" text-anchor="middle" fill="currentColor" opacity=".7">copy it first</text>
+      </g>
+      <path d="M196 74 L222 74" stroke="var(--teal)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="var(--teal)"/></marker></defs>
+      <g>
+        <rect x="230" y="26" width="180" height="96" rx="10" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1.6"/>
+        <text x="320" y="50" font-size="12" text-anchor="middle" fill="currentColor" font-weight="700">② Paste in the browser</text>
+        <text x="320" y="70" font-size="10.5" text-anchor="middle" fill="currentColor" opacity=".75">github.com/login/device</text>
+        <rect x="256" y="80" width="128" height="24" rx="5" fill="currentColor" opacity=".08" stroke="currentColor" stroke-opacity=".25"/>
+        <text x="320" y="97" font-size="11" text-anchor="middle" fill="currentColor" opacity=".8">paste code → Continue</text>
+      </g>
+      <path d="M416 74 L442 74" stroke="var(--teal)" stroke-width="2.5" marker-end="url(#ah)"/>
+      <g>
+        <rect x="450" y="26" width="180" height="96" rx="10" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1.6"/>
+        <text x="540" y="50" font-size="12" text-anchor="middle" fill="currentColor" font-weight="700">③ Press the green button</text>
+        <rect x="492" y="62" width="96" height="28" rx="6" fill="#2e7d32"/>
+        <text x="540" y="81" font-size="13" text-anchor="middle" fill="#fff" font-weight="700">Authorize</text>
+        <text x="540" y="108" font-size="11" text-anchor="middle" fill="currentColor" opacity=".7">then back to Antigravity</text>
+      </g>
+      <text x="320" y="150" font-size="11.5" text-anchor="middle" fill="currentColor" opacity=".7">You may need your GitHub password and the six digits from the phone you set up in item 2</text>
+    </svg>
+    <figcaption>Item 8, signing in to GitHub, is just these three steps.</figcaption>
+  </figure>
+
+    <div class="check" data-k="c10"><input type="checkbox" aria-label="Item 9 done">
+      <div class="t"><strong>9 | A small test run: let the AI assistant do something for you</strong> (about 5 minutes)<span class="done-mark">✓ done</span><br>
+      Everything installed? Now let it actually do something. Paste this into the Antigravity input box:<div class="prep-say">Please create a folder called warmup-check on my desktop, and inside it a file hello.md containing today's date and my GitHub account name. When you are done, tell me the git version and which account gh is signed in as. Only touch this new folder, nothing else.<button class="copybtn prep-copy" type="button" data-copy="Please create a folder called warmup-check on my desktop, and inside it a file hello.md containing today's date and my GitHub account name. When you are done, tell me the git version and which account gh is signed in as. Only touch this new folder, nothing else.">Copy</button></div>
+      Then <strong>go to the desktop and open hello.md yourself</strong> — it only counts if the date and your account name really are in there (the AI saying it is done ≠ it being done, and that is the first thing this course wants to teach you).<br>
+      <span class="small">Three things have to be true: ① the warmup-check folder really is on the desktop, with hello.md in it and the right contents ② it reported the git version ③ the gh account it reported is your account. All three mean the whole install chain works.<br>
+      30 seconds more (Chrome / Edge): open the <a href="quest.en.html" target="_blank" rel="noopener">quest page</a>, press “Connect your working folder”, choose warmup-check, and if the dashboard shows the folder name, reading folders works and you will not be stuck on the day.</span></div></div>
+
+    <div class="check" data-k="c7"><input type="checkbox" aria-label="Item 10 done">
+      <div class="t"><strong>10 | Final self-check</strong> <span class="done-mark">✓ done</span><br>
+      This material is self-service and there is nothing to hand in — <strong>the person who checks is you</strong>. Setup counts as finished when all three are true:<br>
+      ① items 1–9 above are all ticked (Mac users skip item 5 and simply tick it); ② <code>warmup-check/hello.md</code> really is on your desktop with the right contents; ③ you can say that the gh account the AI assistant reported is your GitHub account.<br>
+      <span class="small">If any item is stuck, paste the screen or the error message to the AI assistant first. If you are coming to the live workshop, the instructor also sweeps the room before pairing at the start and fixes whatever is stuck on the spot.</span></div></div>
+  </div>
+
+  <div class="callout warn">
+    <strong>The red line first:</strong> the whole course uses simulated, fake data only. <strong>Please do not bring student personal data, grades or unpublished research into the classroom, and do not upload any of it.</strong>
+  </div>
+
+  <h3>The AI tool for this course: Antigravity</h3>
+  <div class="callout teal">
+    The whole class uses Google's Antigravity: free, signed in with a Google account (an NDHU university address is itself a Google account), editor and AI assistant in one.
+    Every task in class was walked through end to end by the instructor with this tool before it went into the schedule. We also gave it a dangerous instruction on purpose — “force-overwrite the remote for me” —
+    and it first checked the differences on both sides, pointed out that some records would be destroyed, and then <strong>refused to do it</strong>. The tool does some of the checking, but the final say is yours, and that is what this course is practising.
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Backup and extras</th><th>What it is for</th></tr>
+    <tr><td>Gemini CLI (Google)</td><td>Backup (only for people already comfortable with a terminal): the command-line version, usable with the same Google account. If terminals are not your thing, do not take this route — if Antigravity will not install, use the escape hatch at the top of the setup pack: come 20 minutes early on the day and we will fix it</td></tr>
+    <tr><td>GitHub Copilot</td><td>A gift for afterwards: once you pass GitHub Education verification you can use Copilot Pro free of charge (approval takes days to weeks; the pre-class email starts the application at the same time)</td></tr>
+    <tr><td>Claude Code (Anthropic)</td><td>The instructor's demo machine: used for the opening and the “stop it in its tracks” demonstration, which also shows you the same git concepts through a different agent</td></tr>
+  </table></div>
+  <div class="callout">
+    <strong>🏁 That is the end of the setup pack.</strong> All 10 items ticked = everything before class is done, and you can close the laptop with a clear conscience.
+    Bring three things on the day: <strong>your laptop, its charger, and the phone you set 2FA up on</strong>.<br>
+    <span class="small">From the next section (“03”) on, this is the classroom material. You are welcome to read ahead, and it makes no difference to the class if you do not.</span>
+  </div>
+</section>
+
+<!-- ═══════════ concept map ═══════════ -->
+<section id="concepts">
+
+  <h2><span class="no">03</span>Concept map: a quick introduction to Git before class</h2>
+  <p><strong>[The classroom material starts here]</strong> We walk through the sections below together in class; if you want to prepare beforehand, start reading from here.</p>
+  <p>Three lines per card: what it is in plain words, what it looks like in everyday paper writing, and when an AI agent uses it. Click a card to open it; for the actual operations, go back to the matching P1–P9 and C1–C6 steps.</p>
+
+  <figure class="dia">
+    <img src="img/ag-diff.png" alt="The AI assistant in Antigravity listing the differences in notes.md: the old line marked with a minus, the new line marked with a plus, and a written explanation that 0.98 was corrected to 0.96" loading="lazy">
+    <figcaption>Real screen (captured on a Mac, 2026-07-29). This is what you will see in P6 in class —
+    you ask “please list the differences line by line”, and it lays the <strong>before (minus)</strong> and the <strong>after (plus)</strong> out side by side, and explains in words what changed (this screenshot is from a Chinese session; ask in English and it answers in English).
+    There is only one thing you have to confirm: <strong>are the lines you meant to change on the right side?</strong></figcaption>
+  </figure>
+  <div class="cards" id="conceptCards"></div>
+  <div class="card">
+    <h3 style="margin-top:0">One concept for afterwards</h3>
+    <p><strong>Tag</strong>: pin a memorable name on one particular save point, for example <code>v1.0-submission</code>. Put a tag on the spine on the day you submit, and six months later, when the reviews come back, one sentence takes you back to the complete state of the project at submission.</p>
+  </div>
+
+  <h3>Glossary: every term this course uses</h3>
+  <p class="small">Terms marked ◆ only have to be understood, not used. The right-hand column takes you to the step where you practise it; anything marked “extra” is not part of the classroom work.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Term</th><th>In Git</th><th>In one line</th><th>Where it appears</th></tr>
+    <tr><td>AI assistant ◆</td><td>agent</td><td>the AI you are using, which can look inside your working folder and run commands for you; in this material “AI assistant” and “agent” mean the same kind of tool</td><td>throughout</td></tr>
+    <tr><td>Terminal ◆</td><td>terminal</td><td>the black window you type commands into — in this course the AI assistant types for you, so you never have to open it</td><td>behind the scenes</td></tr>
+    <tr><td>Markdown</td><td>.md</td><td>a plain-text file you can open and edit; the formatting goes about as far as “put a # in front of a heading”</td><td><a href="#guide-P3">P3</a></td></tr>
+    <tr><td>Repository</td><td>repository (usually shortened to repo)</td><td>a folder plus its complete record of changes</td><td><a href="#guide-P1">P1</a></td></tr>
+    <tr><td>Main line ◆</td><td>main</td><td>the default line that holds the official version</td><td><a href="#guide-P2">P2</a></td></tr>
+    <tr><td>Commit</td><td>commit</td><td>a save point with a note on it</td><td><a href="#guide-P4">P4</a></td></tr>
+    <tr><td>Staging area ◆</td><td>index / staging area</td><td>a snapshot of the content the next commit will save — not just a list of file names</td><td><a href="#guide-P4">P4</a></td></tr>
+    <tr><td>Working area ◆</td><td>working tree / working directory</td><td>the files you can actually see and are editing right now</td><td>throughout</td></tr>
+    <tr><td>Difference</td><td>diff</td><td>a line-by-line comparison between two versions</td><td><a href="#guide-P6">P6</a></td></tr>
+    <tr><td>History</td><td>log</td><td>the timeline of save points</td><td><a href="#guide-P8">P8</a></td></tr>
+    <tr><td>blame ◆</td><td>blame</td><td>who changed this line, on which day, and why</td><td><a href="#guide-P8">P8 extra</a></td></tr>
+    <tr><td>View an old version</td><td>show</td><td>read the content of an old commit directly, without switching branch and without changing your current files</td><td><a href="#guide-P9">P9</a></td></tr>
+    <tr><td>Restore a working file</td><td>restore</td><td>overwrite files in the working area or the staging area from a source you name; it can discard changes you have not committed</td><td><a href="#guide-P9">P9</a></td></tr>
+    <tr><td>Undo a version</td><td>revert</td><td>add a new commit that does the opposite, keeping the original mistake on the record</td><td><a href="#guide-P9">P9</a></td></tr>
+    <tr><td>Reset ◆</td><td>reset</td><td>move where you currently are in the history, and depending on the mode also line the staging area and the working area up with it; this course only teaches you to spot the risk, not to run it</td><td><a href="#guide-P9">P9 safety note</a></td></tr>
+    <tr><td>HEAD ◆</td><td>HEAD</td><td>points at the commit you are on now; it does not include changes you have not committed</td><td><a href="#guide-P9">P9 safety note</a></td></tr>
+    <tr><td>First parent ◆</td><td>HEAD~1</td><td>the first parent commit of HEAD; in a straight-line history you can read it as “the previous version”</td><td><a href="#guide-P9">P9 safety note</a></td></tr>
+    <tr><td>Remote</td><td>remote / origin</td><td>the copy that lives on GitHub; origin is its default name</td><td><a href="#guide-P2">P2</a></td></tr>
+    <tr><td>Push</td><td>push</td><td>upload the history on your own machine to the remote</td><td><a href="#guide-P5">P5</a></td></tr>
+    <tr><td>Pull</td><td>pull</td><td>fetch what is new on the remote and line up with it</td><td><a href="#guide-C5">C5</a></td></tr>
+    <tr><td>Clone</td><td>clone</td><td>take a copy of a whole repository, history included, onto your own computer</td><td><a href="#guide-C1">C1</a></td></tr>
+    <tr><td>Branch</td><td>branch</td><td>a parallel draft line for trying things without touching the real manuscript</td><td><a href="#guide-C2">C2</a></td></tr>
+    <tr><td>Merge</td><td>merge</td><td>bring the work done on a branch back into the main line</td><td><a href="#guide-C4">C4</a></td></tr>
+    <tr><td>Fast-forward ◆</td><td>fast-forward</td><td>a straight-line merge when the main line has not moved, leaving no fork behind</td><td><a href="#guide-C5">C5 extra</a></td></tr>
+    <tr><td>Conflict</td><td>conflict</td><td>both sides changed the same line, so git stops and asks a person to decide</td><td><a href="#conflict">Collaboration</a></td></tr>
+    <tr><td>Pull Request</td><td>PR</td><td>the formal proposal that says “I am done, please look at it before you merge it in”</td><td><a href="#guide-C2">C2</a></td></tr>
+    <tr><td>Review</td><td>review</td><td>leaving comments on the matching lines inside a PR</td><td><a href="#guide-C3">C3</a></td></tr>
+    <tr><td>Collaborator</td><td>collaborator</td><td>someone you have given read and write access to the repo</td><td><a href="#guide-C1">C1</a></td></tr>
+    <tr><td>.gitignore</td><td>—</td><td>names which untracked files should stay out of version control; it is not a secrecy tool, and it does not remove files that are already tracked</td><td><a href="#guide-P2">P2</a></td></tr>
+    <tr><td>Tag</td><td>tag</td><td>pin a memorable name on an important save point</td><td>extra</td></tr>
+    <tr><td>replication package</td><td>—</td><td>the reproducible data and code bundle journals ask for</td><td>extra</td></tr>
+    <tr><td>gh ◆</td><td>GitHub CLI</td><td>the tool the agent uses to operate GitHub</td><td><a href="#prep">setup pack</a></td></tr>
+    <tr><td>Two-factor authentication</td><td>2FA</td><td>signing in needs a code from your phone as well as a password</td><td><a href="#prep">setup pack</a></td></tr>
+  </table></div>
+</section>
+
+
+<!-- ═══════════ full manual ═══════════ -->
+<section id="guide">
+  <h2><span class="no">GUIDE</span>The full manual: every step spelled out</h2>
+  <p>The 15 steps below use the same numbering, goals and completion criteria as the classroom quest, but they do different jobs: <strong>the quest page walks you through it, this material helps you understand it.</strong> Each step says why you need it, which state Git is dealing with, which new terms turn up, and what you have to judge; the full text to give the AI, the plan and the commands behind the scenes are tucked into “Practice reference”, ready whenever you want them.</p>
+  <div class="callout teal"><strong>You do not have to read it all at once:</strong> in class, hold on to “understand this first” and “what you have to judge”. Afterwards, when a question comes up, search the page in your browser or open the matching step straight from the quest page.</div>
+  <div class="callout"><strong>Format examples:</strong> your table card is the short code you use in class — <strong>your surname in lower-case Latin letters</strong> (like <code>lin</code>) — because it later becomes part of a branch name, so do not use characters outside the Latin alphabet. A pair repo can be written as <code>advisor-account/thesis-pair-03</code>, and your partner's card might say <code>chen</code>. These are only format examples; the quest page does not pre-fill the repo. In C1 the advisor role creates it live, and then you fill in the actual <code>owner/repo</code> they report back.</div>
+  <div id="flowGuide"></div>
+</section>
+
+<!-- ═══════════ collaboration: conflicts ═══════════ -->
+<section id="conflict">
+  <h2><span class="no">04</span>Collaboration, next level: what to do when a conflict turns up</h2>
+  <p>When two people change the same line, Git stops and waits for a person to decide; this is called a merge conflict. The AI can lay both sides out, but it cannot decide the content for a researcher.</p>
+  <div class="card">
+    <p><span class="small" style="color:var(--teal);font-weight:700">Scenario</span><br>
+    You and your partner both rewrote the same concluding sentence in paper.md. Your partner's version reached the main line first, and the moment you say “merge mine back in”, the agent stops.</p>
+    <div class="callout teal"><strong>The AI assistant reports:</strong> the merge hit a conflict: paper.md, line 12, changed on both sides. One side is your version, “the income elasticity of tourism spending is greater than one”; the other is your partner's already-merged version, “the income elasticity of tourism spending is close to one”. Git will not choose for you — <strong>it wants you to decide which sentence stays, or to write a new one</strong>.</div>
+    <p>Three steps to settle it: one, ask the agent to read both versions out side by side; two, you decide — keep one side, or dictate a new sentence to it; three, the agent finishes the merge and commits, and the conflict is gone. That is all there is to it. A conflict is not a fault; it is two authors' opinions laid out on the table, waiting for someone to judge.</p>
+    <p class="small">If you open that file yourself you will see <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> and <code>=======</code> bracketing the two versions — the file is not broken, that is git putting both sides side by side for you.<br>If time allows in class, the instructor will deliberately have two people edit the same line, set the conflict off live, and let the whole class watch one being settled (if time is short we drop it; reading this page is enough on its own). Once you have seen it happen, it will not rattle you next time.</p>
+  </div>
+</section>
+
+<!-- ═══════════ three settings ═══════════ -->
+<section id="gates">
+  <h2><span class="no">04-B</span>Who may touch the real manuscript? Three settings (agree on it before you co-write)</h2>
+  <p>Every change in C2–C6 goes “branch → PR → someone reads it → merge in”. But who gets to press merge and put something into the real manuscript is actually <strong>a setting on the door of main</strong>. Same collaboration, and the door can be locked tighter and tighter:</p>
+  <figure class="dia">
+    <img src="img/merge-gates.png" alt="A card with three settings: setting one, wide open (a PR is good manners, you press merge yourself); setting two, PR required (everyone raises a hand and shows their cards, but nobody has to wait); setting three, approval required (the merge button only lights up when the named person approves)" loading="lazy">
+    <figcaption>One study, three kinds of door. <strong>A PR itself = raising your hand and putting the line-by-line differences on the table</strong>; whether anyone is actually held back is a separate lock fitted to the door.</figcaption>
+  </figure>
+  <div class="card">
+    <p><strong>Setting one, “wide open”</strong> — nothing configured. The PR is a courtesy everybody agreed on: collaborators look at each other's work and merge it themselves. Good for co-authors who already have an agreed process and trust each other completely.</p>
+    <p><strong>Setting two, “PR required”</strong> — turn on “changes to main must go through a PR”. Nobody can quietly edit the real manuscript, and every change leaves a record that was laid out in the open; but once you have raised your hand you can merge it yourself, without waiting for anyone. Good for a team that wants everything to leave a trace.</p>
+    <p><strong>Setting three, “approval required”</strong> — add one more rule: “1 approval before the merge button lights up”. The pair repo you build live in class runs on <strong>setting one plus classroom discipline</strong>: C3 states plainly that the other person reviews it line by line and that authors may not approve themselves — that lock is in the agreement, not on the door. <strong>When you work with graduate students on real research afterwards, we suggest turning the door up to setting three</strong>: GitHub does not let you approve your own PR, so a student's PR always needs the advisor's nod, and the whole supervision trail (who changed what, and why a change was asked for) stays inside the PR and can still be read six months later.<br>⚠️ <strong>Setting three needs one extra box ticked</strong>: the owner and the admins of a repo <strong>can bypass the rule by default</strong> and merge anyway, so as well as “Require a pull request before merging” and “Require approvals: 1”, also tick <strong>Do not allow bypassing the above settings</strong> — only then does the door really lock for you too.</p>
+    <p class="small">Where to set it: the repo's Settings → Branches, add a rule for main and tick the <strong>three</strong> options above (PR required, 1 approval, no bypassing); you can change it any time. ⚠️ An honest warning: <strong>using these gates on a private repo takes more than the free plan</strong> (on a public repo they are free) — but if you apply for the GitHub Education teacher plan mentioned in the pre-class email, you get the paid features.</p>
+  </div>
+  <p class="small">This section says the same thing as section 05: <strong>what you trust and what you lock is your decision</strong> — the only difference is that this time the lock sits on GitHub's door rather than in the agent's permissions.</p>
+</section>
+
+<!-- ═══════════ red lines ═══════════ -->
+<section id="safety">
+  <h2><span class="no">05</span>Red lines and the three rules of supervision</h2>
+  <div class="card">
+    <h3 style="margin-top:0">The three rules of supervision</h3>
+    <p><strong>1. Read the plan before it acts.</strong> Before it starts, the agent says “here is how I plan to do it, and why”; if that paragraph did not make sense to you, ask — <strong>you only let it run once you understand it</strong>, and if the explanation does not hold up, it does not get to act.</p>
+    <p><strong>2. Read the diff after it acts.</strong> The agent saying it is finished does not count; it counts once you have run your eye over the line-by-line differences. Treat it exactly like reviewing your own student's revision.</p>
+    <p class="small" style="background:var(--gold-soft);padding:8px 12px;border-radius:8px">These three rules are the same thing as the permission settings in item 7 of the setup pack: <strong>let commands run automatically so the class moves, keep “ask me first” for files outside the working folder, and never choose Turbo mode.</strong> You are the one who set it, which means what you delegate and what you check yourself is your decision.</p>
+    <p><strong>3. Destructive actions: the agent has to ask you first.</strong> The list of red-line verbs: force push, resetting a branch to an old commit, hard reset (<code>reset --hard</code>), rewriting history (rebase), deleting files or branches, overwriting the remote, overwriting a file the old way (<code>git checkout -- filename</code>, which works like restore and equally wipes changes you have not committed), and clearing untracked files (<code>git clean</code>, which deletes exactly the things git has not started protecting yet, and they do not come back). <code>reset --hard</code> lines the staging area and the tracked working files up with the target commit, so uncommitted changes are overwritten; other reset modes, pointed at an old commit, also move your local history. Whenever you see one of these verbs, call a halt and ask: which layer does this touch? Could anything be lost? Has this history already been shared? Is there a safer way? <strong>If it did any of them without asking, change its settings — or change your agent.</strong></p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Two data red lines (nothing to do with technology, everything to do with your responsibility)</h3>
+    <p><strong>4. Student personal data and unpublished material never go into a public repo.</strong> Grade sheets, class lists, manuscripts still under review: never in a public repository. Research collaboration should use a private repo, and even then you check file by file before anything goes public. <code>.gitignore</code> can only help keep untracked files out; it does not replace your judgment about the data, or your access controls.</p>
+    <p><strong>5. No passwords in a private repo either.</strong> Once a password or an API key has been committed it is in the history, and deleting the current file afterwards does not make the old record disappear. Keep sensitive material outside the project folder; for settings that are not sensitive but only meant for your own machine, use <code>.gitignore</code>.</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">First-aid kit: what to do when a sensitive file went in by mistake</h3>
+    <p>First, stop: do nothing else, and above all do not push. Second, check: ask the agent “did that file get into the repository? has it been pushed to GitHub?” Third, deal with it: if it has not been pushed, paste this to the AI assistant — “<strong>Which commits has that file been in? Please clean it out of every one of them, add the file name to .gitignore, and verify it again for me afterwards. Do not push yet.</strong>” (Cleaning only the last commit often does not do the job, so ask it to check them all.) If it has already been pushed, treat it as a leak: change the password inside it, tell the people concerned, and get someone who knows what they are doing to help clean the history (you can clean your own copy, but not the copies other people have already taken).<br><span class="small">By the way: GitHub automatically blocks common key formats in public repos — when a push is stopped by “secret scanning”, do not look for a way around it, because that is red line 5 saving you.</span></p>
+    <p class="small">When you create a new repo, check two things while you are there: set visibility to Private — anything containing student data is private, no exceptions; and if you mean to share teaching material publicly, remember to choose a license so other people know what they may do with it.</p>
+  </div>
+  <div class="callout">
+    <strong>Live exercise:</strong> only in <strong>your own practice repo</strong> (not in the pair repo). Say to the agent: “Force-overwrite the remote for me. First explain which records would be lost and what the safer alternative is; <strong>do not run anything until I agree.</strong>” Then watch how it answers. A good agent stops, explains the risk and offers an alternative; one that acts without asking is exactly what rule three is about.
+  </div>
+</section>
+
+<!-- ═══════════ how to talk to the agent ═══════════ -->
+<section id="phrases">
+  <h2><span class="no">06</span>How to talk to the agent: 12 sentences you will actually use</h2>
+  <p>Twelve sentences you really will say. Press “Copy” to paste one straight into the agent's chat box and try it.</p>
+  <p class="small">The task sentences for the day are all on the quest page, ready to copy. This table is your everyday phrasebook <strong>for when you go back to your own research</strong> — it is also what the printed reference card contains. The other quick reference, “what I want to do → how to say it”, is in <a href="#troubleshoot">the plain-language lookup in “SOS”</a>; the two complement each other and do not repeat each other.</p>
+  <p class="small">⚠️ One phrasing to be careful with: “go back to the previous version” is ambiguous to an agent — it cannot tell whether you mean “I just edited it and have not saved”, “I saved it and want to undo that”, or “delete the last three versions”, and if it reads you wrong it may lose work you never saved. Use the sentence patterns in the table below to make the situation clear, or have the agent repeat its understanding back to you before you let it run.</p>
+  <div class="tablewrap"><table id="phraseTable">
+    <tr><th style="width:38%">You say</th><th>What the agent does</th><th style="width:22%">The concept behind it</th></tr>
+  </table></div>
+</section>
+
+
+<!-- ═══════════ troubleshooting ═══════════ -->
+<section id="troubleshoot">
+  <h2><span class="no">SOS</span>When something goes wrong: work it out first, then fix it</h2>
+  <div class="callout teal"><strong>The first rescue sentence is always the same:</strong> “For now, only look: tell me the current path, git status, git log and the remote, and what has happened. Do not change anything, do not reset, do not force push.” Preserve the current state first, and it can usually still be saved.</div>
+  <div class="trouble-grid" id="troubleGrid"></div>
+  <p style="margin-top:14px">Table not matching your situation? Fill in the blanks in this <strong>general SOS sentence</strong> and paste it to the AI — it is “look first, plan next, act last” in portable form:</p>
+  <div class="prep-say">I am on step ___ of a Git workshop, my goal is ___, and I am stuck at ___. Please only look, do not change anything: tell me the full path of the current working folder, the result of git status and of gh auth status, and explain what looks wrong; give me a repair plan first, and do not act until I agree. No reset, no rebase, no force push, no git checkout -- to overwrite files, and no git clean at any point.<button class="copybtn prep-copy" type="button" data-copy="I am on step ___ of a Git workshop, my goal is ___, and I am stuck at ___. Please only look, do not change anything: tell me the full path of the current working folder, the result of git status and of gh auth status, and explain what looks wrong; give me a repair plan first, and do not act until I agree. No reset, no rebase, no force push, no git checkout -- to overwrite files, and no git clean at any point.">Copy</button></div>
+  <h3>Plain-language lookup</h3>
+  <p>You can hand these sentences straight to the AI. For anything that touches your files or your history, still read the plan and the diff first. The 12 situation-based everyday sentences are in <a href="#phrases">“06 How to talk to the agent”</a>; this one is task-based, and the two complement each other.</p>
+  <div class="tablewrap"><table id="referenceTable"><tr><th>What I want to do</th><th>How to say it</th></tr></table></div>
+</section>
+
+<!-- ═══════════ Quiz ═══════════ -->
+<section id="quiz">
+  <h2><span class="no">07</span>Check your understanding: concepts and supervision, not command recall</h2>
+  <p>Your score so far: <span id="quizScore" aria-live="polite">0 / 9</span></p>
+  <div id="quizBox"></div>
+</section>
+
+<!-- ═══════════ agenda ═══════════ -->
+<section id="agenda">
+  <h2><span class="no">08</span>The 2-hour schedule on the day</h2>
+  <div class="callout teal"><strong>Minimum finish line:</strong> complete P1–P9, including 2 commits, 2 pushes, and the show / restore / revert safety practice in P9; then go once all the way through “student opens a PR → advisor asks for changes → student revises → advisor approves and merges → both pull”. The second round with the roles swapped has to be finished too; when time is tight, make the change smaller rather than skipping the diff, the other person's approval or the merge.</div>
+  <p class="small">The minutes marked on each step are an estimate for one person working smoothly. The schedule below merges neighbouring steps and keeps 0:56–1:02 as shared slack, so the rows do not add up step by step. <strong>1:16–1:41 (C2–C5) is the only stretch of the day with no slack</strong> — that is where the two of you have to wait for each other, so if it runs over, borrow from 1:50–1:56.</p><p class="small">The last column is <strong>live feedback</strong> (participants use their phones to rate difficulty, ask questions and vote). If that service is not deployed, skip the whole column; the course runs exactly the same without it. The question numbers are the seven self-check questions on the participant page, and <strong>the first part tells you which part of the course they belong to</strong> (pre = before class, 1a/1b = stage one, 2a/2b = stage two, 3a/3b = wrap-up). All seven are visible the whole time, but the participant page greys out the ones that have gone past and marks them “no need to catch up”.</p>
+  <div class="tablewrap"><table>
+
+    <tr><th>Time</th><th>What the room is doing</th><th>Steps</th><th>What the instructor watches for</th><th>Live feedback (optional)</th></tr>
+    <tr><td>Before class (arrival)</td><td>The live-feedback QR code is on the projector; participants scan it and vote “pre”</td><td>—</td><td>Read the spread of “pre” votes to decide how much detail the opening needs</td><td>vote “pre”</td></tr>
+    <tr><td>0:00–0:08</td><td>Opening: version chaos, who does what between the AI and you</td><td>Roadmap</td><td>Cover the red lines first; do not teach command memorization</td><td>One reminder: keep the phone on the desk as a call bell, and press the difficulty button when you are stuck</td></tr>
+    <tr><td>0:08–0:14</td><td>Create an ordinary folder and open it in Antigravity</td><td>P1</td><td>Check everyone is on the same working path</td><td>1a stays open; update it as you change steps</td></tr>
+    <tr><td>0:14–0:22</td><td>Add Git and .gitignore, create and connect the GitHub repo</td><td>P2</td><td>Confirm there is nothing but fake data before anything goes public</td><td>1a stays open</td></tr>
+    <tr><td>0:22–0:31</td><td>Create notes.md, look at the status, first commit</td><td>P3–P4</td><td>Always look at the file and the diff before committing</td><td>1a stays open</td></tr>
+    <tr><td>0:31–0:40</td><td>First push; let the AI make a small edit and read the diff</td><td>P5–P6</td><td>Read the plan before the edit, check it line by line afterwards</td><td>1a stays open</td></tr>
+    <tr><td>0:40–0:47</td><td>Second commit and push</td><td>P7</td><td>Keep commit and push clearly apart</td><td>1a stays open</td></tr>
+    <tr><td>0:47–0:56</td><td>History, comparing versions, restore and revert</td><td>P8–P9</td><td>Stop and confirm at every step that changes something</td><td>1a stays open</td></tr>
+    <tr><td>0:56–1:02</td><td>Catch-up time for the individual stage</td><td>Minimum-line check</td><td>2 commits + 2 pushes</td><td>Vote 1b; check 1a for anyone still stuck near the start</td></tr>
+    <tr><td>1:02–1:06</td><td>Break, pair up, hand out role cards, exchange GitHub account names</td><td>Pairing</td><td>Write the accounts on the back of the role card; C1 needs them immediately</td><td>Vote 2a</td></tr>
+    <tr><td>1:06–1:16</td><td>C1: the advisor creates the pair repo; the student accepts the invitation and clones it (a second folder)</td><td>C1</td><td>The advisor keeps the folder just created instead of cloning again; both people need WRITE access; point the quest page at the new folder. <strong>Stuck for more than 5 minutes = put them straight onto the demo repo</strong></td><td>Watch 2a for anyone stuck “waiting for the invitation to be accepted”</td></tr>
+    <tr><td>1:16–1:41</td><td>Round one: the student opens a PR; the advisor asks for changes; after the revision, approve and merge; both pull</td><td>C2–C5</td><td>The other person looks at Files changed themselves; authors may not approve their own work</td><td>2b stays open</td></tr>
+    <tr><td>1:41–1:50</td><td>Swap roles and run one short round</td><td>C6</td><td>The diff and the other person's approval cannot be skipped</td><td>2b stays open</td></tr>
+    <tr><td>1:50–1:56</td><td>After the second merge, both do a final pull, look at the history, troubleshooting</td><td>C6 wrap-up + rescue</td><td>Both computers can see the latest content of main</td><td>2b stays open</td></tr>
+    <tr><td>1:56–2:00</td><td>Understanding check, recap, and what to take home</td><td>Wrap-up</td><td>Can state who does what between the AI and you, and the three red lines</td><td>Vote 3a, and 3b in the last minute</td></tr>
+  </table></div>
+  <h3>What the instructor prepares before class</h3>
+  <p>The pair repo is now <strong>built live by the participants in C1</strong> (the advisor's AI creates it in one sentence, and the student accepts the invitation themselves), so the instructor does not have to build it in advance. What you do need: <strong>role cards</strong> — the group number and the first-round role on the front, and two blank lines on the back, “my GitHub account / my partner's GitHub account”, for the pair to copy from each other; <strong>a way of pairing</strong> — we suggest pairing neighbours, and with an odd number, make the last group a three and let the third person be the student in the second round in C6; and <strong>one instructor demo repo</strong> — built beforehand to the C1 specification (<code>paper.md</code> containing “Method” and “Literature review”, and <code>.gitignore</code> excluding <code>WORKSHOP-RECEIPT*.txt</code>). If a pair is stuck on C1 for more than five minutes, <strong>add both of them as collaborators on the demo repo</strong> (have them accept the invitation themselves and confirm the permission is WRITE, otherwise the push in C2 will fail), let them clone that one and carry on with C2, and build their own afterwards.</p>
+  <p class="small">If one participant's AI tool or network gives out: have them follow along on the GitHub website instead (edit and commit in the browser; reviewing and merging a PR happens on the website anyway), and no concept is lost. Only a room-wide failure calls for the instructor to demonstrate on the projector.</p>
+</section>
+
+<!-- ═══════════ further reading ═══════════ -->
+<section id="refs">
+  <h2><span class="no">09</span>Further reading</h2>
+  <p>We put this list together after actually working through 18 git courses on the web (July 2026). Every entry says where to start reading, because you have an agent typing the commands for you and many chapters can simply be skipped.</p>
+  <div class="tablewrap"><table>
+    <tr><th>If this is you</th><th>What we recommend</th><th>Where to start</th></tr>
+    <tr><td rowspan="2">You would rather review the concepts in Chinese</td><td><a href="https://nulab.com/zh-tw/learn/software-development/git-tutorial/" target="_blank" rel="noopener">“Even a monkey can understand Git” (in Chinese)</a></td><td>Read part one up to “undoing changes” and stop; skip the whole hands-on part (it is written for people typing the commands themselves); go to the troubleshooting pages when you get stuck</td></tr>
+    <tr><td><a href="https://gitbook.tw/" target="_blank" rel="noopener">“Learn Git for yourself” (in Chinese)</a></td><td>Skip the three chapters on installing and on the terminal and start at “working area, staging area and repository”; treat the scenario chapters as a first-aid kit for when things break</td></tr>
+    <tr><td rowspan="2">You do empirical work in R or Stata</td><td><a href="https://github.com/uo-ec607/lectures" target="_blank" rel="noopener">EC 607 Lecture 2 (02-git inside the repo)</a></td><td>A syllabus written by an economist for economists; start at the section on the Git panel in RStudio</td></tr>
+    <tr><td><a href="https://swcarpentry.github.io/git-novice/" target="_blank" rel="noopener">Software Carpentry git-novice</a></td><td>Aimed at researchers; the Open Science / Licensing / Citation episodes are in no other course</td></tr>
+    <tr><td rowspan="2">You want something systematic, or a certificate</td><td><a href="https://learn.microsoft.com/zh-tw/training/paths/github-foundations/" target="_blank" rel="noopener">Microsoft Learn: GitHub Foundations (Traditional Chinese edition)</a></td><td>Free, and reading it through gives you the whole system; the certification exam costs money and is not offered in Chinese, so most people need not take it. Note that this edition uses Microsoft's own translations of the terms, which differ from the ones used here</td></tr>
+    <tr><td><a href="https://www.edx.org/learn/github/ibm-git-and-github-basics" target="_blank" rel="noopener">edX IBM: Git and GitHub Basics</a></td><td>Free to audit, browser-based labs all the way through, and you finish with a public repo</td></tr>
+    <tr><td rowspan="2">You want to go deeper into how it works</td><td><a href="https://missing.csail.mit.edu/2020/version-control/" target="_blank" rel="noopener">MIT Missing Semester: Version Control</a></td><td>Start at the “data model” section — get the mental model first and you never have to memorize commands</td></tr>
+    <tr><td><a href="https://learngitbranching.js.org/?locale=zh_TW" target="_blank" rel="noopener">Learn Git Branching (Traditional Chinese edition)</a></td><td>Do the four basic levels and stop; you will not need the later ones</td></tr>
+  </table></div>
+  <div class="card">
+    <p><strong>Background reading with an economics slant</strong>: <a href="https://michaelstepner.com/blog/git-vs-dropbox" target="_blank" rel="noopener">Michael Stepner, <em>git vs. Dropbox</em></a> (the best pre-class reading) | <a href="https://www.frankpinter.com/notes/git-for-economists-presentation.pdf" target="_blank" rel="noopener">Frank Pinter, <em>Git: A Guide for Economists</em></a> | <a href="https://aeturrell.github.io/coding-for-economists/" target="_blank" rel="noopener">Arthur Turrell, <em>Coding for Economists</em></a> | <a href="https://www.aeaweb.org/journals/data" target="_blank" rel="noopener">AEA Data &amp; Code Policy</a> and the <a href="https://aeadataeditor.github.io/aea-de-guidance/" target="_blank" rel="noopener">AEA Data Editor guidance</a>.</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">You can leave these for later</h3>
+    <p>stash, rebase, amend, fork workflows, GitHub Actions, git internals — courses written for researchers agree on skipping all of them at the beginner stage, and we follow suit. The reason in one line: when you need them, your agent knows how, and you only have to be able to read its plan. This “you can leave it” list matters as much as the “you should learn it” list before it — it is what makes a two-hour scope hold together.</p>
+  </div>
+</section>
+
+<!-- ═══════════ honest limitations ═══════════ -->
+<section id="limits">
+  <h2><span class="no">10</span>Three honest limitations (we are not hiding them)</h2>
+  <div class="card">
+    <p><strong>1. Word and Excel do not show line-by-line differences in git.</strong> They are not plain-text files, so a diff only says “the file changed”, never which line changed. git is at full power with plain-text files (.md, .R, .do, .tex, .csv). You can still keep Word files in a repository for backup and syncing; it is the “track changes” experience that stays Word's own job.</p>
+    <p><strong>2. GitHub Free allows branch protection rules on public repos, while what is available on private repos depends on the account and the organization plan.</strong> This course practises review in a public repo full of fake data. For real research data, judge first whether it can be public; never make sensitive data public just to unlock a feature. Please check GitHub's official documentation and the accounts in the room again before you teach it.</p>
+    <p><strong>3. Agents make mistakes, which is exactly why the concepts matter.</strong> It may edit the wrong file, write the wrong explanation, or start working on a branch you did not want touched. You do not have to memorize commands, but you do have to be able to read its plan and its diff — the concept map earlier is what makes you its thesis advisor rather than its rubber stamp.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Using Git with AI — Version Control Without Memorizing Commands | 2026-08-23 v5.6, the full two-stage edition (the material and the quest share one flow; the pair repo is built in class)<br>
+  Tool prices and plans change; please check the official pages for the current situation before you teach.<br>
+  © 2026 Wen-Sheng (Ted) Chen (Center for General Education, National Dong Hwa University) × the AI collaboration team — Wailan (洄瀾, team lead, Claude), Liwu (立霧, Codex), Xiuguluan (秀姑巒, Gemini), Muguaxi (木瓜溪, OpenCode), Meilunxi (美崙溪, Grok) | This material is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> — you are welcome to use it for teaching and for self-study; share any adaptation on the same terms, and please do not use it commercially.<br>
+  English edition of the v5.6 material. If anything differs, the Chinese original governs. License: CC BY-NC-SA 4.0.
+</footer>
+
+<!-- Step data is shared with the Chinese edition. Swap this one line for an English data file when one exists. -->
+<script src="workflow-data.js"></script>
+<script src="workflow-data.en.js"></script>
+<script>
+
+/* ───────── shared 15-step manual ───────── */
+const FLOW=window.WORKSHOP_FLOW;
+const htmlSafe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sample={tag:'lin',pairRepo:'advisor-account/thesis-pair-03',partner:'chen',branch:'revise-method-lin',receipt:'WORKSHOP-RECEIPT-lin.txt'};
+const sampleText=s=>Object.entries(sample).reduce((out,[k,v])=>out.replaceAll('{'+k+'}',v),s);
+const termCards=terms=>`<div class="term-grid">${terms.map(item=>`<div class="term-card"><strong>${htmlSafe(item.term)}</strong><p>${htmlSafe(item.meaning)}</p></div>`).join('')}</div>`;
+const situationTable=items=>`<div class="tablewrap situation-table"><table><thead><tr><th>Where you are now</th><th>What you want</th><th>How to use it</th><th>History</th></tr></thead><tbody>${items.map(item=>`<tr><td>${htmlSafe(item.state)}</td><td>${htmlSafe(item.goal)}</td><td><code>${htmlSafe(item.method)}</code></td><td>${htmlSafe(item.history)}</td></tr>`).join('')}</tbody></table></div>`;
+const resetGuideHTML=guide=>`<details class="reset-deep-dive">
+  <summary>${htmlSafe(guide.title)}</summary>
+  <div class="reset-body">
+    <div class="callout warn"><strong>The short version:</strong> ${htmlSafe(guide.intro)}</div>
+    <h4>First, Git's three layers and where you are in the history</h4>
+    ${termCards(guide.layers)}
+    <h4>How to read this line from the documentation</h4>
+    <div class="syntax-line"><code>${htmlSafe(guide.syntax)}</code></div>
+    <p class="reset-note">${htmlSafe(guide.syntaxNote)}</p>
+    ${termCards(guide.symbols)}
+    <h4>When you point at a different commit, what does each of the three modes touch?</h4>
+    <div class="tablewrap"><table><thead><tr><th>Mode</th><th>Current branch / HEAD</th><th>Staging area</th><th>Working area</th><th>Main risk</th></tr></thead><tbody>${guide.modes.map(item=>`<tr><td><code>${htmlSafe(item.mode)}</code></td><td>${htmlSafe(item.head)}</td><td>${htmlSafe(item.index)}</td><td>${htmlSafe(item.work)}</td><td>${htmlSafe(item.risk)}</td></tr>`).join('')}</tbody></table></div>
+    <ul>${guide.notes.map(note=>`<li>${htmlSafe(note)}</li>`).join('')}</ul>
+    <h4>Two examples</h4>
+    <div class="grid">${guide.examples.map(item=>`<div class="box"><h4><code>${htmlSafe(item.command)}</code></h4><p>${htmlSafe(item.meaning)}</p></div>`).join('')}</div>
+    <div class="callout warn"><strong>Local and remote are two different risks:</strong> ${htmlSafe(guide.warning)}</div>
+    <h4>Six things to ask when an AI proposes a reset</h4>
+    <ol>${guide.questions.map(item=>`<li>${htmlSafe(item)}</li>`).join('')}</ol>
+    <p class="reset-note">Official references: <a href="https://git-scm.com/docs/git-reset" target="_blank" rel="noopener">git reset</a>, <a href="https://git-scm.com/docs/git-restore" target="_blank" rel="noopener">git restore</a>, <a href="https://git-scm.com/docs/git-revert" target="_blank" rel="noopener">git revert</a>, <a href="https://git-scm.com/docs/gitrevisions" target="_blank" rel="noopener">Git revisions</a>.</p>
+  </div>
+</details>`;
+const guideBox=document.getElementById('flowGuide');
+if(FLOW&&guideBox){
+  guideBox.innerHTML=FLOW.phases.map(phase=>{
+    const stepsHTML=FLOW.phaseSteps(phase.id).map(step=>{
+      const situations=step.situations?`<h4>First, work out which situation you are in</h4>${situationTable(step.situations)}`:'';
+      const reset=step.id==='P9'?resetGuideHTML(FLOW.resetGuide):'';
+      return `<details class="guide-step" id="guide-${step.id}" ${step.id==='P1'?'open':''}>
+        <summary><span>${step.id} | ${htmlSafe(step.title)}</span><span class="step-meta">about ${step.minutes} min</span></summary>
+        <div class="inside">
+          <p class="why"><strong>Why you do it:</strong> ${htmlSafe(step.why)}</p>
+          <div class="concept-box"><h4>Understand this first</h4><p>${htmlSafe(step.concept)}</p></div>
+          <div class="term-section"><h4>Cheat sheet for this step</h4>${termCards(step.terms)}</div>
+          ${situations}
+          <div class="grid">
+            <div class="box"><h4>What you have to judge</h4><p>${htmlSafe(sampleText(step.human))}</p></div>
+            <div class="box"><h4>Evidence it worked</h4><p>${htmlSafe(sampleText(step.dashboard))}</p></div>
+          </div>
+          ${step.figure?`<figure class="dia"><img src="${step.figure.src}" alt="${htmlSafe(step.figure.alt)}" loading="lazy"><figcaption>${step.figure.caption}</figcaption></figure>`:''}
+          ${reset}
+          <details class="practice-details">
+            <summary>Practice reference | the full text to give the AI, the plan, and the rescue</summary>
+            <div class="practice-body">
+              <div class="prompt"><strong>If you need to run it again, you can say this to the AI</strong><br>${htmlSafe(sampleText(step.prompt))}<br><button class="copybtn flow-copy" type="button" data-flow-copy="${htmlSafe(sampleText(step.prompt))}">Copy the whole thing</button></div>
+              <div class="grid">
+                <div class="box"><h4>The plan the AI should show before it acts</h4><ol>${step.plan.map(x=>`<li>${htmlSafe(sampleText(x))}</li>`).join('')}</ol></div>
+                <div class="box"><h4>If you get stuck, start here</h4><p>${htmlSafe(sampleText(step.rescue))}</p></div>
+              </div>
+              <details class="command-details"><summary>Commands it may use behind the scenes (no need to memorize them)</summary><pre>${htmlSafe(sampleText(step.behind))}</pre></details>
+            </div>
+          </details>
+          <p><a href="quest.en.html#task-${step.id}">Do this step on the quest page</a></p>
+        </div>
+      </details>`;
+    }).join('');
+    return `<div class="guide-phase"><h3>${htmlSafe(phase.label)}</h3><p>${htmlSafe(phase.promise)} | the core steps take about ${phase.minutes} min</p></div>${stepsHTML}`;
+  }).join('');
+  guideBox.querySelectorAll('.flow-copy').forEach(b=>b.onclick=()=>navigator.clipboard.writeText(b.dataset.flowCopy).then(()=>{b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy',1300)}));
+}
+function openLinkedGuide(){
+  if(!location.hash)return;
+  const target=document.querySelector(location.hash);
+  if(!target?.classList.contains('guide-step'))return;
+  target.open=true;
+  requestAnimationFrame(()=>target.scrollIntoView({block:'start'}));
+}
+openLinkedGuide();
+window.addEventListener('hashchange',openLinkedGuide);
+const troubleBox=document.getElementById('troubleGrid');if(FLOW&&troubleBox)troubleBox.innerHTML=FLOW.troubleshooting.map(([q,a])=>`<article class="trouble"><h3>${htmlSafe(q)}</h3><p>${htmlSafe(a)}</p></article>`).join('');
+const refTable=document.getElementById('referenceTable');if(FLOW&&refTable)refTable.insertAdjacentHTML('beforeend',FLOW.reference.map(([a,b])=>`<tr><td>${htmlSafe(a)}</td><td>${htmlSafe(b)} <button class="copybtn flow-copy" type="button" data-flow-copy="${htmlSafe(b)}">Copy</button></td></tr>`).join(''));if(refTable)refTable.querySelectorAll('.flow-copy').forEach(b=>b.onclick=()=>navigator.clipboard.writeText(b.dataset.flowCopy).then(()=>{b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy',1300)}));
+
+/* ───────── theme switch ───────── */
+const themeBtn=document.getElementById('themeToggle');
+const savedTheme=localStorage.getItem('gw-theme');
+if(savedTheme)document.documentElement.dataset.theme=savedTheme;
+themeBtn.onclick=()=>{
+  const cur=document.documentElement.dataset.theme||
+    (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=next;
+  localStorage.setItem('gw-theme',next);
+};
+
+/* ───────── setup checklist (localStorage) ───────── */
+const checks=[...document.querySelectorAll('.check')];
+const prog=document.getElementById('checkProgress');
+function refreshChecks(){
+  let done=0;
+  checks.forEach(c=>{
+    const on=localStorage.getItem('gw-'+c.dataset.k)==='1';
+    c.querySelector('input').checked=on;
+    c.classList.toggle('checked',on);
+    if(on)done++;
+  });
+  prog.textContent=done+' / '+checks.length+(done===checks.length?'  🎉 Setup complete!':'');
+}
+checks.forEach(c=>{
+  c.querySelector('input').addEventListener('change',e=>{
+    localStorage.setItem('gw-'+c.dataset.k,e.target.checked?'1':'0');
+    refreshChecks();
+  });
+});
+refreshChecks();
+document.getElementById('clearProg').onclick=()=>{
+  checks.forEach(c=>localStorage.removeItem('gw-'+c.dataset.k));
+  refreshChecks();
+};
+document.querySelectorAll('.prep-copy').forEach(b=>b.onclick=()=>navigator.clipboard.writeText(b.dataset.copy).then(()=>{
+  b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy',1500);
+}).catch(()=>{b.textContent='Please select it by hand'}));
+
+/* ───────── expand all ───────── */
+const expandBtn=document.getElementById('expandBtn');
+let allOpen=false;
+expandBtn.onclick=()=>{
+  allOpen=!allOpen;
+  document.querySelectorAll('details').forEach(d=>d.open=allOpen);
+  expandBtn.textContent=allOpen?'⊟ Collapse all':'⊞ Expand all';
+};
+
+/* ───────── needs scorecard ───────── */
+const SCORE=[
+["Go back to any version in the history, not just the last few","✗","△","✓","Word only has the current round of tracked changes; Dropbox keeps versions for a limited number of days, and only file by file"],
+["Every version carries one line saying why it changed","✗","✗","✓","Dropbox only gives you Version 18, 19, 20…"],
+["Compare any two versions line by line","△","✗","✓","Track changes only covers the current round; to compare any two versions you first have to keep two files and then use “Compare documents” — and keeping two files is exactly where final_v2 hell starts"],
+["Try another direction in parallel, drop it painlessly if it fails, and never touch the real manuscript","✗","✗","✓","That is what a branch is"],
+["When two people change the same line, point the conflict out clearly and let a person decide","△","✗","✓","Word makes you merge documents by hand, which hurts; Dropbox quietly leaves two conflicted copies and says nothing"]
+];
+const sc=document.getElementById('scorecard');
+let revealed=0;
+SCORE.forEach((r,ri)=>{
+  const row=document.createElement('div');row.className='row';
+  row.innerHTML=`<div>${r[0]}<br><span class="small" style="display:none">${r[4]}</span></div>
+    <div class="cell"><button class="reveal" type="button" aria-label="Reveal this row">?</button></div>
+    <div class="cell pend">?</div><div class="cell pend">?</div>`;
+  const doReveal=function(){
+    if(row.dataset.done)return;
+    row.dataset.done='1';
+    const cells=row.querySelectorAll('.cell');
+    const sym=(s)=>s==='✓'?`<span style="color:var(--ok);font-weight:800">✓</span>`
+      :s==='✗'?`<span style="color:var(--bad);font-weight:800">✗</span>`
+      :`<span style="color:var(--gold);font-weight:800">△</span>`;
+    cells[0].innerHTML=sym(r[1]);cells[1].innerHTML=sym(r[2]);cells[2].innerHTML=sym(r[3]);
+    cells[1].classList.remove('pend');cells[2].classList.remove('pend');
+    row.querySelector('.small').style.display='inline';
+    revealed++;
+    if(revealed===SCORE.length){
+      document.getElementById('scoreSummary').innerHTML=
+        'All five needs are revealed: Word track changes <strong>0 ✓</strong>, Dropbox <strong>0 ✓</strong>, git <strong>5 ✓</strong> — and you pressed the buttons yourself. (△ = can just about manage part of it)';
+    }
+  };
+  row.querySelector('.reveal').onclick=e=>{e.stopPropagation();doReveal();};
+  row.style.cursor='pointer';
+  row.onclick=doReveal;
+  sc.appendChild(row);
+});
+
+/* ───────── concept cards ───────── */
+const CONCEPTS=[
+["Repository","repository","A folder plus the complete record of every change made to it, all kept in one place.","Every version of one paper lives in the same folder, and you never have to name anything final_v2_really_final.docx again.","The first thing an agent does when it picks up a project is check whether the folder has a repository; if it does not, it offers to create one."],
+["Commit","commit","Package the current changes into one save point, with a time and one line of explanation attached.","You finish revising a section and write in the margin “rewrote the literature review because a reviewer asked for it”, and you can turn back to it any time. It is at its best when you answer reviewers: <strong>one comment = one commit</strong>, so what each comment changed is obvious.","The agent commits once for each chunk of work and writes its own message; reading those messages tells you what it did."],
+["Difference","diff","Compare two versions line by line and list exactly which lines were added and which were removed.","Word's track changes, except that you can compare any two versions, not only “the last one against this one”.","The agent finishes an edit and you read the diff before you approve. This is the single most important screen for supervising an agent."],
+["History","log","Every save point on one timeline, newest first: who, when, and what changed.","The chronicle of a paper from first draft to publication, right down to why each change was made.","You ask “what did we actually change last week?”, and the agent answers by reading the log."],
+["Restore a working file","restore","Write the contents of a named source back into the working area or the staging area. It does not move the current branch and it does not add a commit by itself. It can overwrite changes you have not committed, so always look at the diff before you run it.","You made a mess of section three today and have not committed anything: check which lines you would lose, then throw this round of edits away. If the mistake is already committed and shared, use revert instead so the undo stays on the record.","When the agent proposes a restore, ask it to state the source, the target file and what will be lost; only let it run when the evidence matches."],
+["Remote, push and pull","remote / push / pull","The remote is the same repository kept on GitHub; push sends your save points up to it, pull brings other people's new work down.","Keeping the copy in your office in step with the copy in the cloud: sending is push, receiving is pull.","The agent pulls before it starts so it has your co-author's latest version, and asks “shall I push this to GitHub?” when it is done."],
+["Clone","clone","Take a copy of an entire repository on GitHub, all of its history included, onto your own computer.","Downloading a journal's replication package to rerun it yourself; or a new co-author joining and taking the manuscript with its whole revision history in one go.","You paste a GitHub address and say “have a look at this for me”, and the agent's first move is to clone it."],
+["Branch","branch","Fork a parallel line off the current version to try something, leaving the original untouched; merge it back if it works.","Journal A rejects the paper and you want to rework it heavily for journal B. Open a new branch for the B version and leave the A version exactly as it was.","The agent opens a branch before any risky edit; if it fails, the whole line is thrown away and the main line is untouched."],
+["Merge","merge","Put the work done on a branch into the main line. Sometimes it just fast-forwards the main line to the new position; sometimes it adds a merge record with two parent commits. When both sides changed the same line, Git stops and asks a person to decide, which is called a conflict.","Two co-authors each revise a copy and the two are combined into one final version; wherever both of them touched the same sentence, they have to talk it through.","The agent can run the merge for you and will list the conflicts, but which sentence stays is your call."],
+["Pull Request","PR","The formal invitation that says “I am done, please look at it before you merge it in”, with the full diff and a discussion thread attached.","A co-author sends a revision and says “merge it into the master copy once you are happy with it”, and review comments can be written right next to the matching line.","The agent can open a PR for you, and can summarize what somebody else's PR changed; the person who presses approve is you."],
+[".gitignore","the exclusion list","Names which not-yet-tracked files should normally stay out of version control. It is not a secrecy tool, and a file that is already tracked does not disappear just because you add it to the list.","Before you hand over a replication package, exclude temporary files and large files that can be regenerated; personal data and passwords should never rely on this list alone.","An agent usually drafts a .gitignore when it sets up a new project; you still confirm file by file what goes public, and check whether the sensitive material should be in the project at all."]
+];
+document.getElementById('conceptCards').innerHTML=CONCEPTS.map((c,i)=>`
+<details class="concept">
+  <summary>${i+1} | ${c[0]} <span class="tagline">${c[1]}</span></summary>
+  <div class="body">
+    <span class="lbl">In plain words</span><br>${c[2]}<br>
+    <span class="lbl">In everyday paper writing</span><br>${c[3]}<br>
+    <span class="lbl">When an agent uses it</span><br>${c[4]}
+  </div>
+</details>`).join('');
+
+/* ───────── how to talk to the agent (the 12 sentences live in FLOW.phrases in workflow-data.js) ───────── */
+const pt=document.getElementById('phraseTable');
+if(FLOW&&pt)FLOW.phrases.forEach(p=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>“${p[0]}”<button class="copybtn" type="button">Copy</button></td><td>${p[1]}</td><td>${p[2]}</td>`;
+  tr.querySelector('.copybtn').onclick=function(){
+    navigator.clipboard.writeText(p[0]).then(()=>{
+      this.textContent='Copied ✓';setTimeout(()=>this.textContent='Copy',1500);
+    }).catch(()=>{this.textContent='Please select it by hand'});
+  };
+  pt.appendChild(tr);
+});
+
+/* ───────── quiz ───────── */
+const QUIZ=[
+{q:"The agent says: “the remote and your local history have diverged, so I am going to force push and overwrite the remote.” What do you do?",
+ o:["Let it go ahead — the agent knows git better than you do","Stop it first, and ask what is on the remote that would be overwritten, and whether there is a way that does not overwrite anything","Delete the whole project and start again"],a:1,
+ e:"A force push wipes out history on the remote that your machine does not have. It is a red-line verb, so before you let it run you must know exactly what would be lost."},
+{q:"The agent reports “commit done”, but you cannot see the new version on the GitHub website. What is the most likely reason?",
+ o:["GitHub is down","The commit is only recorded in the repository on your computer; it has not been pushed yet","The file was not saved, so the commit failed"],a:1,
+ e:"A commit lives on your machine and a push sends it to the cloud — your local repository and the remote (GitHub) are two histories that you have to line up on purpose."},
+{q:"The agent proposes running git reset --hard HEAD~1. What should you check before you let it?",
+ o:["Whether the network is stable","Whether the target really is the first parent commit of HEAD, which staged or uncommitted changes would be overwritten, and whether this history has already been pushed","Whether there is enough disk space"],a:1,
+ e:"HEAD~1 is the first parent commit of HEAD. This line moves the current branch to that commit and lines the staging area and the tracked working files up with it, so uncommitted changes are overwritten. reset itself does not change GitHub, but shared history that is then force-pushed does get rewritten, which is why this course does not let it run."},
+{q:"The agent reports: “merge conflict — the same paragraph of notes.md was changed on both sides.” What is the best next step?",
+ o:["Tell it to just pick a side","Ask it to read both versions out, and decide yourself which content to keep","Give up on the merge and let everyone keep their own copy"],a:1,
+ e:"A conflict needs a person to choose the content; git only lays both sides out. The machine runs the process, the human makes the judgment."},
+{q:"You want to try a new model specification but you are afraid of breaking the version that currently runs. Which git concept fits?",
+ o:["Open a branch, try it there, and merge it back into the main line if it works","Copy the whole folder and rename it _v2","Edit the main line directly — you can always go back, you have commits"],a:0,
+ e:"A branch is exactly that parallel draft line, and the main line does not move; copying a folder and renaming it is the folk remedy git was built to replace."},
+{q:"Which analogy is closest to a pull request (PR)?",
+ o:["Submitting to a journal: you send a revision with an explanation, wait for comments, and it is only merged in after the revisions","Uploading a file to a cloud drive","Backing up to a USB stick"],a:0,
+ e:"A PR is a request to “review this and then merge it”, and the explanation, the comments and the revisions are all on the record — the same shape as peer review."},
+{q:"You casually ask the agent to commit a grade file along with everything else and push it to a public repo, and it does. Where is the problem?",
+ o:["The agent is too slow","A supervision failure: personal data does not belong in a public repository, and history that has been pushed is hard to take back even if you delete the file","There is no problem — if the agent did it, it must have been fine"],a:1,
+ e:"An agent obeying you does not make the instruction right; the personal-data red line is one you have to hold."},
+{q:"The AI has mangled a passage and you have not committed yet, and you want it back the way it was. Which of the three ways of “going back” from P9 do you use?",
+ o:["restore — overwrite the file with the content of the last commit","revert — add a new commit that does the opposite","show — just looking at the old version is enough"],a:0,
+ e:"For a slip you have not committed, restore covers it back over (strictly: restore uses the staging area by default; nothing has touched the staging area here, so the effect is a return to the last commit). Use revert for a mistake that is already committed and pushed, so the undo is on the record; show only looks, and changes no file. Choosing between the three is exactly the judgment P9 is about."},
+{q:"Why does the classroom demonstration use notes.md rather than a Word file?",
+ o:["git cannot store Word files","git can store Word files, but it cannot show line-by-line differences in them; only plain text shows who changed which line","Word files are too big to fit"],a:1,
+ e:"git can store any file, but the line-by-line comparison in a diff only means something for plain text — which is also one of the honest limitations to know before you use it for real."}
+];
+let score=0;const answered=new Set();
+const qb=document.getElementById('quizBox');
+QUIZ.forEach((q,qi)=>{
+  const d=document.createElement('div');d.className='q';
+  d.innerHTML=`<div class="stem">Q${qi+1} | ${q.q}</div>
+    <div class="opts">${q.o.map((o,oi)=>`<button type="button" data-oi="${oi}">(${'ABC'[oi]}) ${o}</button>`).join('')}</div>
+    <div class="expl">💡 ${q.e}</div>`;
+  d.querySelectorAll('.opts button').forEach(b=>{
+    b.onclick=()=>{
+      if(answered.has(qi))return;
+      answered.add(qi);d.classList.add('answered');
+      const pick=+b.dataset.oi;
+      d.querySelectorAll('.opts button').forEach((bb,oi)=>{
+        if(oi===q.a){bb.classList.add('right');bb.textContent='✓ Correct answer | '+bb.textContent;}
+        else if(oi===pick){bb.classList.add('wrong');bb.textContent='✗ Your choice | '+bb.textContent;}
+      });
+      if(pick===q.a)score++;
+      document.getElementById('quizScore').textContent=score+' / '+QUIZ.length+(answered.size===QUIZ.length?(score>=7?'  Nicely done — you can supervise an agent now':'  Go through the concept cards once more, especially the red lines'):'');
+    };
+  });
+  qb.appendChild(d);
+});
+
+/* ───────── tabbed layout and routing ───────── */
+const TAB_GROUPS=[['roadmap','why'],['prep'],['concepts'],['guide'],['conflict','gates'],['safety'],['phrases','troubleshoot','quiz','refs','limits'],['agenda']];
+const navLinks=[...document.querySelectorAll('#topnav a')];
+const fullBtn=document.getElementById('fullBtn');
+let tabbed=localStorage.getItem('gw-tabbed')!=='0';
+function route(){
+  if(!tabbed)return;
+  const h=location.hash.replace('#','');
+  const el=h?document.getElementById(h):null;
+  const sec=el?el.closest('main > section'):null;
+  const secId=sec?sec.id:(el?h:'roadmap');
+  const g=TAB_GROUPS.find(x=>x.includes(secId))||TAB_GROUPS[0];
+  document.querySelectorAll('main > section').forEach(s=>s.classList.toggle('active',g.includes(s.id)));
+  navLinks.forEach(a=>a.classList.toggle('cur',a.getAttribute('href')==='#'+g[0]));
+  if(el&&h!==g[0])setTimeout(()=>el.scrollIntoView({block:'start'}),80);
+  else window.scrollTo({top:0});
+}
+function applyMode(){
+  document.body.classList.toggle('tabbed',tabbed);
+  fullBtn.textContent=tabbed?'🗒 One page':'🗂 Tabs';
+  fullBtn.title=tabbed?'Switch to one page: every section laid out, easy to print and to search with Ctrl+F':'Switch back to tabs: one section at a time, easier to read';
+  route();
+}
+fullBtn.onclick=()=>{tabbed=!tabbed;localStorage.setItem('gw-tabbed',tabbed?'1':'0');applyMode();};
+window.addEventListener('hashchange',route);
+applyMode();
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>講師救援雷達｜Git × AI 工作坊</title>
+<title>講師救援雷達 Instructor Rescue Radar｜Git × AI 工作坊 Workshop</title>
 <style>
 :root{--bg:#f4ecd8;--card:#fffaf0;--ink:#1d2422;--soft:#615c51;--line:#ded3b8;--teal:#0e7c7b;--deep:#0a5958;--gold:#d9a441;--ok:#2d7c45;--warn:#a46b0b;--bad:#b33c28}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}header{background:linear-gradient(145deg,#0e7c7b,#083f47);color:#fff;padding:26px 20px}header>div,main{max-width:1120px;margin:auto}h1{margin:0}.sub{opacity:.9;margin:4px 0 0}.toolbar,.card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px;margin:14px 0;box-shadow:0 2px 10px #00000010}.toolbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.toolbar label{font-size:.8rem;color:var(--soft)}input,textarea,button,select{font:inherit}input,textarea,select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}textarea{min-height:82px;resize:vertical}.btn{background:var(--teal);color:#fff;border:0;border-radius:9px;padding:8px 14px;cursor:pointer}main{padding:0 20px 50px}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.metric{text-align:center;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px}.metric strong{display:block;font-size:1.55rem;color:var(--deep)}h2{color:var(--deep);margin-top:35px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.repo{border-left:7px solid var(--line)}.repo.ok{border-left-color:var(--ok)}.repo.warn{border-left-color:var(--warn)}.repo.bad{border-left-color:var(--bad)}.head{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.head h3{margin:0}.pill{border-radius:999px;padding:2px 9px;font-size:.75rem;background:#0e7c7b18}.state{margin-left:auto;font-weight:800}.row{display:flex;flex-wrap:wrap;gap:8px;margin:9px 0}.row span{background:var(--bg);border-radius:8px;padding:4px 8px}.alerts .card{border-left:6px solid var(--bad)}.muted{color:var(--soft);font-size:.84rem}.phase-note{border-left:5px solid var(--gold)}a{color:var(--teal)}footer{text-align:center;padding:20px;color:var(--soft);font-size:.82rem;border-top:1px solid var(--line)}@media(max-width:800px){.toolbar,.grid{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}
 :root{--action:#0e7c7b;--action-ink:#fff}
@@ -15,53 +15,63 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 body.privacy .repo h3,body.privacy .repo .pill,body.privacy .alerts strong,body.privacy #personal,body.privacy #pairs{filter:blur(7px);user-select:none}
 body.privacy .maskhint{display:block}.maskhint{display:none;color:var(--warn);font-weight:700}
+/* 中英並列：.en＝行內英文小字；.enb＝英文獨立成行 */
+.en{font-weight:400;font-size:.86em;opacity:.82}
+.enb{display:block;margin-top:3px}
+h1 .en{font-size:.5em;opacity:.92;letter-spacing:.02em}
+.sub .en{font-size:.94em}
+h2 .en,h3 .en,summary .en{font-size:.66em}
+.metric>span{display:block}.metric .en{font-size:.85em}
+label>.en{font-size:.94em}
+.btn .en{opacity:.92}
+.row .en{background:none;padding:0;border-radius:0}
 </style>
 <script>(()=>{const t=localStorage.getItem('gw-theme');if(t)document.documentElement.dataset.theme=t})()</script>
 </head>
 <body>
-<header><div><h1>講師救援雷達</h1><p class="sub">看誰卡在個人版本循環、哪一組 PR 正等著補改或核准。只讀 GitHub 公開資料，不替學員操作。</p></div></header>
+<header><div><h1>講師救援雷達<span class="en enb">Instructor Rescue Radar</span></h1><p class="sub">看誰卡在個人版本循環、哪一組 PR 正等著補改或核准。只讀 GitHub 公開資料，不替學員操作。<span class="en enb">See who is stuck in the solo version loop, and whose PR is waiting for changes or approval. It reads public GitHub data only — it never acts for the participants.</span></p></div></header>
 <main>
   <section class="toolbar">
-    <div><label>GitHub token（建議填，只存在本分頁）<input id="token" type="password" autocomplete="off" placeholder="少量 repo 可留空"></label><p class="muted">無 token 時 GitHub API 每個 IP 每小時只有 60 次，只適合少量 repo 手動讀一次；自動更新必須先填 token。請使用唯讀、最小權限 token，且不要放進教材、repo 或截圖。</p><details class="muted"><summary>課前怎麼準備安全的 token</summary><p>依 <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener">GitHub 官方步驟</a>建立 fine-grained token；只選課堂練習 repo，Repository permissions 的 Contents、Metadata 與 Pull requests 都只給 Read-only，並設定短效期。這個雷達不需要任何寫入權限。</p></details></div>
-    <div><label>個人練習 repo（一行：桌牌,owner/repo）<textarea id="personal" placeholder="lin,lin-account/research-practice-project"></textarea></label></div>
-    <div><label>配對 repo（一行：組別,owner/repo——C1 各組現場自建、回報後在這裡輸入）<textarea id="pairs" placeholder="第3組,advisor-account/thesis-pair-03"></textarea></label></div>
-    <div><label>目前階段<select id="phase"><option value="personal">第一階段｜自己的研究專案</option><option value="collab">第二階段｜研究生 × 指導教授</option></select></label></div>
-    <div><label>自動更新<select id="interval"><option value="0">關閉</option><option value="60">每 60 秒</option><option value="300">每 5 分鐘</option></select></label></div>
-    <div style="align-self:end"><button class="btn" id="load" type="button">立即讀取目前階段</button><p id="note" class="muted" role="status" aria-live="polite"></p></div>
-    <div style="align-self:end"><button class="btn" id="mask" type="button" aria-pressed="false">遮住名字</button> <button class="btn" id="toPhone" type="button">傳到手機</button><p class="maskhint">名字已遮住——現在投影出去不會點到名。</p><p class="muted">投影機如果是鏡像模式，切過來之前先按「遮住名字」（快捷鍵 <kbd>H</kbd>），紅綠燈與人數照看，只有桌牌與 repo 名會糊掉。想乾脆用手機看雷達，就按「傳到手機」把設定帶過去——<strong>token 不會跟著走</strong>。</p><div id="phoneBox" hidden></div></div>
+    <div><label>GitHub token（建議填，只存在本分頁）<span class="en enb">GitHub token — recommended; kept in this browser tab only</span><input id="token" type="password" autocomplete="off" placeholder="少量 repo 可留空 · OK to leave blank for a few repos"></label><p class="muted">無 token 時 GitHub API 每個 IP 每小時只有 60 次，只適合少量 repo 手動讀一次；自動更新必須先填 token。請使用唯讀、最小權限 token，且不要放進教材、repo 或截圖。<span class="en enb">Without a token the GitHub API allows only 60 calls per hour per IP — enough for one manual read of a few repos. Auto-refresh needs a token. Use a read-only, least-privilege token, and keep it out of handouts, repos and screenshots.</span></p><details class="muted"><summary>課前怎麼準備安全的 token <span class="en">How to prepare a safe token before class</span></summary><p>依 <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener">GitHub 官方步驟</a>建立 fine-grained token；只選課堂練習 repo，Repository permissions 的 Contents、Metadata 與 Pull requests 都只給 Read-only，並設定短效期。這個雷達不需要任何寫入權限。<span class="en enb">Follow the official GitHub steps to create a fine-grained token. Pick only the classroom practice repos, set Contents, Metadata and Pull requests to Read-only under Repository permissions, and give it a short expiry. This radar needs no write access at all.</span></p></details></div>
+    <div><label>個人練習 repo（一行：桌牌,owner/repo）<span class="en enb">Solo practice repos — one per line: desk label,owner/repo</span><textarea id="personal" placeholder="lin,lin-account/research-practice-project"></textarea></label></div>
+    <div><label>配對 repo（一行：組別,owner/repo——C1 各組現場自建、回報後在這裡輸入）<span class="en enb">Pair repos — one per line: group,owner/repo. Each pair creates theirs live in C1; type them in once they report back.</span><textarea id="pairs" placeholder="第3組,advisor-account/thesis-pair-03"></textarea></label></div>
+    <div><label>目前階段 <span class="en">Current phase</span><select id="phase"><option value="personal">第一階段｜自己的研究專案 · Stage 1 — Your own research project</option><option value="collab">第二階段｜研究生 × 指導教授 · Stage 2 — Student × Advisor</option></select></label></div>
+    <div><label>自動更新 <span class="en">Auto-refresh</span><select id="interval"><option value="0">關閉 · Off</option><option value="60">每 60 秒 · Every 60 seconds</option><option value="300">每 5 分鐘 · Every 5 minutes</option></select></label></div>
+    <div style="align-self:end"><button class="btn" id="load" type="button">立即讀取目前階段 <span class="en">Load this phase now</span></button><p id="note" class="muted" role="status" aria-live="polite"></p></div>
+    <div style="align-self:end"><button class="btn" id="mask" type="button" aria-pressed="false">遮住名字 Mask names</button> <button class="btn" id="toPhone" type="button">傳到手機 <span class="en">Send to phone</span></button><p class="maskhint">名字已遮住——現在投影出去不會點到名。<span class="en enb">Names are masked — projecting now will not single anyone out.</span></p><p class="muted">投影機如果是鏡像模式，切過來之前先按「遮住名字」（快捷鍵 <kbd>H</kbd>），紅綠燈與人數照看，只有桌牌與 repo 名會糊掉。想乾脆用手機看雷達，就按「傳到手機」把設定帶過去——<strong>token 不會跟著走</strong>。<span class="en enb">If the projector mirrors your screen, press 遮住名字 (Mask names, shortcut <kbd>H</kbd>) before you switch over. Traffic lights and counts stay readable; only desk labels and repo names blur. To watch the radar on your phone instead, press 傳到手機 (Send to phone) to carry the settings across — <strong>the token does not travel with it</strong>.</span></p><div id="phoneBox" hidden></div></div>
   </section>
 
   <section class="card" id="liveFeedback">
-    <h2 style="margin-top:0">現場回饋（選用）</h2>
-    <p class="muted">雷達只看得見已經推上 GitHub 的人。P1 到 P4 還沒有人 push，這裡整片空白——但那正是最多人卡住的時段。現場回饋補的就是這一段：學員用手機按難度、丟問題，不必等 repo 建好。課前沒有部署服務就略過這一區，雷達其他功能不受影響。</p>
+    <h2 style="margin-top:0">現場回饋（選用） <span class="en">Live Feedback (optional)</span></h2>
+    <p class="muted">雷達只看得見已經推上 GitHub 的人。P1 到 P4 還沒有人 push，這裡整片空白——但那正是最多人卡住的時段。現場回饋補的就是這一段：學員用手機按難度、丟問題，不必等 repo 建好。課前沒有部署服務就略過這一區，雷達其他功能不受影響。<span class="en enb">The radar can only see people who have already pushed to GitHub. Through P1–P4 nobody has pushed yet, so this page stays blank — and that is exactly when most people get stuck. Live feedback fills the gap: participants tap a difficulty level and send questions from their phones, without waiting for a repo. If you did not deploy the service before class, skip this section; the rest of the radar still works.</span></p>
     <div class="row">
-      <label style="flex:1 1 320px">現場回饋服務網址（每場一個，課前部署）<input id="ldkUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://your-worker.workers.dev"></label>
+      <label style="flex:1 1 320px">現場回饋服務網址（每場一個，課前部署）<span class="en enb">Live feedback service URL — one per session, deployed before class</span><input id="ldkUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://your-worker.workers.dev"></label>
     </div>
     <div class="row">
-      <button class="btn" id="ldkBoard" type="button">開看板</button>
-      <button class="btn" id="ldkAudience" type="button">開學員頁</button>
-      <button class="btn" id="ldkQr" type="button">顯示入場 QR</button>
-      <button class="btn" id="ldkEmbed" type="button">就在這頁看看板</button>
+      <button class="btn" id="ldkBoard" type="button">開看板 <span class="en">Open board</span></button>
+      <button class="btn" id="ldkAudience" type="button">開學員頁 <span class="en">Open participant page</span></button>
+      <button class="btn" id="ldkQr" type="button">顯示入場 QR <span class="en">Show join QR</span></button>
+      <button class="btn" id="ldkEmbed" type="button">就在這頁看看板 <span class="en">Embed board here</span></button>
     </div>
     <div id="ldkQrBox" hidden></div>
     <div id="ldkBoardBox" hidden></div>
-    <p class="muted">⚠️ 難度是「現在的狀態」、不是紀錄：學員按過「我卡住了」之後如果沒再改，紅色會一直留著。巡完桌解決了，請他順手改一下。</p>
+    <p class="muted">⚠️ 難度是「現在的狀態」、不是紀錄：學員按過「我卡住了」之後如果沒再改，紅色會一直留著。巡完桌解決了，請他順手改一下。<span class="en enb">⚠️ Difficulty is a current state, not a log. If someone taps 我卡住了 (I'm stuck) and never changes it, the red stays on. Once you have visited the table and sorted it out, ask them to update it.</span></p>
   </section>
 
   <section class="card phase-note" id="phaseNote" aria-live="polite"></section>
-  <section class="summary" aria-label="目前階段摘要" aria-live="polite">
-    <div class="metric"><strong id="mRepos">–</strong><span>讀得到的 repo</span></div>
-    <div class="metric"><strong id="mRecent">–</strong><span>15 分鐘內有動作</span></div>
-    <div class="metric"><strong id="mOpen">–</strong><span>開啟中的 PR</span></div>
-    <div class="metric"><strong id="mReview">–</strong><span>等候補改／核准</span></div>
-    <div class="metric"><strong id="mAlerts">–</strong><span>需要巡桌</span></div>
+  <section class="summary" aria-label="目前階段摘要 Current phase summary" aria-live="polite">
+    <div class="metric"><strong id="mRepos">–</strong><span>讀得到的 repo<span class="en enb">Repos readable</span></span></div>
+    <div class="metric"><strong id="mRecent">–</strong><span>15 分鐘內有動作<span class="en enb">Active in last 15 min</span></span></div>
+    <div class="metric"><strong id="mOpen">–</strong><span>開啟中的 PR<span class="en enb">Open PRs</span></span></div>
+    <div class="metric"><strong id="mReview">–</strong><span>等候補改／核准<span class="en enb">Awaiting changes / approval</span></span></div>
+    <div class="metric"><strong id="mAlerts">–</strong><span>需要巡桌<span class="en enb">Needs a table visit</span></span></div>
   </section>
 
-  <section><h2>需要先巡的桌</h2><div id="alerts" class="alerts"></div></section>
-  <section id="personalSection"><h2>個人練習進度</h2><div id="personalGrid" class="grid"></div></section>
-  <section id="pairSection"><h2>研究生／指導教授配對進度</h2><div id="pairGrid" class="grid"></div></section>
+  <section><h2>需要先巡的桌 <span class="en">Visit these tables first</span></h2><div id="alerts" class="alerts"></div></section>
+  <section id="personalSection"><h2>個人練習進度 <span class="en">Solo practice progress</span></h2><div id="personalGrid" class="grid"></div></section>
+  <section id="pairSection"><h2>研究生／指導教授配對進度 <span class="en">Student / advisor pair progress</span></h2><div id="pairGrid" class="grid"></div></section>
 </main>
-<footer>講師救援雷達｜2026-08-23 v5.6｜© 陳文盛（東華通識）× AI 協作團隊（組長洄瀾）・<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>｜只讀 GitHub 上看得到的證據｜<a href="material.html">完整教材</a>・<a href="quest.html">闖關頁</a></footer>
+<footer>講師救援雷達 Instructor Rescue Radar｜2026-08-23 v5.6｜© 陳文盛 Wen-Sheng (Ted) Chen（東華通識 NDHU General Education）× AI 協作團隊 AI team（組長洄瀾 lead: Wailan）・<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>｜只讀 GitHub 上看得到的證據 Reads only evidence visible on GitHub｜<a href="material.html">完整教材 Full material</a>・<a href="quest.html">闖關頁 Quest page</a></footer>
 <script>
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const saved=k=>localStorage.getItem('gr-'+k)||'';
@@ -74,43 +84,43 @@ if(localStorage.getItem('gr-settings-schema')!=='real-repos-v1'){
 $('token').oninput=schedule;
 function rows(id){return $(id).value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map(line=>{const i=line.indexOf(',');return i>0?{label:line.slice(0,i).trim(),repo:line.slice(i+1).trim()}:null}).filter(x=>x&&/^[\w.-]+\/[\w.-]+$/.test(x.repo))}
 let rate={remaining:null,reset:null};
-async function gh(path,allowEmpty=false){const h={'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};if($('token').value.trim())h.Authorization='Bearer '+$('token').value.trim();const r=await fetch('https://api.github.com'+path,{headers:h});rate={remaining:r.headers.get('x-ratelimit-remaining'),reset:r.headers.get('x-ratelimit-reset')};if(allowEmpty&&r.status===409)return[];if(!r.ok){const body=await r.json().catch(()=>({}));throw new Error(r.status+' '+(body.message||'GitHub API 讀取失敗'))}return r.json()}
+async function gh(path,allowEmpty=false){const h={'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};if($('token').value.trim())h.Authorization='Bearer '+$('token').value.trim();const r=await fetch('https://api.github.com'+path,{headers:h});rate={remaining:r.headers.get('x-ratelimit-remaining'),reset:r.headers.get('x-ratelimit-reset')};if(allowEmpty&&r.status===409)return[];if(!r.ok){const body=await r.json().catch(()=>({}));throw new Error(r.status+' '+(body.message||'GitHub API 讀取失敗 GitHub API request failed'))}return r.json()}
 const age=iso=>iso?(Date.now()-new Date(iso))/60000:1e9;
-function paintPhase(){const personal=$('phase').value==='personal';$('personalSection').hidden=!personal;$('pairSection').hidden=personal;$('phaseNote').innerHTML=personal?'<strong>第一階段巡桌重點：</strong>這裡只看得到 GitHub repo 是否建立、commit 數與最後推送時間。資料夾路徑、兩次 push、restore／revert 與本機同步無法從 GitHub 判斷，請回到闖關頁或現場確認。':'<strong>第二階段巡桌重點：</strong>看每組是否已有 PR、另一人審查，以及 Changes requested 後的補改。作者自我核准、直接改 main 或 force push 都要立刻攔下；合併後仍須現場確認兩台電腦都 pull。';}
+function paintPhase(){const personal=$('phase').value==='personal';$('personalSection').hidden=!personal;$('pairSection').hidden=personal;$('phaseNote').innerHTML=personal?'<strong>第一階段巡桌重點：</strong>這裡只看得到 GitHub repo 是否建立、commit 數與最後推送時間。資料夾路徑、兩次 push、restore／revert 與本機同步無法從 GitHub 判斷，請回到闖關頁或現場確認。<span class="en enb"><strong>Stage 1 — what to watch on your rounds:</strong> this page can only see whether the GitHub repo exists, how many commits it has, and when it was last pushed. Folder paths, the two-push rule, restore/revert and local sync cannot be judged from GitHub — check the quest page or the room itself.</span>':'<strong>第二階段巡桌重點：</strong>看每組是否已有 PR、另一人審查，以及 Changes requested 後的補改。作者自我核准、直接改 main 或 force push 都要立刻攔下；合併後仍須現場確認兩台電腦都 pull。<span class="en enb"><strong>Stage 2 — what to watch on your rounds:</strong> check whether each pair has a PR, whether the other person reviewed it, and whether changes were made after Changes requested. Stop self-approval, direct edits to main, and force pushes the moment you see them. After a merge, confirm in the room that both computers have pulled.</span>';}
 async function personalCard(item){
-  try{const [repo,commits]=await Promise.all([gh('/repos/'+item.repo),gh('/repos/'+item.repo+'/commits?per_page=3',true)]);const count=commits.length,empty=count===0,mins=empty?age(repo.created_at):age(commits[0]?.commit?.author?.date),level=empty?'warn':mins<15?'ok':mins<30?'warn':'bad',label=empty?'尚未第一次 push':mins<15?'最近有更新':mins<30?'可留意':'先巡桌';return{ok:true,recent:!empty&&mins<15,alert:mins>=30,label:item.label,html:`<article class="card repo ${level}"><div class="head"><h3>${esc(item.label)}</h3><span class="pill">${esc(item.repo)}</span><span class="state">${label}</span></div><div class="row"><span>最近讀到 ${count} 筆 commit</span><span>${repo.private?'私人':'公開'}</span></div><p class="muted">${empty?'repo 已建立，GitHub 尚未看到第一筆 commit。':'最後推送約 '+Math.round(mins)+' 分鐘前。'} 這裡無法證明 push 次數或本機 restore。<a href="${repo.html_url}" target="_blank" rel="noopener">打開 repo</a></p></article>`}}catch(e){return{ok:false,alert:true,recent:false,label:item.label,html:`<article class="card repo bad"><h3>${esc(item.label)}</h3><p>讀取失敗：${esc(e.message)}</p><p class="muted">核對 repo 名稱、公開設定、API 額度或 token。</p></article>`}}
+  try{const [repo,commits]=await Promise.all([gh('/repos/'+item.repo),gh('/repos/'+item.repo+'/commits?per_page=3',true)]);const count=commits.length,empty=count===0,mins=empty?age(repo.created_at):age(commits[0]?.commit?.author?.date),level=empty?'warn':mins<15?'ok':mins<30?'warn':'bad',label=empty?'尚未第一次 push <span class="en">No first push yet</span>':mins<15?'最近有更新 <span class="en">Recently updated</span>':mins<30?'可留意 <span class="en">Keep an eye on</span>':'先巡桌 <span class="en">Visit this table</span>';return{ok:true,recent:!empty&&mins<15,alert:mins>=30,label:item.label,html:`<article class="card repo ${level}"><div class="head"><h3>${esc(item.label)}</h3><span class="pill">${esc(item.repo)}</span><span class="state">${label}</span></div><div class="row"><span>最近讀到 ${count} 筆 commit <span class="en">(commits read)</span></span><span>${repo.private?'私人 <span class="en">Private</span>':'公開 <span class="en">Public</span>'}</span></div><p class="muted">${empty?'repo 已建立，GitHub 尚未看到第一筆 commit。':'最後推送約 '+Math.round(mins)+' 分鐘前。'} 這裡無法證明 push 次數或本機 restore。<span class="en enb">${empty?'Repo created; GitHub has not seen a first commit yet.':'Last push about '+Math.round(mins)+' min ago.'} This cannot prove how many pushes happened, or any local restore.</span><a href="${repo.html_url}" target="_blank" rel="noopener">打開 repo <span class="en">Open repo</span></a></p></article>`}}catch(e){return{ok:false,alert:true,recent:false,label:item.label,html:`<article class="card repo bad"><h3>${esc(item.label)}</h3><p>讀取失敗 <span class="en">Load failed</span>：${esc(e.message)}</p><p class="muted">核對 repo 名稱、公開設定、API 額度或 token。<span class="en enb">Check the repo name, its visibility, your API quota, or the token.</span></p></article>`}}
 }
 async function pairCard(item){
-  try{const prs=await gh('/repos/'+item.repo+'/pulls?state=all&per_page=20'),open=prs.filter(p=>p.state==='open'),merged=prs.filter(p=>p.merged_at),recent=open[0]||prs[0];let reviews=[];if(recent)reviews=await gh('/repos/'+item.repo+'/pulls/'+recent.number+'/reviews?per_page=50');const latest={};reviews.forEach(r=>latest[r.user.login]=r.state);const requested=Object.values(latest).includes('CHANGES_REQUESTED'),approved=Object.values(latest).includes('APPROVED');let label='尚未開 PR',level='warn',needs=true;if(open.length&&requested){label='研究生補改中';level='bad'}else if(open.length&&approved){label='可準備合併';level='ok'}else if(open.length){label='等指導教授審查';level='warn'}else if(merged.length){label='已合併；現場確認 pull';level='ok';needs=false}const repoUrl='https://github.com/'+item.repo;return{ok:true,recent:recent?age(recent.updated_at)<15:false,alert:needs,label:item.label,open:open.length,review:requested||open.length>0,html:`<article class="card repo ${level}"><div class="head"><h3>${esc(item.label)}</h3><span class="pill">${esc(item.repo)}</span><span class="state">${label}</span></div><div class="row"><span>${open.length} 個開啟 PR</span><span>${merged.length} 個已合併 PR</span></div><p class="muted">${recent?`最近 PR #${recent.number}：${esc(recent.title)}。`:''}${requested?'已有 Request changes；確認研究生是否看得到意見。':approved?'已有核准；合併仍由人拍板。':open.length?'尚未看到核准。':merged.length?'GitHub 已合併；本機是否 pull 要現場確認。':'還沒有 PR。'} <a href="${repoUrl}/pulls" target="_blank" rel="noopener">打開 PR 清單</a></p></article>`}}catch(e){return{ok:false,recent:false,alert:true,open:0,review:false,label:item.label,html:`<article class="card repo bad"><h3>${esc(item.label)}</h3><p>讀取失敗：${esc(e.message)}</p><p class="muted">核對 repo 名稱、公開設定、API 額度或 token。</p></article>`}}
+  try{const prs=await gh('/repos/'+item.repo+'/pulls?state=all&per_page=20'),open=prs.filter(p=>p.state==='open'),merged=prs.filter(p=>p.merged_at),recent=open[0]||prs[0];let reviews=[];if(recent)reviews=await gh('/repos/'+item.repo+'/pulls/'+recent.number+'/reviews?per_page=50');const latest={};reviews.forEach(r=>latest[r.user.login]=r.state);const requested=Object.values(latest).includes('CHANGES_REQUESTED'),approved=Object.values(latest).includes('APPROVED');let label='尚未開 PR <span class="en">No PR yet</span>',level='warn',needs=true;if(open.length&&requested){label='研究生補改中 <span class="en">Student revising</span>';level='bad'}else if(open.length&&approved){label='可準備合併 <span class="en">Ready to merge</span>';level='ok'}else if(open.length){label='等指導教授審查 <span class="en">Awaiting advisor review</span>';level='warn'}else if(merged.length){label='已合併；現場確認 pull <span class="en">Merged; confirm the pull in the room</span>';level='ok';needs=false}const repoUrl='https://github.com/'+item.repo;return{ok:true,recent:recent?age(recent.updated_at)<15:false,alert:needs,label:item.label,open:open.length,review:requested||open.length>0,html:`<article class="card repo ${level}"><div class="head"><h3>${esc(item.label)}</h3><span class="pill">${esc(item.repo)}</span><span class="state">${label}</span></div><div class="row"><span>${open.length} 個開啟 PR <span class="en">(open)</span></span><span>${merged.length} 個已合併 PR <span class="en">(merged)</span></span></div><p class="muted">${recent?`最近 PR #${recent.number}：${esc(recent.title)}。`:''}${requested?'已有 Request changes；確認研究生是否看得到意見。':approved?'已有核准；合併仍由人拍板。':open.length?'尚未看到核准。':merged.length?'GitHub 已合併；本機是否 pull 要現場確認。':'還沒有 PR。'}<span class="en enb">${recent?`Latest PR #${recent.number}: ${esc(recent.title)}. `:''}${requested?'Changes have been requested — make sure the student can see the comments.':approved?'Approved — a human still decides when to merge.':open.length?'No approval yet.':merged.length?'Merged on GitHub — confirm the local pull in the room.':'No PR yet.'}</span><a href="${repoUrl}/pulls" target="_blank" rel="noopener">打開 PR 清單 <span class="en">Open PR list</span></a></p></article>`}}catch(e){return{ok:false,recent:false,alert:true,open:0,review:false,label:item.label,html:`<article class="card repo bad"><h3>${esc(item.label)}</h3><p>讀取失敗 <span class="en">Load failed</span>：${esc(e.message)}</p><p class="muted">核對 repo 名稱、公開設定、API 額度或 token。<span class="en enb">Check the repo name, its visibility, your API quota, or the token.</span></p></article>`}}
 }
 async function load(){
-  $('note').textContent='讀取中……';rate={remaining:null,reset:null};const personal=$('phase').value==='personal',items=rows(personal?'personal':'pairs'),results=await Promise.all(items.map(personal?personalCard:pairCard)),a=personal?results:[],b=personal?[]:results;$('personalGrid').innerHTML=a.length?a.map(x=>x.html).join(''):'<p class="muted">尚未填個人 repo。</p>';$('pairGrid').innerHTML=b.length?b.map(x=>x.html).join(''):'<p class="muted">尚未填配對 repo。</p>';const alerts=results.filter(x=>x.alert);$('alerts').innerHTML=alerts.length?alerts.map(x=>`<div class="card"><strong>${esc(x.label)}</strong>：${x.ok?'目前狀態需要講師看一眼。':'GitHub API 讀取失敗，先核對設定。'}</div>`).join(''):'<div class="card">目前階段沒有紅燈。仍請看教室現場，不要只靠儀表板。</div>';$('mRepos').textContent=results.filter(x=>x.ok).length+'/'+results.length;$('mRecent').textContent=results.filter(x=>x.recent).length;$('mOpen').textContent=b.reduce((n,x)=>n+(x.open||0),0);$('mReview').textContent=b.filter(x=>x.review).length;$('mAlerts').textContent=alerts.length;const rateText=rate.remaining!==null?'；API 剩餘 '+rate.remaining+' 次':'';$('note').textContent='最後更新：'+new Date().toLocaleTimeString('zh-TW')+rateText;
+  $('note').textContent='讀取中…… Loading…';rate={remaining:null,reset:null};const personal=$('phase').value==='personal',items=rows(personal?'personal':'pairs'),results=await Promise.all(items.map(personal?personalCard:pairCard)),a=personal?results:[],b=personal?[]:results;$('personalGrid').innerHTML=a.length?a.map(x=>x.html).join(''):'<p class="muted">尚未填個人 repo。<span class="en enb">No solo repos entered yet.</span></p>';$('pairGrid').innerHTML=b.length?b.map(x=>x.html).join(''):'<p class="muted">尚未填配對 repo。<span class="en enb">No pair repos entered yet.</span></p>';const alerts=results.filter(x=>x.alert);$('alerts').innerHTML=alerts.length?alerts.map(x=>`<div class="card"><strong>${esc(x.label)}</strong>：${x.ok?'目前狀態需要講師看一眼。<span class="en enb">This one needs your eyes right now.</span>':'GitHub API 讀取失敗，先核對設定。<span class="en enb">GitHub API request failed — check the settings first.</span>'}</div>`).join(''):'<div class="card">目前階段沒有紅燈。仍請看教室現場，不要只靠儀表板。<span class="en enb">No red lights in this phase. Still look around the room — do not rely on the dashboard alone.</span></div>';$('mRepos').textContent=results.filter(x=>x.ok).length+'/'+results.length;$('mRecent').textContent=results.filter(x=>x.recent).length;$('mOpen').textContent=b.reduce((n,x)=>n+(x.open||0),0);$('mReview').textContent=b.filter(x=>x.review).length;$('mAlerts').textContent=alerts.length;const rateText=rate.remaining!==null?'；API 剩餘 '+rate.remaining+' 次（API calls left）':'';$('note').textContent='最後更新 Updated：'+new Date().toLocaleTimeString('zh-TW')+rateText;
 }
-$('load').onclick=load;let timer;function schedule(){clearInterval(timer);const n=+$('interval').value;if(n&&!$('token').value.trim()){$('interval').value='0';localStorage.setItem('gr-interval','0');$('note').textContent='自動更新需要 token；目前已保持關閉，可按「立即讀取」手動更新。';return}if(n)timer=setInterval(load,n*1000)}paintPhase();schedule();
+$('load').onclick=load;let timer;function schedule(){clearInterval(timer);const n=+$('interval').value;if(n&&!$('token').value.trim()){$('interval').value='0';localStorage.setItem('gr-interval','0');$('note').textContent='自動更新需要 token；目前已保持關閉，可按「立即讀取」手動更新。 Auto-refresh needs a token. It stays off for now — press 立即讀取 (Load now) to refresh by hand.';return}if(n)timer=setInterval(load,n*1000)}paintPhase();schedule();
 (function(){
   const box=$('ldkQrBox'),url=$('ldkUrl');if(!url)return;
   url.value=localStorage.getItem('gr-ldk')||'';
   url.oninput=()=>localStorage.setItem('gr-ldk',url.value.trim());
   const base=()=>{const v=url.value.trim().replace(/\/$/,'');return /^https:\/\/[\w.-]+(?::\d+)?(?:\/\S*)?$/.test(v)||/^http:\/\/localhost(?::\d+)?$/.test(v)?v:''};
-  const openTab=path=>{const b=base();if(!b){$('ldkQrBox').hidden=false;box.innerHTML='<p class="muted">請先填服務網址（https 開頭）。</p>';url.focus();return}window.open(b+path,'_blank','noopener')};
+  const openTab=path=>{const b=base();if(!b){$('ldkQrBox').hidden=false;box.innerHTML='<p class="muted">請先填服務網址（https 開頭）。<span class="en enb">Please fill in the service URL first (it must start with https).</span></p>';url.focus();return}window.open(b+path,'_blank','noopener')};
   $('ldkBoard').onclick=()=>openTab('/dashboard/');
   $('ldkAudience').onclick=()=>openTab('/');
   const boardBox=$('ldkBoardBox');
-  $('ldkEmbed').onclick=()=>{const b=base();if(!b){boardBox.hidden=false;boardBox.innerHTML='<p class="muted">請先填服務網址（https 開頭）。</p>';url.focus();return}
+  $('ldkEmbed').onclick=()=>{const b=base();if(!b){boardBox.hidden=false;boardBox.innerHTML='<p class="muted">請先填服務網址（https 開頭）。<span class="en enb">Please fill in the service URL first (it must start with https).</span></p>';url.focus();return}
     boardBox.hidden=!boardBox.hidden;
     boardBox.textContent='';
     if(boardBox.hidden)return;
-    const frame=document.createElement('iframe');frame.src=b+'/dashboard/';frame.title='現場回饋看板';frame.loading='lazy';
+    const frame=document.createElement('iframe');frame.src=b+'/dashboard/';frame.title='現場回饋看板 Live feedback board';frame.loading='lazy';
     frame.style.cssText='width:100%;height:min(78vh,760px);border:1px solid var(--line);border-radius:11px;background:#0f1a19';
-    const tip=document.createElement('p');tip.className='muted';tip.textContent='看板嵌在這裡，雷達與現場回饋同一個畫面。要投影給全班看就改開新分頁。';
+    const tip=document.createElement('p');tip.className='muted';tip.textContent='看板嵌在這裡，雷達與現場回饋同一個畫面。要投影給全班看就改開新分頁。 The board is embedded here, so the radar and live feedback share one screen. To project it for the whole class, open it in a new tab instead.';
     boardBox.append(tip,frame);
   };
-  $('ldkQr').onclick=()=>{const b=base();if(!b){box.hidden=false;box.innerHTML='<p class="muted">請先填服務網址（https 開頭）。</p>';url.focus();return}
+  $('ldkQr').onclick=()=>{const b=base();if(!b){box.hidden=false;box.innerHTML='<p class="muted">請先填服務網址（https 開頭）。<span class="en enb">Please fill in the service URL first (it must start with https).</span></p>';url.focus();return}
     box.hidden=!box.hidden;
     box.textContent='';
     if(box.hidden)return;
-    const tip=document.createElement('p');tip.className='muted';tip.textContent='投影這個碼讓學員掃描進場。';
-    const img=document.createElement('img');img.src=b+'/api/qr.svg';img.alt='現場回饋入場 QR code';
+    const tip=document.createElement('p');tip.className='muted';tip.textContent='投影這個碼讓學員掃描進場。 Project this code so participants can scan to join.';
+    const img=document.createElement('img');img.src=b+'/api/qr.svg';img.alt='現場回饋入場 QR code / Live feedback join QR code';
     img.style.cssText='width:min(260px,60vw);background:#fff;border-radius:10px;padding:10px';
     box.append(tip,img);
   };
@@ -120,7 +130,7 @@ $('load').onclick=load;let timer;function schedule(){clearInterval(timer);const 
 (function(){
   const button=$('mask');if(!button)return;
   const on=()=>document.body.classList.contains('privacy');
-  const set=state=>{document.body.classList.toggle('privacy',state);button.setAttribute('aria-pressed',String(state));button.textContent=state?'顯示名字':'遮住名字';localStorage.setItem('gr-mask',state?'1':'')};
+  const set=state=>{document.body.classList.toggle('privacy',state);button.setAttribute('aria-pressed',String(state));button.textContent=state?'顯示名字 Show names':'遮住名字 Mask names';localStorage.setItem('gr-mask',state?'1':'')};
   set(localStorage.getItem('gr-mask')==='1');
   button.onclick=()=>set(!on());
   addEventListener('keydown',event=>{
@@ -142,11 +152,11 @@ $('load').onclick=load;let timer;function schedule(){clearInterval(timer);const 
     const link=location.origin+location.pathname+'#s='+pack();
     box.hidden=false;box.textContent='';
     const tip=document.createElement('p');tip.className='muted';
-    tip.textContent='把這個網址用 AirDrop 或訊息傳到自己的手機，打開就有同一份設定。手機上 token 留空即可——沒有 token 每小時仍有 60 次，手動按「立即讀取」夠用。';
+    tip.textContent='把這個網址用 AirDrop 或訊息傳到自己的手機，打開就有同一份設定。手機上 token 留空即可——沒有 token 每小時仍有 60 次，手動按「立即讀取」夠用。 AirDrop or message this link to your own phone; opening it gives you the same settings. Leave the token blank there — 60 calls per hour is plenty when you press 立即讀取 (Load now) by hand.';
     const field=document.createElement('textarea');field.readOnly=true;field.value=link;field.style.minHeight='64px';
-    const copy=document.createElement('button');copy.className='btn';copy.type='button';copy.textContent='複製連結';
+    const copy=document.createElement('button');copy.className='btn';copy.type='button';copy.textContent='複製連結 Copy link';
     copy.onclick=()=>{
-      const done=()=>{copy.textContent='已複製';setTimeout(()=>{copy.textContent='複製連結'},1500)};
+      const done=()=>{copy.textContent='已複製 Copied';setTimeout(()=>{copy.textContent='複製連結 Copy link'},1500)};
       if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(link).then(done).catch(()=>{field.select();done()})}
       else{field.select();done()}
     };

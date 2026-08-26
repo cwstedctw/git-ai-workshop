@@ -99,8 +99,8 @@ for(const phrase of ['回報 PR 編號與網址','核對 repo、作者與來源�
 }
 if(!c6.prompt.includes('相關文獻將於正式研究中補齊'))fail('C6 缺少第二輪明確修改任務');
 
-const html={index:read('./index.html'),start:read('./start.html'),material:read('./material.html'),quest:read('./quest.html'),radar:read('./radar.html')};
-const fileFor={index:'index.html',start:'start.html',material:'material.html',quest:'quest.html',radar:'radar.html'};
+const html={index:read('./index.html'),start:read('./start.html'),material:read('./material.html'),quest:read('./quest.html'),radar:read('./radar.html'),indexEn:read('./index.en.html'),startEn:read('./start.en.html'),materialEn:read('./material.en.html'),questEn:read('./quest.en.html')};
+const fileFor={index:'index.html',start:'start.html',material:'material.html',quest:'quest.html',radar:'radar.html',indexEn:'index.en.html',startEn:'start.en.html',materialEn:'material.en.html',questEn:'quest.en.html'};
 for(const [file,source] of [...Object.entries(html).map(([name,source])=>[fileFor[name],source]),['workflow-data.js',read('./workflow-data.js')]]){
   const informal=source.match(/開發|測試|測驗|提示/);
   if(informal)fail(`${file} 的對外文字仍有非正式成品措辭：${informal[0]}`);
@@ -119,7 +119,7 @@ for(const [name,source] of Object.entries(html)){
     if(!fs.existsSync(new URL(src,new URL(`./${fileFor[name]}`,import.meta.url))))fail(`${fileFor[name]} 圖片不存在：${src}`);
   }
 }
-for(const id of ids)idsByPage.material.add(`guide-${id}`),idsByPage.quest.add(`task-${id}`);
+for(const id of ids)idsByPage.material.add(`guide-${id}`),idsByPage.quest.add(`task-${id}`),idsByPage.materialEn.add(`guide-${id}`),idsByPage.questEn.add(`task-${id}`);
 for(const [name,source] of Object.entries(html)){
   for(const href of [...source.matchAll(/\bhref="([^"]+)"/g)].map(match=>match[1])){
     if(href.includes('${'))continue;
@@ -129,8 +129,8 @@ for(const [name,source] of Object.entries(html)){
     if(hashPart&&!idsByPage[targetName].has(hashPart))fail(`${fileFor[name]} 連到不存在的錨點：${href}`);
   }
 }
-for(const name of ['material','quest','start']){
-  if(!html[name].includes('<script src="workflow-data.js"></script>'))fail(`${name}.html 未載入共用流程`);
+for(const name of ['material','quest','start','materialEn','questEn','startEn']){
+  if(!html[name].includes('<script src="workflow-data.js"></script>'))fail(`${fileFor[name]} 未載入共用流程`);
 }
 if(html.radar.includes('<script src="workflow-data.js"></script>'))fail('講師雷達不應載入未使用的共用流程');
 for(const name of ['material','quest','radar','start']){
@@ -253,4 +253,34 @@ for(const page of ['start','material','quest','radar','index']){
   }
 }
 
+
+for(const name of ['indexEn','startEn','materialEn','questEn']){
+  if(!/<html[^>]*\blang="en"/.test(html[name]))fail(`${fileFor[name]} 應為 lang="en"`);
+}
+for(const name of ['materialEn','questEn','startEn']){
+  const zhTag=html[name].indexOf('<script src="workflow-data.js"></script>');
+  const enTag=html[name].indexOf('<script src="workflow-data.en.js"></script>');
+  if(enTag===-1)fail(`${fileFor[name]} 未載入英文覆蓋層 workflow-data.en.js`);
+  if(!(zhTag>-1&&enTag>zhTag))fail(`${fileFor[name]} 的 workflow-data.en.js 必須排在 workflow-data.js 之後`);
+}
+{
+  const enSandbox={window:{}};
+  vm.runInNewContext(read('./workflow-data.js'),enSandbox,{filename:'workflow-data.js'});
+  vm.runInNewContext(read('./workflow-data.en.js'),enSandbox,{filename:'workflow-data.en.js'});
+  const enFlow=enSandbox.window.WORKSHOP_FLOW;
+  const zhLeft=[];
+  const scan=(value,path)=>{
+    if(typeof value==='string'){const m=value.match(/[一-鿿]+/);if(m)zhLeft.push(`${path}:${m[0]}`);}
+    else if(Array.isArray(value))value.forEach((item,i)=>scan(item,`${path}[${i}]`));
+    else if(value&&typeof value==='object')for(const [k,val] of Object.entries(value))scan(val,`${path}.${k}`);
+  };
+  for(const phase of enFlow.phases)scan({label:phase.label,promise:phase.promise},`phases.${phase.id}`);
+  for(const step of enFlow.steps)for(const field of ['title','why','concept','terms','prompt','plan','human','dashboard','behind','rescue','situations'])if(step[field]!==undefined)scan(step[field],`${step.id}.${field}`);
+  for(const key of ['resetGuide','troubleshooting','reference','phrases'])scan(enFlow[key],key);
+  if(zhLeft.length)fail(`英文覆蓋層套用後仍殘留中文 ${zhLeft.length} 處，例如 ${zhLeft[0]}——workflow-data.js 改過後 workflow-data.en.js 沒跟上`);
+}
+{
+  const informal=read('./workflow-data.en.js').match(/開發|測試|測驗|提示/);
+  if(informal)fail(`workflow-data.en.js 出現非正式措辭：${informal[0]}`);
+}
 console.log(`PASS ${flow.version}: ${flow.steps.length} steps, ${Object.keys(html).length} HTML files, shared flow, layout guards and inline JavaScript verified.`);

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Before you start｜Git with AI</title>
+<style>
+:root{
+  --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441; --gold-soft:#F3E3C3;
+  --teal-soft:#DCEFED; --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --bad:#b3441e; --warn-text:#8a5a00;
+  --shadow:0 2px 10px rgba(26,26,26,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+    --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+    --gold-soft:#3a3220; --teal-soft:#173937; --bad:#ff967a; --warn-text:#f0bc58;
+    --shadow:0 2px 10px rgba(0,0,0,.35); }
+}
+:root[data-theme="dark"]{ --bg:#151d1c; --card:#1d2726; --ink:#ece6d6; --ink-soft:#b7b0a0;
+  --line:#33403e; --teal:#3aa6a1; --teal-deep:#7fd0cb; --gold:#d9a441;
+  --gold-soft:#3a3220; --teal-soft:#173937; --bad:#ff967a; --warn-text:#f0bc58;
+  --shadow:0 2px 10px rgba(0,0,0,.35); }
+:root[data-theme="light"]{ --bg:#F4ECD8; --card:#FDFAF2; --ink:#1A1A1A; --ink-soft:#4a463d;
+  --line:#e2d8bf; --teal:#0E7C7B; --teal-deep:#0A5958; --gold:#D9A441;
+  --gold-soft:#F3E3C3; --teal-soft:#DCEFED; --bad:#b3441e; --warn-text:#8a5a00;
+  --shadow:0 2px 10px rgba(26,26,26,.07); }
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.75;
+  font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
+
+/* ── Projector mode: for showing the page in class, text size only ── */
+:root.projector body{font-size:22px;line-height:1.85}
+:root.projector .note{font-size:1rem}
+:root.projector table{font-size:1.05rem}
+:root.projector main{max-width:1180px}
+
+header.hero{background:linear-gradient(150deg,#0E7C7B,#0A5958);color:#F4ECD8;padding:52px 20px 44px}
+header.hero .inner{max-width:920px;margin:0 auto}
+header.hero .kicker{font-size:.9rem;letter-spacing:.08em;opacity:.9;margin:0 0 10px;font-weight:700}
+header.hero h1{margin:0 0 14px;font-size:clamp(1.6rem,4.4vw,2.4rem);line-height:1.35}
+header.hero p{margin:0;max-width:44em;font-size:1.02rem}
+
+nav#topnav{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line);
+  padding:0 12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px}
+nav#topnav .navlinks{flex:1 1 auto;min-width:0;overflow-x:auto;white-space:nowrap;
+  display:flex;align-items:center;gap:2px}
+nav#topnav a{display:inline-flex;align-items:center;min-height:42px;flex:none;padding:9px 13px;
+  color:var(--ink);text-decoration:none;font-size:.9rem;border-radius:8px}
+nav#topnav a:hover{background:var(--teal-soft)}
+nav#topnav a:focus-visible{outline:3px solid var(--teal);outline-offset:-3px}
+
+main{max-width:920px;margin:0 auto;padding:8px 20px 70px}
+section{scroll-margin-top:60px}
+h2{font-size:1.42rem;margin:52px 0 6px;color:var(--teal-deep);line-height:1.4}
+h2 .num{font-size:.82em;opacity:.65;margin-right:.4em}
+h3{font-size:1.06rem;margin:22px 0 4px;color:var(--teal-deep)}
+p{margin:10px 0}
+ul{margin:10px 0;padding-left:1.35em}
+li{margin:5px 0}
+
+.tablewrap{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:.93rem;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--gold-soft);font-weight:700}
+td.step{white-space:nowrap;font-weight:700;color:var(--teal-deep)}
+td.mins{white-space:nowrap;text-align:right;color:var(--ink-soft)}
+tr.phasebar th{background:var(--teal-soft);color:var(--teal-deep);font-size:.96rem}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;box-shadow:var(--shadow)}
+.card .t{font-weight:800;color:var(--teal-deep);margin-bottom:4px}
+.routes{display:grid;gap:14px;margin:16px 0}
+@media (min-width:760px){.routes{grid-template-columns:1fr 1fr}}
+.route{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--teal);
+  border-radius:0 12px 12px 0;padding:16px 18px;box-shadow:var(--shadow)}
+.route.solo{border-left-color:var(--gold)}
+.route .t{font-weight:800;color:var(--teal-deep);margin-bottom:2px}
+.route .who{font-size:.86rem;color:var(--ink-soft);margin-bottom:8px}
+
+.callout{border-left:5px solid var(--gold);background:var(--gold-soft);border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0}
+.callout.red{background:transparent;border:1px solid var(--line);border-left:5px solid var(--bad);border-radius:0 10px 10px 0}
+.callout .t{font-weight:800;margin-bottom:4px}
+.note{font-size:.87rem;color:var(--ink-soft)}
+
+a{color:var(--teal-deep)}
+a:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.linkcards{display:grid;gap:12px;margin:22px 0}
+a.linkcard{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:16px 18px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow)}
+a.linkcard:hover{border-color:var(--teal)}
+a.linkcard .t{font-weight:800;color:var(--teal-deep)}
+a.linkcard .d{font-size:.9rem;margin-top:3px}
+
+.checklist{list-style:none;padding-left:0}
+.checklist li{padding-left:1.9em;position:relative;margin:9px 0}
+.checklist li::before{content:"☐";position:absolute;left:0;font-size:1.15em;color:var(--teal)}
+
+.tools{margin-left:auto;display:flex;gap:6px;padding-left:10px;flex:none}
+.tools button{border:1px solid var(--line);background:var(--card);color:var(--ink);
+  border-radius:999px;min-height:34px;min-width:44px;padding:0 12px;
+  font-size:.88rem;cursor:pointer;font-family:inherit;white-space:nowrap}
+.tools button:hover{background:var(--teal-soft)}
+.tools button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+
+footer{border-top:1px solid var(--line);margin-top:56px;padding:22px 20px 40px;
+  font-size:.83rem;color:var(--ink-soft)}
+footer .inner{max-width:920px;margin:0 auto}
+</style>
+<script>(()=>{const d=document.documentElement;const t=localStorage.getItem('gw-theme');if(t)d.dataset.theme=t;if(localStorage.getItem('gw-proj')==='1')d.classList.add('projector')})()</script>
+</head>
+<body>
+
+<header class="hero">
+  <div class="inner">
+    <p class="kicker">Git with AI｜version control without memorizing commands</p>
+    <h1>Before you start: what this path looks like</h1>
+    <p>The material is thick, and clicking straight into it is a good way to drown. This page tells you first which path you will walk, what to prepare, and which steps you have to check with your own eyes instead of handing them to the AI. A classroom session and solo self-study walk different routes; Part II below makes that clear. One more thing before you begin: the AI assistant understands English (and most other languages) — talk to it in whatever language you think in.</p>
+  </div>
+</header>
+
+<nav id="topnav" aria-label="On-page navigation">
+  <span class="navlinks">
+    <a href="#who">Who it is for</a>
+    <a href="#routes">Two routes</a>
+    <a href="#prep">Prepare first</a>
+    <a href="#map">The 15-step map</a>
+    <a href="#check">Did I learn it?</a>
+    <a href="#next">After the course</a>
+    <a href="index.en.html">Back to entry</a>
+  </span>
+  <span class="tools">
+    <a href="start.html" hreflang="zh-Hant" title="Read this page in Chinese">中文版</a>
+    <button id="projToggle" type="button" aria-pressed="false" title="Projector mode: larger text, for showing the 15-step map on screen in class">🔎 Projector</button>
+    <button id="themeToggle" type="button" aria-label="Switch between dark and light mode">🌗</button>
+  </span>
+</nav>
+
+<main>
+
+<div class="callout red" style="margin-top:22px">
+  <div class="t">🔴 Two data red lines before you touch anything</div>
+  <p style="margin:4px 0 0" class="note">It is fine if the words below mean nothing to you yet — the course teaches all of them. For now just remember two things: <strong>student data does not go online, and passwords do not go into a project</strong>.</p>
+  <p style="margin:4px 0 0">First, <strong>student personal data and unpublished data never go into a public repo</strong> — <code>.gitignore</code> is not a security tool. Second, <strong>not even a private repo holds account names and passwords</strong> — once something has been committed it is in the history, and deleting the file afterwards does not help.</p>
+  <p style="margin:8px 0 0" class="note">The full explanation of both lines, the three supervision principles, and the first-aid kit for "I saved the wrong thing" are in <a href="material.en.html#safety">Part V of the material</a>.</p>
+</div>
+
+<section id="who">
+<h2><span class="num">I</span>Who this is for</h2>
+<p>For university teachers and graduate students who have a research project in hand. The test is simple: if a file called <code>thesis_v3_final_really_final.docx</code> has ever appeared in your folder, or if you and a co-author have mailed drafts back and forth until nobody is sure which one is newest, this course was made for you.</p>
+<p><strong>You do not need to know</strong> any Git command, any terminal, or any programming language. <strong>You do need</strong> a computer with an internet connection, a GitHub account, and an AI assistant you are used to — and <strong>it is fine if you do not have the last two yet</strong>; the preparation pack walks you through getting them.</p>
+<p class="note">This course does not teach you to memorize commands, and it does not explain how Git works inside; several advanced features (stash, rebase, fork workflows, GitHub Actions) are skipped on purpose. What you practise is something else: <strong>being the supervisor of your agent (the AI assistant that does the work for you), not its rubber stamp</strong>. The full "why" is in <a href="material.en.html#why">Part I of the material</a>.</p>
+</section>
+
+<section id="routes">
+<h2><span class="num">II</span>Two routes: which one are you?</h2>
+<p>Same 15 steps, but a classroom session and solo self-study walk them differently. The difference is only in Stage 2.</p>
+<div id="phaseCards"></div>
+
+<div class="routes">
+  <div class="route">
+    <div class="t">🅐 Classroom session (workshop)</div>
+    <div class="who">You have a partner and an instructor in the room, and you follow the instructor to the end</div>
+    <p style="margin:0"><strong>You walk all 15 steps.</strong> In Stage 1 everyone works on their own research project. In Stage 2 you pair up: one of you plays the graduate student, the other the advisor, taking turns to propose changes and to review them, and at the end you swap roles and run one short round again.</p>
+  </div>
+  <div class="route solo">
+    <div class="t">🅑 Learning on your own</div>
+    <div class="who">At home, by yourself, with no partner</div>
+    <p style="margin:0"><strong>For now, walk Stage 1 only, P1–P9.</strong> That phase is about your own research project anyway, and finishing it already solves the more painful half: you can get an earlier version back, your work is backed up on GitHub, and you can see what changed.</p>
+  </div>
+</div>
+
+<div class="callout red">
+  <div class="t">⚠️ Stage 2 needs two people; one person cannot pretend</div>
+  <p style="margin:4px 0 0">What C1–C6 practise is exactly how two people work on the same draft without stepping on each other — propose, send back, revise, approve, merge. <strong>One person cannot create that situation</strong>, so wait until you have a co-author, a student you supervise, or a place in a scheduled session.</p>
+  <p style="margin:8px 0 0" class="note">Please do not register a second GitHub account just to fake a partner and play both roles yourself. The <a href="https://docs.github.com/en/site-policy/github-terms/github-terms-of-service" target="_blank" rel="noopener">GitHub Terms of Service</a> state that one person may keep only one free account, and practice is not worth crossing that line for.</p>
+</div>
+</section>
+
+<section id="prep">
+<h2><span class="num">III</span>What to prepare before you start</h2>
+<div class="callout">
+  <div class="t">⚠️ The preparation list has ten items, not three</div>
+  <p style="margin:4px 0 0"><strong>You have to work through all ten items in <a href="material.en.html#prep">Part II of the material, "The setup pack"</a></strong> (two-factor authentication, installing Git itself, installing PowerShell 7, the permission settings for your AI assistant, signing in to GitHub, and so on). The three lines below are only the lowest bar, the one that lets you judge right now whether you are heading in the right direction — <strong>they are not the full list</strong>.</p>
+</div>
+<p>The three minimum checks: <strong>①</strong> your AI assistant is installed and signed in (it opens, the login works, you can find the input box); <strong>②</strong> you can sign in to your GitHub account; <strong>③</strong> do one warm-up run — ask the AI to create a small file, <strong>and to report the git version and the GitHub account it is signed in as</strong>, then <strong>open the file yourself and look at it</strong>.</p>
+<p class="note">Item ③ tests the whole installation chain in one sentence — the AI reports the git version and the GitHub account it is logged in as (the tool is called gh), so <strong>this one step shows you whether git is installed and whether GitHub is signed in</strong>. And the step is itself the first lesson of this course: <em>the AI saying it is done does not mean it is done</em>. ⚠️ But it <strong>cannot check two-factor authentication (2FA) or the permission settings of your AI assistant</strong>; for those two, follow the material. The material has an interactive ten-item checklist you can tick off, a screenshot for every step, and a sentence to say when you are stuck, so none of that is repeated here. <strong>Give yourself two evenings and do not leave this to the day before</strong> — several items need downloading and installing, which can take more than an hour depending on your connection.</p>
+</section>
+
+<section id="map">
+<h2><span class="num">IV</span>The 15-step map: what each step does, and where you must look yourself</h2>
+<p>This table is the map of the whole course. The right-hand column matters most — <strong>that is what you have to check yourself after the AI is done</strong>. The value of this course is not in the commands; it is in that column.</p>
+<div class="tablewrap">
+  <table id="mapTable">
+    <caption class="note" style="caption-side:bottom;text-align:left;padding-top:8px">The step codes are clickable and take you straight to the matching section of the material. To show this on screen in class, press <strong>🔎 Projector</strong> on the right of the top navigation bar to enlarge the text.</caption>
+    <thead>
+      <tr>
+        <th scope="col" style="width:5.5em">Step</th>
+        <th scope="col" style="width:3.6em">Minutes</th>
+        <th scope="col">What you do in this step</th>
+        <th scope="col">What you must check yourself</th>
+      </tr>
+    </thead>
+    <tbody id="mapBody"></tbody>
+  </table>
+</div>
+<p class="note">The clock-based class schedule (what happens when, and what the instructor watches for while walking the room) is in <a href="material.en.html#agenda">Part VIII of the material</a>. The times listed here are estimates for one person working through a step smoothly.</p>
+<noscript><p class="callout">This table is generated live from the material's workflow data, so JavaScript has to be on. You can also read the <a href="material.en.html">material page</a> directly.</p></noscript>
+</section>
+
+<section id="check">
+<h2><span class="num">V</span>Did I actually learn it?</h2>
+<p>After Stage 1, ask yourself these questions. Being able to answer them is what counts as having walked the path; the progress bar on the quest page is only a helper.</p>
+<ul class="checklist">
+  <li>I know that Git looks after one folder, and I can say which folder I am in right now.</li>
+  <li>I can have the AI save a change as one version, and <strong>I read which lines it changed before saving</strong>.</li>
+  <li>I can push the project to GitHub and see it on the website.</li>
+  <li>I can read the history and compare two versions to see how they differ.</li>
+  <li>I know that "just looking", "restore" and "revert" are three different ways of going back, and I know which one is safe once something has already been pushed.</li>
+  <li>I know which files should stay out of the repo, and that <code>.gitignore</code> is not a security tool.</li>
+  <li>I know that an agent saying "done" does not mean done, and I open the file myself to check.</li>
+  <li>I know I can call a stop at any moment, and I remember how the rescue sentence goes.</li>
+</ul>
+</section>
+
+<section id="next">
+<h2><span class="num">VI</span>After the course: what to do next</h2>
+<ul>
+  <li><strong>Move a real research project in.</strong> First decide whether the data can be public; if you are not sure, open a private repo — but <strong>a private repo still holds no account names or passwords</strong>, and sensitive research data still has to be judged against your institution's and your project's rules. Also keep the split you learned in class: <strong>large data files (.dta and .csv files easily run to hundreds of MB) stay on cloud storage and out of the repo</strong> — GitHub has a hard 100 MB limit per file, and pushing one in gets the whole push rejected.</li>
+  <li><strong>Move the files you edit often to plain text.</strong> Notes as <code>.md</code>, papers as <code>.tex</code>; that is what makes line-by-line differences visible.</li>
+  <li><strong>Find a co-author or a student you supervise, and go back for Stage 2.</strong> Once the two of you have done one PR together, real collaboration later will not get stuck.</li>
+  <li><strong>If your journal asks you to submit data and code</strong>, this workflow is the layer underneath: a complete history of changes, a clean list of files, and a clear account of how each version differs.</li>
+</ul>
+<p class="note">Before you start, it is worth reading <a href="material.en.html#limits">Part X of the material, "Three honest limits (nothing hidden)"</a> once: Word and Excel do not show line-by-line differences, GitHub plans and features change, and agents make mistakes. Knowing what a tool cannot do is how you find out what you actually have.</p>
+</section>
+
+<div class="linkcards">
+  <a class="linkcard" href="material.en.html"><div class="t">📘 The material — for reading</div><div class="d">The full two-phase route, the ideas and complete operations behind all 15 steps, advanced collaboration, troubleshooting, and a plain-language phrase table.</div></a>
+  <a class="linkcard" href="quest.en.html"><div class="t">🎮 The quest — for doing</div><div class="d">Keep this page open the whole time you are working: copyable plain-language prompts, a Git dashboard, and step-by-step checks. Please open it in Chrome or Edge.</div></a>
+</div>
+
+</main>
+
+<footer><div class="inner">
+  <p>Git with AI — version control without memorizing commands｜<span id="ver">v5.6</span>｜"Before you start" guide page</p>
+  <p>Tool prices and plans change; before you start, check each official page for what is true today.</p>
+  <p>© 2026 Wen-Sheng (Ted) Chen (Center for General Education, National Dong Hwa University) × the AI collaboration team — Wailan (洄瀾, team lead, Claude), Liwu (立霧, Codex), Xiuguluan (秀姑巒, Gemini), Muguaxi (木瓜溪, OpenCode), Meilunxi (美崙溪, Grok)｜This material is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> — you are welcome to use it for teaching and self-study; share adaptations under the same terms, and please do not use it commercially.</p>
+  <p>English edition of the v5.6 material. If anything differs, the Chinese original governs. License: CC BY-NC-SA 4.0.</p>
+</div></footer>
+
+<script src="workflow-data.js"></script>
+<script src="workflow-data.en.js"></script>
+<script>
+(function(){
+  'use strict';
+  var FLOW = window.WORKSHOP_FLOW;
+  var esc = function(s){ return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;'); };
+
+  /* English strings come from workflow-data.en.js (shared overlay, loaded above). */
+  var enPhase = function(p, field){ return p[field]; };
+  var enStep  = function(s, field){ return s[field]; };
+
+  var themeBtn = document.getElementById('themeToggle');
+  themeBtn.addEventListener('click', function(){
+    var cur = document.documentElement.dataset.theme;
+    if(!cur){ cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('gw-theme', next); } catch(e) {}
+  });
+
+  var projBtn = document.getElementById('projToggle');
+  var paintProj = function(on){ projBtn.textContent = on ? '🔎 Projector ON' : '🔎 Projector'; projBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); };
+  paintProj(document.documentElement.classList.contains('projector'));
+  projBtn.addEventListener('click', function(){
+    var on = document.documentElement.classList.toggle('projector');
+    paintProj(on);
+    try { localStorage.setItem('gw-proj', on ? '1' : '0'); } catch(e) {}
+  });
+
+  if(!FLOW || !FLOW.steps || !FLOW.phases) return;
+
+  document.getElementById('ver').textContent = FLOW.version || 'v5.6';
+
+  document.getElementById('phaseCards').innerHTML = FLOW.phases.map(function(p){
+    var steps = FLOW.steps.filter(function(s){ return s.phase === p.id; });
+    var ids = steps.map(function(s){ return s.id; });
+    var range = ids.length ? ids[0] + '–' + ids[ids.length - 1] : '';
+    return `<div class="card">
+      <div class="t">${esc(enPhase(p, 'label'))}</div>
+      <p class="note" style="margin:2px 0 6px">${esc(range)}, ${steps.length} steps｜about ${esc(p.minutes)} minutes</p>
+      <p style="margin:0">${esc(enPhase(p, 'promise'))}</p>
+    </div>`;
+  }).join('');
+
+  var rows = '';
+  FLOW.phases.forEach(function(p){
+    var steps = FLOW.steps.filter(function(s){ return s.phase === p.id; });
+    rows += `<tr class="phasebar"><th colspan="4" scope="colgroup">${esc(enPhase(p, 'label'))} (about ${esc(p.minutes)} minutes)</th></tr>`;
+    steps.forEach(function(s){
+      rows += `<tr>
+        <td class="step"><a href="material.en.html#guide-${esc(s.id)}">${esc(s.id)}</a></td>
+        <td class="mins">${esc(s.minutes)}</td>
+        <td>${esc(enStep(s, 'title'))}</td>
+        <td>${esc(enStep(s, 'human'))}</td>
+      </tr>`;
+    });
+  });
+  document.getElementById('mapBody').innerHTML = rows;
+})();
+</script>
+</body>
+</html>
