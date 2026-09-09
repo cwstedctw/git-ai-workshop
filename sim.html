@@ -152,8 +152,9 @@ header.top .eyebrow{text-transform:none; letter-spacing:.08em}
 .repo-list .newest{font-size:11.5px; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase}
 
 /* 下方：白話＋指令 */
-.panel{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:14px; padding:14px 22px 0}
+.panel{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:14px; padding:14px 22px 20px}
 .say{background:var(--card-2); border:1px solid var(--line-soft); border-radius:12px; padding:16px 18px; display:grid; gap:8px; align-content:start}
+.say .say-live{display:grid; gap:8px}
 .say .eyebrow{color:var(--teal-deep)}
 .say h3{font-size:18px}
 .say p{color:var(--ink-soft); font-size:15px}
@@ -170,7 +171,7 @@ header.top .eyebrow{text-transform:none; letter-spacing:.08em}
 .term .note{font-size:12.5px; color:var(--term-dim)}
 
 /* 操作列 */
-.actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:16px 22px 20px}
+.actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:12px 0 0; margin-top:4px; border-top:1px dashed var(--line)}
 .btn{border:1px solid var(--line); background:var(--card); border-radius:10px; padding:10px 16px; font-weight:700; font-size:15px; display:inline-flex; align-items:center; gap:8px; transition:transform .08s, background .15s}
 .btn:hover{background:var(--card-2)}
 .btn:active{transform:translateY(1px)}
@@ -181,7 +182,7 @@ header.top .eyebrow{text-transform:none; letter-spacing:.08em}
 .actions .spacer{flex:1}
 
 /* commit 訊息輸入 */
-.commit-form{display:grid; gap:8px; padding:0 22px 6px}
+.commit-form{display:grid; gap:8px; padding:8px 0 0}
 .commit-form label{font-size:14px; font-weight:700}
 .commit-form .row{display:flex; flex-wrap:wrap; gap:10px}
 .commit-form input{flex:1 1 260px; min-width:0; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font:inherit; font-size:15px; background:var(--card); color:var(--ink)}
@@ -242,7 +243,7 @@ footer.foot .wrap{display:grid; gap:8px}
   .panel{grid-template-columns:1fr}
   .stepper{grid-template-columns:repeat(4,1fr); gap:8px}
   .snapshot .two{grid-template-columns:1fr}
-  .sim-head,.desk,.panel,.actions,.commit-form{padding-left:14px; padding-right:14px}
+  .sim-head,.desk,.panel{padding-left:14px; padding-right:14px}
   .snapshot,.done-card{margin-left:14px; margin-right:14px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -293,11 +294,23 @@ footer.foot .wrap{display:grid; gap:8px}
     </div>
 
     <div class="panel">
-      <div class="say" aria-live="polite" id="say">
+      <div class="say" id="say">
         <p class="eyebrow" data-i18n="sayEyebrow"></p>
-        <h3 id="sayTitle"></h3>
-        <p id="sayBody"></p>
-        <div class="why" id="sayWhy" hidden></div>
+        <div class="say-live" id="sayLive" aria-live="polite">
+          <h3 id="sayTitle"></h3>
+          <p id="sayBody"></p>
+          <div class="why" id="sayWhy" hidden></div>
+        </div>
+        <div class="commit-form" id="commitForm" hidden>
+          <label for="msg" data-i18n="msgLabel"></label>
+          <div class="row">
+            <input id="msg" type="text" maxlength="72" autocomplete="off" placeholder="">
+            <button class="btn primary" id="btnDoCommit" data-i18n="btnCommit"></button>
+          </div>
+          <p class="hint" data-i18n="msgHint"></p>
+          <p class="warn" id="msgWarn" hidden></p>
+        </div>
+        <div class="actions" id="actions"></div>
       </div>
       <div class="term">
         <p class="eyebrow" data-i18n="termEyebrow"></p>
@@ -306,20 +319,8 @@ footer.foot .wrap{display:grid; gap:8px}
       </div>
     </div>
 
-    <div class="commit-form" id="commitForm" hidden>
-      <label for="msg" data-i18n="msgLabel"></label>
-      <div class="row">
-        <input id="msg" type="text" maxlength="72" autocomplete="off" placeholder="">
-        <button class="btn primary" id="btnDoCommit" data-i18n="btnCommit"></button>
-      </div>
-      <p class="hint" data-i18n="msgHint"></p>
-      <p class="warn" id="msgWarn" hidden></p>
-    </div>
-
     <div class="snapshot" id="snapshot" hidden></div>
     <div class="done-card" id="doneCard" hidden></div>
-
-    <div class="actions" id="actions"></div>
   </section>
 
   <section class="doc" aria-labelledby="statesTitle">
@@ -421,7 +422,7 @@ footer.foot .wrap{display:grid; gap:8px}
       s9e:{t:'小實驗：先 add，再改檔', b:'我已經替你把目前的 notes.md 放進暫存區了（右邊指令可見）。現在<strong>再改一次</strong>桌面上的檔，按「幫我加一行」或自己改，然後按「改好了」。', term:'# 然後你又回去改了 notes.md……'},
       s9a:{t:'兩邊不一樣了', b:'看 status：notes.md <strong>同時</strong>出現在「已暫存」跟「尚未暫存」兩段。暫存區裝的是你按 add 那一刻的版本，桌面是更新的版本。<br>如果現在 commit，收進去的是<strong>紙箱裡的舊版</strong>，你剛加的那行不會在裡面。', w:'很多人第一次遇到會嚇一跳，以為檔案壞了。沒有，這只是提醒你：紙箱不會自動更新。'},
       s9b:{t:'再 add 一次，紙箱才跟上', b:'現在兩邊一致了，status 只剩「已暫存」一段。要不要 commit 隨你，這裡的重點已經看到了。<br>想重頭練一遍，按「重來」。', w:'口訣：<strong>改完要 add，add 完才 commit；中間又改了，就再 add。</strong>'},
-      done8:'<h3>你走完了一整輪</h3><p>兩個 commit、一次 diff、一次翻歷史。真正要記住的只有一件事：<strong>存檔不是存版。</strong>桌面上的檔案隨時會變，版本庫裡的每一格都不會。</p><p>下一步在真實世界會是 <code>git push</code>：把這些版本送到 GitHub 備份。那是另一趟旅程，闖關頁的 P5 關會帶你走。</p>',
+      done8:'<h3>你走完了一整輪</h3><p>兩個 commit、一次 diff、一次翻歷史。真正要記住的只有一件事：<strong>存檔不是存版。</strong>桌面上的檔案隨時會變，版本庫裡的每一格都不會。</p><p>下一步在真實世界會是 <code>git push</code>：把這些版本送到 GitHub 備份。那是另一趟旅程，<a href="quest.html#task-P5">闖關頁的 P5 關</a>會帶你走。</p>',
       done9h:'小實驗：add 之後又改檔案',
       done9:['先按下面「幫我加一行」或自己改幾個字，再按「改好了」。','看到了嗎？<strong>暫存區裡還是舊內容</strong>，桌面上的檔案卻已經不一樣。現在 commit 的話，收進去的是紙箱裡的舊版。','再 add 一次之後，紙箱裡的內容才跟上桌面。這就是為什麼看 status 時要分清楚「已暫存」和「尚未暫存」兩段。'],
       statesEyebrow:'一張表記住',
@@ -514,7 +515,7 @@ footer.foot .wrap{display:grid; gap:8px}
       s9e:{t:'Small experiment: add first, then edit', b:'I have already staged the current notes.md for you (see the command on the right). Now <strong>edit the file on the desk again</strong>: press "Add a line for me" or edit it yourself, then press "Done".', term:'# Then you went back and edited notes.md again...'},
       s9a:{t:'The two sides no longer match', b:'Look at the status: notes.md appears in <strong>both</strong> the "to be committed" and the "not staged" sections. The staging area holds the version from the moment you pressed add; the desk has the newer one.<br>If you commit now, what goes in is <strong>the older version in the box</strong>. The line you just added will not be there.', w:'Many people are startled the first time and think the file is broken. It is not. It is just a reminder that the box does not update itself.'},
       s9b:{t:'Only another add brings the box up to date', b:'Now both sides match, and status shows only the "to be committed" section. Whether you commit is up to you; the point has been made.<br>To practice from the beginning, press "Start over".', w:'The rule of thumb: <strong>after editing, add; after add, commit; if you edit in between, add again.</strong>'},
-      done8:'<h3>You have completed a full round</h3><p>Two commits, one diff, one look at the history. Only one thing really needs remembering: <strong>saving is not versioning.</strong> The file on the desk can change at any time; the drawers in the repository never do.</p><p>In the real world the next step is <code>git push</code>: sending these versions to GitHub as a backup. That is another journey; step P5 on the quest page takes you there.</p>',
+      done8:'<h3>You have completed a full round</h3><p>Two commits, one diff, one look at the history. Only one thing really needs remembering: <strong>saving is not versioning.</strong> The file on the desk can change at any time; the drawers in the repository never do.</p><p>In the real world the next step is <code>git push</code>: sending these versions to GitHub as a backup. That is another journey; <a href="quest.en.html#task-P5">step P5 on the quest page</a> takes you there.</p>',
       done9h:'Small experiment: editing after add',
       done9:['First press "Add a line for me" below, or change a few words yourself, then press "Done".','See? <strong>The staging area still holds the old content</strong>, while the file on the desk has changed. A commit now would take the old version from the box.','Only after another add does the box catch up with the desk. This is why, when reading status, you have to tell the "to be committed" and "not staged" sections apart.'],
       statesEyebrow:'One table to remember',

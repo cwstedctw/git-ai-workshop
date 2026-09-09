@@ -273,6 +273,16 @@ for(const name of ['indexEn','startEn','materialEn','questEn']){
   if(missing.length||extra.length)fail(`sim.html 兩套語言的鍵不一致：英文缺 ${missing.join(',')||'無'}；英文多 ${extra.join(',')||'無'}`);
   const enOnlyZh=[...enBlock.matchAll(/[一-鿿]+/g)].map(m=>m[0]).filter(w=>!['中文版','工作區','暫存區','版本庫','未追蹤','已修改','已暫存','乾淨','洄瀾'].includes(w));
   if(enOnlyZh.length)fail(`sim.html 英文字典殘留非術語的中文：${enOnlyZh.slice(0,5).join('、')}`);
+  // 連結要對語言：中文字典只連中文頁、英文字典只連 .en.html（外部 https 不管）
+  for(const [label,block,mustEn] of [['zh',zhBlock,false],['en',enBlock,true]]){
+    for(const href of [...block.matchAll(/\bhref="([^"]+)"/g)].map(m=>m[1])){
+      if(/^https?:/i.test(href))continue;
+      if(/\.en\.html/.test(href)!==mustEn)fail(`sim.html ${label} 字典連到另一種語言的頁：${href}`);
+    }
+    const home=(block.match(/homeHref:'([^']+)'/)||[])[1];
+    if(!home||/\.en\.html/.test(home)!==mustEn)fail(`sim.html ${label} 字典的 homeHref 語言不對：${home}`);
+  }
+  if(!/<div class="say"[\s\S]*?id="commitForm"[\s\S]*?id="actions"[\s\S]*?<div class="term">/.test(sim))fail('sim.html 的 commit 表單與按鈕列必須放在「現在發生了什麼」卡裡（讀完就按，2026-09-09 Ted）');
   for(const [file,src] of [['index.html',html.index],['index.en.html',html.indexEn],['material.html',html.material],['material.en.html',html.materialEn]]){
     if(!src.includes('href="sim.html'))fail(`${file} 沒有連到練習台 sim.html`);
   }
