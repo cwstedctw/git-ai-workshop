@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW" data-lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>從建檔到 commit｜跟 AI 一起用 Git</title>
+<style>
+/* ── 沿用本站配色（index／material）── */
+:root{
+  --teal:#0E7C7B; --teal-deep:#0A5958; --teal-soft:#DCEFED;
+  --gold:#D9A441; --gold-deep:#8a6218; --gold-soft:#F3E3C3;
+  --slate:#4F7FA6; --slate-soft:#DCE7F0;
+  --bg:#F4ECD8; --card:#FDFAF2; --card-2:#F8F1DF;
+  --ink:#1A1A1A; --ink-soft:#4a463d; --ink-faint:#6f6a5c;
+  --line:#e2d8bf; --line-soft:#ece3cc;
+  --add:#2E7D4F; --add-soft:#DDEFE2;
+  --del:#B5533C; --del-soft:#F5DFD8;
+  --term-bg:#1f2523; --term-ink:#e7e2d3; --term-dim:#9a948a; --term-cmd:#f0c86a;
+  --shadow:0 1px 3px rgba(26,26,26,.06), 0 6px 20px rgba(26,26,26,.05);
+  --cta-ink:#F4ECD8;
+  --focus:#0E7C7B;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --teal:#3aa6a1; --teal-deep:#7fd0cb; --teal-soft:#173937;
+    --gold:#d9a441; --gold-deep:#e6bd6a; --gold-soft:#3a3220;
+    --slate:#7fa9cc; --slate-soft:#1f2e3a;
+    --bg:#151d1c; --card:#1d2726; --card-2:#222d2c;
+    --ink:#ece6d6; --ink-soft:#b7b0a0; --ink-faint:#8d8677;
+    --line:#33403e; --line-soft:#2a3634;
+    --add:#6cc08b; --add-soft:#1c3327;
+    --del:#e08b73; --del-soft:#3d241d;
+    --term-bg:#0f1514; --term-ink:#e7e2d3; --term-dim:#8d8677; --term-cmd:#f0c86a;
+    --shadow:0 1px 3px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+    --cta-ink:#0f1817;
+    --focus:#7fd0cb;
+  }
+}
+:root[data-theme="dark"]{
+  --teal:#3aa6a1; --teal-deep:#7fd0cb; --teal-soft:#173937;
+  --gold:#d9a441; --gold-deep:#e6bd6a; --gold-soft:#3a3220;
+  --slate:#7fa9cc; --slate-soft:#1f2e3a;
+  --bg:#151d1c; --card:#1d2726; --card-2:#222d2c;
+  --ink:#ece6d6; --ink-soft:#b7b0a0; --ink-faint:#8d8677;
+  --line:#33403e; --line-soft:#2a3634;
+  --add:#6cc08b; --add-soft:#1c3327;
+  --del:#e08b73; --del-soft:#3d241d;
+  --term-bg:#0f1514; --term-ink:#e7e2d3; --term-dim:#8d8677; --term-cmd:#f0c86a;
+  --shadow:0 1px 3px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  --cta-ink:#0f1817;
+  --focus:#7fd0cb;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:16px; line-height:1.75;
+}
+h1,h2,h3{line-height:1.3; text-wrap:balance; margin:0}
+h1{font-size:clamp(28px,4.2vw,40px); font-weight:800}
+h2{font-size:clamp(21px,2.6vw,26px); font-weight:700}
+h3{font-size:17px; font-weight:600}
+p{margin:0}
+code,kbd,.mono{font-family:"JetBrains Mono",ui-monospace,Consolas,"Courier New",monospace; font-size:.92em}
+code{background:var(--card-2); padding:.05em .4em; border-radius:4px; border:1px solid var(--line-soft)}
+a{color:var(--teal-deep)}
+button{font:inherit; color:inherit; cursor:pointer}
+button:focus-visible,textarea:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px}
+.eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); font-weight:500}
+
+/* ── 頁首 ── */
+header.top{padding:18px 0 28px}
+header.top .wrap{display:grid; gap:14px}
+header.top .lede{max-width:40em; color:var(--ink-soft); font-size:17px}
+header.top .lede strong{color:var(--ink)}
+header.top .eyebrow{text-transform:none; letter-spacing:.08em}
+.topbar{display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:14px; margin-bottom:10px}
+.topbar a{color:var(--teal-deep); text-decoration:none; font-weight:600}
+.topbar a:hover{text-decoration:underline}
+.langswitch{border:1px solid var(--teal); border-radius:999px; padding:4px 14px; background:var(--card)}
+
+/* ── 三個地方（導覽卡） ── */
+.zones-intro{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:6px 0 40px}
+.zone-card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; display:grid; gap:6px; align-content:start}
+.zone-card .zname{display:flex; align-items:baseline; gap:8px; font-weight:700; font-size:17px; flex-wrap:wrap}
+.zone-card .zname small{font-weight:500; color:var(--ink-faint); font-size:12px; letter-spacing:.04em}
+.zone-card p{color:var(--ink-soft); font-size:15px}
+.dot{display:inline-block; width:10px; height:10px; border-radius:50%; flex:none; transform:translateY(-1px)}
+.dot.w{background:var(--gold)} .dot.s{background:var(--slate)} .dot.r{background:var(--teal)}
+
+/* ── 模擬器外殼 ── */
+.sim{background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); overflow:hidden}
+.sim-head{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 16px; padding:16px 22px; border-bottom:1px solid var(--line-soft); background:var(--card-2)}
+.sim-head h2{font-size:19px}
+.sim-head .hint{color:var(--ink-faint); font-size:14px}
+
+/* 進度條 */
+.stepper{display:grid; grid-template-columns:repeat(8,1fr); gap:6px; padding:14px 22px 0; list-style:none; margin:0}
+.stepper li{display:grid; gap:6px; font-size:12.5px; color:var(--ink-faint); text-align:left}
+.stepper li .bar{height:4px; border-radius:2px; background:var(--line)}
+.stepper li.done .bar{background:var(--teal)}
+.stepper li.now .bar{background:var(--gold)}
+.stepper li.now{color:var(--ink); font-weight:700}
+.stepper li.done{color:var(--ink-soft)}
+.stepper li span.n{font-family:"JetBrains Mono",Consolas,monospace; font-size:11px; margin-right:4px; color:inherit}
+
+/* 三欄桌面 */
+.desk{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; padding:18px 22px 6px}
+.zone{background:var(--bg); border:1px dashed var(--line); border-radius:12px; min-height:230px; display:grid; grid-template-rows:auto 1fr; overflow:hidden; transition:border-color .25s, box-shadow .25s}
+.zone.lit{border-style:solid; border-color:var(--zone-c); box-shadow:0 0 0 3px color-mix(in srgb, var(--zone-c) 18%, transparent)}
+.zone-w{--zone-c:var(--gold)} .zone-s{--zone-c:var(--slate)} .zone-r{--zone-c:var(--teal)}
+.zone-head{display:flex; align-items:baseline; gap:8px; padding:10px 14px 8px; border-bottom:1px solid var(--line-soft); font-weight:700; font-size:15px; flex-wrap:wrap}
+.zone-head small{font-weight:500; color:var(--ink-faint); font-size:11.5px; letter-spacing:.04em}
+.zone-body{padding:12px; display:grid; gap:10px; align-content:start}
+.empty{color:var(--ink-faint); font-size:14px; padding:10px 4px; text-align:center; align-self:center}
+
+/* 檔案卡 */
+.file{background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; box-shadow:var(--shadow)}
+.file .fh{display:flex; align-items:center; gap:8px; padding:8px 12px; border-bottom:1px solid var(--line-soft); font-size:14px}
+.file .fh .fname{font-family:"JetBrains Mono",Consolas,monospace; font-weight:500; font-size:13.5px}
+.pill{margin-left:auto; font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap; letter-spacing:.02em}
+.pill.untracked{background:var(--del-soft); color:var(--del)}
+.pill.modified{background:var(--gold-soft); color:var(--gold-deep)}
+.pill.staged{background:var(--slate-soft); color:var(--slate)}
+.pill.clean{background:var(--add-soft); color:var(--add)}
+.pill.snap{background:var(--teal-soft); color:var(--teal-deep)}
+.file .lines{margin:0; padding:8px 12px; font-family:"JetBrains Mono",Consolas,monospace; font-size:12.5px; line-height:1.6; white-space:pre-wrap; word-break:break-word; color:var(--ink-soft)}
+.file .lines .ln{display:block}
+.file .lines .ln.add{background:var(--add-soft); color:var(--add)}
+.file .lines .ln.del{background:var(--del-soft); color:var(--del); text-decoration:line-through; text-decoration-color:color-mix(in srgb, var(--del) 60%, transparent)}
+.file textarea{width:100%; border:0; border-top:1px solid var(--line-soft); background:var(--card-2); color:var(--ink); font-family:"JetBrains Mono",Consolas,monospace; font-size:12.5px; line-height:1.6; padding:8px 12px; resize:vertical; min-height:96px; display:block}
+.file .editbar{display:flex; flex-wrap:wrap; gap:8px; padding:8px 12px; border-top:1px solid var(--line-soft); background:var(--card-2)}
+.file .editbar .btn{padding:6px 12px; font-size:13.5px}
+
+/* commit 節點 */
+.commit{display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:start; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 12px; text-align:left; width:100%; box-shadow:var(--shadow); transition:border-color .2s}
+.commit:hover{border-color:var(--teal)}
+.commit.sel{border-color:var(--teal); box-shadow:0 0 0 3px color-mix(in srgb, var(--teal) 20%, transparent)}
+.commit .node{width:14px; height:14px; border-radius:50%; background:var(--teal); margin-top:6px; position:relative}
+.commit .node::after{content:""; position:absolute; left:6px; top:14px; width:2px; height:26px; background:var(--line)}
+.commit:last-child .node::after{display:none}
+.commit .meta{display:grid; gap:2px; min-width:0}
+.commit .msg{font-weight:700; font-size:14px; line-height:1.4; overflow-wrap:anywhere}
+.commit .sub{font-size:12px; color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:4px 10px}
+.commit .sub .hash{font-family:"JetBrains Mono",Consolas,monospace; color:var(--teal-deep)}
+.repo-list{display:grid; gap:8px}
+.repo-list .newest{font-size:11.5px; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase}
+
+/* 下方：白話＋指令 */
+.panel{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:14px; padding:14px 22px 0}
+.say{background:var(--card-2); border:1px solid var(--line-soft); border-radius:12px; padding:16px 18px; display:grid; gap:8px; align-content:start}
+.say .eyebrow{color:var(--teal-deep)}
+.say h3{font-size:18px}
+.say p{color:var(--ink-soft); font-size:15px}
+.say p strong{color:var(--ink)}
+.say .why{border-left:3px solid var(--gold); padding:4px 12px; color:var(--ink-soft); font-size:14.5px; background:var(--card); border-radius:0 8px 8px 0}
+.term{background:var(--term-bg); color:var(--term-ink); border-radius:12px; padding:14px 16px; display:grid; gap:8px; align-content:start; min-width:0}
+.term .eyebrow{color:var(--term-dim)}
+.term pre{margin:0; font-family:"JetBrains Mono",Consolas,monospace; font-size:12.5px; line-height:1.6; white-space:pre-wrap; word-break:break-word; overflow-x:auto}
+.term .cmd{color:var(--term-cmd)}
+.term .cmd::before{content:"$ "; color:var(--term-dim)}
+.term .out{color:var(--term-ink)}
+.term .dim{color:var(--term-dim)}
+.term .plus{color:#8fd19e} .term .minus{color:#f0a08c}
+.term .note{font-size:12.5px; color:var(--term-dim)}
+
+/* 操作列 */
+.actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:16px 22px 20px}
+.btn{border:1px solid var(--line); background:var(--card); border-radius:10px; padding:10px 16px; font-weight:700; font-size:15px; display:inline-flex; align-items:center; gap:8px; transition:transform .08s, background .15s}
+.btn:hover{background:var(--card-2)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--teal); border-color:var(--teal); color:var(--cta-ink)}
+.btn.primary:hover{background:var(--teal-deep); border-color:var(--teal-deep)}
+.btn.ghost{background:transparent; font-weight:500; color:var(--ink-soft)}
+.btn .k{font-family:"JetBrains Mono",Consolas,monospace; font-weight:500; font-size:12.5px; opacity:.85}
+.actions .spacer{flex:1}
+
+/* commit 訊息輸入 */
+.commit-form{display:grid; gap:8px; padding:0 22px 6px}
+.commit-form label{font-size:14px; font-weight:700}
+.commit-form .row{display:flex; flex-wrap:wrap; gap:10px}
+.commit-form input{flex:1 1 260px; min-width:0; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font:inherit; font-size:15px; background:var(--card); color:var(--ink)}
+.commit-form .hint{font-size:13.5px; color:var(--ink-faint)}
+.commit-form .warn{color:var(--del); font-size:13.5px}
+
+/* 快照檢視 */
+.snapshot{margin:0 22px 16px; border:1px solid var(--teal); border-radius:12px; background:var(--teal-soft); padding:14px 16px; display:grid; gap:10px}
+.snapshot h3{font-size:16px; color:var(--teal-deep)}
+.snapshot .two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.snapshot .two .file{align-self:start}
+.snapshot .close{justify-self:start}
+.snapshot .lead{color:var(--ink-soft); font-size:14.5px}
+
+/* ── 說明區塊 ── */
+section.doc{padding:44px 0 0}
+section.doc .wrap{display:grid; gap:18px; padding:0}
+section.doc .lede{color:var(--ink-soft); max-width:42em}
+
+table.states{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; font-size:15px}
+.table-wrap{overflow-x:auto; border-radius:12px}
+table.states th,table.states td{padding:12px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line-soft)}
+table.states th{background:var(--card-2); font-weight:700; font-size:14px; white-space:nowrap}
+table.states tr:last-child td{border-bottom:0}
+table.states td:first-child{white-space:nowrap}
+table.states td .alt{display:block; color:var(--ink-faint); font-size:12.5px; margin-top:2px}
+
+.myths{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; list-style:none; margin:0; padding:0}
+.myths li{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; display:grid; gap:6px}
+.myths li .no{color:var(--del); font-weight:700; font-size:15px}
+.myths li .yes{color:var(--ink-soft); font-size:15px}
+
+.quiz{display:grid; gap:14px}
+.q{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; display:grid; gap:10px}
+.q .qt{font-weight:700; font-size:16px}
+.q .opts{display:grid; gap:8px}
+.q .opt{text-align:left; border:1px solid var(--line); background:var(--card-2); border-radius:10px; padding:10px 14px; font-size:15px; display:flex; gap:10px; align-items:flex-start}
+.q .opt:hover{border-color:var(--teal)}
+.q .opt.right{border-color:var(--add); background:var(--add-soft)}
+.q .opt.wrong{border-color:var(--del); background:var(--del-soft)}
+.q .opt .mark{font-weight:700; flex:none; font-family:"JetBrains Mono",Consolas,monospace}
+.q .fb{font-size:14.5px; color:var(--ink-soft); min-height:1.5em}
+.q .fb.ok{color:var(--add)} .q .fb.ng{color:var(--del)}
+
+footer.foot{padding:48px 0 60px; color:var(--ink-faint); font-size:13.5px}
+footer.foot .wrap{display:grid; gap:8px}
+
+/* 完成卡 */
+.done-card{margin:0 22px 18px; background:var(--gold-soft); border:1px solid var(--gold); border-radius:12px; padding:16px 18px; display:grid; gap:8px}
+.done-card h3{color:var(--gold-deep)}
+.done-card p{color:var(--ink-soft); font-size:15px}
+.done-card p strong{color:var(--ink)}
+
+@media (max-width:820px){
+  .zones-intro{grid-template-columns:1fr}
+  .desk{grid-template-columns:1fr}
+  .zone{min-height:150px}
+  .panel{grid-template-columns:1fr}
+  .stepper{grid-template-columns:repeat(4,1fr); gap:8px}
+  .snapshot .two{grid-template-columns:1fr}
+  .sim-head,.desk,.panel,.actions,.commit-form{padding-left:14px; padding-right:14px}
+  .snapshot,.done-card{margin-left:14px; margin-right:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important; animation:none !important}
+}
+</style>
+<script>(()=>{const t=localStorage.getItem('gw-theme');if(t)document.documentElement.dataset.theme=t})()</script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="topbar">
+      <a id="homeLink" href="index.html"></a>
+      <a class="langswitch" id="langSwitch" href="?lang=en" hreflang="en" lang="en" title="English version of this page">EN</a>
+    </div>
+    <p class="eyebrow" data-i18n="eyebrow"></p>
+    <h1 data-i18n="h1"></h1>
+    <p class="lede" data-i18n="lede"></p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="zones-intro" id="zonesIntro"></div>
+
+  <section class="sim" aria-labelledby="simTitle">
+    <div class="sim-head">
+      <h2 id="simTitle" data-i18n="simTitle"></h2>
+      <p class="hint" data-i18n="simHint"></p>
+    </div>
+
+    <ol class="stepper" id="stepper"></ol>
+
+    <div class="desk">
+      <div class="zone zone-w" id="zoneW">
+        <div class="zone-head" id="headW"></div>
+        <div class="zone-body" id="bodyW"></div>
+      </div>
+      <div class="zone zone-s" id="zoneS">
+        <div class="zone-head" id="headS"></div>
+        <div class="zone-body" id="bodyS"></div>
+      </div>
+      <div class="zone zone-r" id="zoneR">
+        <div class="zone-head" id="headR"></div>
+        <div class="zone-body" id="bodyR"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="say" aria-live="polite" id="say">
+        <p class="eyebrow" data-i18n="sayEyebrow"></p>
+        <h3 id="sayTitle"></h3>
+        <p id="sayBody"></p>
+        <div class="why" id="sayWhy" hidden></div>
+      </div>
+      <div class="term">
+        <p class="eyebrow" data-i18n="termEyebrow"></p>
+        <pre id="termOut"></pre>
+        <p class="note" data-i18n="termNote"></p>
+      </div>
+    </div>
+
+    <div class="commit-form" id="commitForm" hidden>
+      <label for="msg" data-i18n="msgLabel"></label>
+      <div class="row">
+        <input id="msg" type="text" maxlength="72" autocomplete="off" placeholder="">
+        <button class="btn primary" id="btnDoCommit" data-i18n="btnCommit"></button>
+      </div>
+      <p class="hint" data-i18n="msgHint"></p>
+      <p class="warn" id="msgWarn" hidden></p>
+    </div>
+
+    <div class="snapshot" id="snapshot" hidden></div>
+    <div class="done-card" id="doneCard" hidden></div>
+
+    <div class="actions" id="actions"></div>
+  </section>
+
+  <section class="doc" aria-labelledby="statesTitle">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="statesEyebrow"></p>
+      <h2 id="statesTitle" data-i18n="statesTitle"></h2>
+      <p class="lede" data-i18n="statesLede"></p>
+      <div class="table-wrap" id="statesTable"></div>
+    </div>
+  </section>
+
+  <section class="doc" aria-labelledby="mythTitle">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="mythEyebrow"></p>
+      <h2 id="mythTitle" data-i18n="mythTitle"></h2>
+      <ul class="myths" id="myths"></ul>
+    </div>
+  </section>
+
+  <section class="doc" aria-labelledby="quizTitle">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="quizEyebrow"></p>
+      <h2 id="quizTitle" data-i18n="quizTitle"></h2>
+      <div class="quiz" id="quiz"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p data-i18n="foot1"></p>
+    <p data-i18n="foot2"></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ───────── 兩種語言的文字（同一份頁面、同一套邏輯） ───────── */
+  const LANG = {
+    zh: {
+      title:'從建檔到 commit｜跟 AI 一起用 Git',
+      home:'← 工作坊首頁', homeHref:'index.html', switchLabel:'EN', switchHref:'?lang=en', switchTitle:'English version of this page',
+      eyebrow:'跟 AI 一起用 Git · Git 入門 · 互動模擬',
+      h1:'從建檔到 commit',
+      lede:'用滑鼠走一遍：一個檔案怎麼從「剛建好」，一步步變成「存進版本歷史」。這一頁是<strong>模擬的</strong>，沒有真的程式在跑，按錯也不會弄壞任何東西。你不用背指令，只要看得懂每一步發生了什麼。',
+      zones:[
+        {dot:'w', name:'工作區', alt:'working directory', desk:'你的桌面', desc:'你的桌面。檔案在這裡被建立、被修改，就是你平常在資料夾裡看到的那些檔。'},
+        {dot:'s', name:'暫存區', alt:'staging area', desk:'出貨前的紙箱', desc:'出貨前的紙箱。你決定「這一版要收哪些內容」，先放進來排好，還沒封箱。'},
+        {dot:'r', name:'版本庫', alt:'repository，簡稱 repo', desk:'檔案櫃', desc:'檔案櫃。每 commit 一次就多一格抽屜，裡面是那一刻的完整快照，附時間和說明。'}
+      ],
+      simTitle:'練習台：一個檔案的第一趟旅程',
+      simHint:'下面的按鈕一次只會亮該做的那一顆，照著按就好。',
+      steps:['建檔','看現況','放進暫存區','存成版本','修改','看差異','再存一版','翻歷史'],
+      sayEyebrow:'現在發生了什麼',
+      termEyebrow:'背後其實是這幾行指令',
+      termNote:'你不必自己打。跟 AI 一起工作時，這些是它替你敲的；你的工作是看懂它回報了什麼。',
+      msgLabel:'這一版的說明（commit 訊息）',
+      btnCommit:'存成版本 <span class="k">git commit</span>',
+      msgHint:'寫「為什麼改」，不是只寫檔名。三個月後的你看到「update」會完全想不起來改了什麼。',
+      ph1:'例如：建立研究筆記第一版',
+      ph2:'例如：訂正表 2 係數為 0.96（重跑後的結果）',
+      warnEmpty:'說明不能空白。Git 也會拒絕沒有說明的 commit。',
+      warnNudge:'這句三個月後看得懂嗎？建議寫「為什麼改」。真的要用這句，再按一次就存。',
+      pills:{untracked:'未追蹤', modified:'已修改', staged:'已暫存', clean:'乾淨', 'staged+modified':'又改了'},
+      seed:['研究筆記（練習用的假資料）','表 2 的係數目前是 0.98','下週要補跑一次穩健性檢驗'],
+      extraLine:'補一行：這是 add 之後才加的',
+      emptyFile:'（空白檔案）',
+      editorAria:'notes.md 的內容',
+      emptyW:'（空的資料夾）<br>已經 <code>git init</code> 過，版本庫建好了，但裡面一個檔都沒有。',
+      emptyS:'（空的）<br>還沒有任何內容被放進來。',
+      emptyR:'（還沒有任何版本）<br>檔案櫃是空的。',
+      newest:'最新的在上面 · 點一個看那一版',
+      verN:n=>`第 ${n} 版`,
+      commitAria:(n,m)=>`第 ${n} 版：${m}`,
+      snapTitle:(n,h,m,t)=>`第 ${n} 版 <span class="mono">${h}</span>：「${m}」（${t}）`,
+      snapLead:'這是那一刻 notes.md 的完整內容。你現在桌面上怎麼改，這一格都不會變。',
+      snapPill:n=>`快照 · 第 ${n} 版`,
+      snapDiffPill:'跟上一版差在哪',
+      snapFirst:'這是第一版，前面沒有東西可以比。',
+      close:'收起',
+      reset:'重來',
+      bCreate:'建立 notes.md', bDone:'建好了', bEdited:'改好了', bStatus:'請 Git 回報現況', bAdd:'放進暫存區', bToCommit:'準備存成版本', bEdit:'接著修改檔案', bDiff:'看改了哪裡', bLog:'翻一下歷史', bExp:'小實驗：add 之後又改檔，會怎樣？', bAuto:'幫我改：0.98 → 0.96', bAutoExp:'幫我加一行', bAdd3:'再 add 一次',
+      s0:{t:'起點：一個空的資料夾', b:'這個資料夾已經被 Git 接管了（做過一次 <code>git init</code>），但裡面還沒有任何檔案，也還沒有任何版本。<br>我們先建一個檔案，看看 Git 會怎麼反應。', w:'Git 管的是「一個資料夾」，不是整台電腦。你在哪個資料夾做事，它就只看那裡。'},
+      s1e:{t:'你正在建立 notes.md', b:'內容可以照用，也可以自己改幾個字。這是練習用的假資料，不要放真的研究資料或任何個人資訊。<br>寫好按「建好了」，這一下等於存檔（Ctrl+S）。<strong>Git 只看得到已經存進硬碟的內容</strong>，編輯器裡還沒存的字它看不見。', w:'就像一般開 Word 打字一樣，這一步跟 Git 還沒關係，只是資料夾裡多了一個檔。', term:'# 你正在編輯器裡打字，這一步不需要任何 Git 指令。'},
+      s1:{t:'檔案建好了，Git 看到它了嗎？', b:'有。檔案一出現在資料夾裡，Git 就看得到，但它會標成<strong>「未追蹤」（untracked）</strong>：意思是「有個新東西，我還沒開始管」。<br>按「請 Git 回報現況」看它怎麼說。', term:'# notes.md 已存檔。接下來問 Git 現在的狀況。'},
+      s2:{t:'Git 說：有個新檔，還沒開始管', b:'看右邊的回報：<code>Untracked files: notes.md</code>。這是 Git 的「現況報告」（status），<strong>只是看，什麼都不會改</strong>。<br>它同時告訴你：想讓下一版收進這個檔，用 <code>git add</code>。', w:'養成習慣：每做完一件事就問一次 status。它是免費的，也永遠不會弄壞東西。'},
+      s3:{t:'放進紙箱了，但還沒封箱', b:'notes.md 現在多了一份在<strong>暫存區</strong>，標成「已暫存」（staged）。它的意思是「下一版會收這些內容」。<br>注意：<strong>還沒有建立任何版本</strong>，也什麼都沒上傳。這一步只是在排「下一版要收什麼」。', w:'為什麼要多這一層？因為你常常一次改了五個檔，卻只想把其中兩個存成一版。暫存區就是讓你挑。'},
+      s4:{t:'封箱前，寫一句說明', b:'每個版本都要附一句話說明「這一版是什麼、為什麼改」。在上面的欄位打字，然後按「存成版本」。<br>這句話會永遠跟著這個版本，是以後翻歷史時唯一看得懂的線索。', w:'好的說明像「訂正表 2 係數」；差的說明像「update」「改一下」，三個月後誰都看不懂。', term:'# 等你寫好說明，接著會執行：', cmd:'git commit -m "你的說明"'},
+      s4d:{t:'第一版存進檔案櫃了', b:(h,m)=>`版本庫裡出現第一格：編號 <span class="mono">${h}</span>、說明「${m}」。紙箱清空了，桌面上的 notes.md 也變成<strong>「乾淨」</strong>：意思是它跟最新一版一模一樣。<br>這個編號是 Git 自動算出來的，你不用記，只要知道每一版都有一個就好。`, w:'記住：commit 存在<strong>你這台電腦</strong>。它還沒到 GitHub，也還沒有別人看得到。'},
+      s5e:{t:'日常工作：改檔案', b:'假設你重跑了分析，係數從 0.98 變成 0.96。按「幫我改」或自己動手改幾個字，改完按「改好了」。', w:'這一步跟 Git 一樣沒關係，就是平常的編輯與存檔。', term:'# 你正在編輯 notes.md。'},
+      s5:{t:'Git 發現檔案跟最新一版不一樣了', b:'notes.md 現在標成<strong>「已修改」（modified）</strong>。Git 只知道「變了」，還沒告訴你變在哪。<br>在存版之前，先看一眼到底改了什麼，這是你監督自己（或 AI）最重要的一道門。'},
+      s6:{t:'逐行比對：紅色是拿掉的，綠色是加上的', b:'這叫「差異」（diff）。<strong style="color:var(--del)">減號那行</strong>是舊版有、現在沒有的；<strong style="color:var(--add)">加號那行</strong>是現在有、舊版沒有的。改了一個數字，Git 會顯示成「拿掉一行、加上一行」。<br>確認就是你想改的，再放進暫存區。', w:'顏色只代表「變了」，不代表對錯。是不是改對，要靠你的判斷。'},
+      s7:{t:'再走一次：寫說明、存版', b:'跟第一次一樣。這一次試著把「為什麼改」寫進去，例如「訂正表 2 係數為 0.96（重跑後的結果）」。', w:'改、看、放、存。這四個動作重複幾次，版本控制就會變成日常，不再是一件事。'},
+      s7d:{t:'第二版也進檔案櫃了', b:'現在有兩格。注意舊的那一格<strong>還在</strong>：你改掉的 0.98 沒有消失，它安安穩穩地待在第一版裡。<br>桌面又回到「乾淨」。', w:'這就是版本控制跟一般存檔最大的不同：存檔會蓋掉舊的，commit 會把舊的留下來。'},
+      s8:{t:'歷史：哪一版、什麼時候、為什麼', b:'這是版本清單（log），最新的在最上面。<strong>點版本庫裡任何一格</strong>，可以看那一版的完整內容、以及它跟前一版差在哪。<br>Git 的價值不只是保存，而是能回答「當初那一版長什麼樣」。', w:'這就是為什麼 commit 訊息要寫清楚。清單上你看到的就是那幾個字。'},
+      s9e:{t:'小實驗：先 add，再改檔', b:'我已經替你把目前的 notes.md 放進暫存區了（右邊指令可見）。現在<strong>再改一次</strong>桌面上的檔，按「幫我加一行」或自己改，然後按「改好了」。', term:'# 然後你又回去改了 notes.md……'},
+      s9a:{t:'兩邊不一樣了', b:'看 status：notes.md <strong>同時</strong>出現在「已暫存」跟「尚未暫存」兩段。暫存區裝的是你按 add 那一刻的版本，桌面是更新的版本。<br>如果現在 commit，收進去的是<strong>紙箱裡的舊版</strong>，你剛加的那行不會在裡面。', w:'很多人第一次遇到會嚇一跳，以為檔案壞了。沒有，這只是提醒你：紙箱不會自動更新。'},
+      s9b:{t:'再 add 一次，紙箱才跟上', b:'現在兩邊一致了，status 只剩「已暫存」一段。要不要 commit 隨你，這裡的重點已經看到了。<br>想重頭練一遍，按「重來」。', w:'口訣：<strong>改完要 add，add 完才 commit；中間又改了，就再 add。</strong>'},
+      done8:'<h3>你走完了一整輪</h3><p>兩個 commit、一次 diff、一次翻歷史。真正要記住的只有一件事：<strong>存檔不是存版。</strong>桌面上的檔案隨時會變，版本庫裡的每一格都不會。</p><p>下一步在真實世界會是 <code>git push</code>：把這些版本送到 GitHub 備份。那是另一趟旅程，闖關頁的 P5 關會帶你走。</p>',
+      done9h:'小實驗：add 之後又改檔案',
+      done9:['先按下面「幫我加一行」或自己改幾個字，再按「改好了」。','看到了嗎？<strong>暫存區裡還是舊內容</strong>，桌面上的檔案卻已經不一樣。現在 commit 的話，收進去的是紙箱裡的舊版。','再 add 一次之後，紙箱裡的內容才跟上桌面。這就是為什麼看 status 時要分清楚「已暫存」和「尚未暫存」兩段。'],
+      statesEyebrow:'一張表記住',
+      statesTitle:'一個檔案在 Git 眼裡只有四種狀態',
+      statesLede:'剛才那趟旅程，其實就是在這四格之間移動。看到 Git 回報哪個字，就知道自己在哪一格、下一步該做什麼。',
+      statesHead:['狀態','你剛做了什麼','Git 的意思是','下一步通常是'],
+      statesRows:[
+        ['untracked','未追蹤','untracked','新建了一個檔','「有個新檔案，我還沒開始管它」','放進暫存區（add）'],
+        ['modified','已修改','modified','改了一個已經有版本的檔','「這個檔跟最新一版長得不一樣」','先看差異（diff），確認沒改錯，再 add'],
+        ['staged','已暫存','staged','按了 add','「下一版會收這些內容」','存成版本（commit）'],
+        ['clean','乾淨','clean / committed','按了 commit','「桌面跟最新一版一模一樣，沒事」','繼續工作；要備份到 GitHub 就 push']
+      ],
+      mythEyebrow:'最常搞混的五件事',
+      mythTitle:'這些不是同一件事',
+      myths:[
+        ['存檔（Ctrl+S）＝ commit？不是。','存檔只是把內容寫進硬碟。Git 要等你 commit，才會替這一刻留下一版。'],
+        ['add ＝ 上傳？不是。','add 只是把內容放進紙箱，什麼都還沒送出去，連版本都還沒建立。'],
+        ['commit ＝ 上傳到 GitHub？也不是。','commit 存在你這台電腦的版本庫裡。要送到 GitHub，還要再做一步 push。這一頁沒講 push，因為它是另一趟旅程。'],
+        ['之後改了檔，舊版就沒了？不會。','每一個 commit 都留著。你隨時可以翻回去看任何一版長什麼樣，這正是版本控制的價值。'],
+        ['add 之後再改檔，commit 會收最新的？不會。','紙箱裡裝的是你按 add 那一刻的內容。之後的修改要再 add 一次才會進去。練習台最後有個小實驗可以親眼看。']
+      ],
+      quizEyebrow:'四題自我檢查',
+      quizTitle:'走完了嗎？考自己一下',
+      quiz:[
+        {q:'你剛改了 notes.md，也按了存檔（Ctrl+S）。Git 已經替你留下這一版了嗎？', opts:['有，存檔就會留一版','沒有，要 commit 才算'], ans:1, fb:['存檔只是寫進硬碟。Git 什麼都還沒記。','對。存檔是編輯器的事，留版本是 commit 的事。']},
+        {q:'按了 git add 之後，這個檔已經上傳到 GitHub 了嗎？', opts:['是，add 就是上傳','不是，add 只是放進暫存區'], ans:1, fb:['add 連版本都還沒建立，離上傳還有 commit 跟 push 兩步。','對。add 進暫存區、commit 進本機版本庫、push 才到 GitHub。']},
+        {q:'下面哪一句是比較好的 commit 訊息？', opts:['update','notes.md','訂正表 2 係數為 0.96（重跑後的結果）'], ans:2, fb:['三個月後看到「update」，你會想不起來改了什麼。','檔名 Git 自己知道，訊息要寫的是「為什麼改」。','對。有改了什麼、也有為什麼。']},
+        {q:'你按了 add，之後又改了同一個檔。這時 commit 會收進哪個內容？', opts:['改之後的最新內容','按 add 那一刻的內容'], ans:1, fb:['暫存區不會自動更新，要再 add 一次。','對。紙箱裝的是你放進去那一刻的東西。']}
+      ],
+      right:'答對了。', wrong:'不是這個。',
+      foot1:'這是模擬器，頁面上沒有真的 Git 在跑；名詞跟本站教材一致。真的要動手，請開 <a href="quest.html">🎮 闖關頁</a>，那裡有完整的 15 關；想先讀觀念，看 <a href="material.html#concepts">📘 教材・參 概念地圖</a>。',
+      foot2:'教材版本：2026-08-23 v5.6（練習台 2026-09-09 新增）｜© 2026 陳文盛（國立東華大學通識教育中心）× AI 協作團隊（組長洄瀾）｜<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>：歡迎教學與自學使用、改作請以相同方式開放，請勿用於商業用途。'
+    },
+    en: {
+      title:'From a new file to a commit｜Using Git with AI',
+      home:'← Workshop home', homeHref:'index.en.html', switchLabel:'中文版', switchHref:'?lang=zh', switchTitle:'Chinese version of this page',
+      eyebrow:'Using Git with AI · Git basics · Interactive simulation',
+      h1:'From a new file to a commit',
+      lede:'Walk through it with your mouse: how one file goes from "just created" to "saved in the version history", one step at a time. This page is <strong>a simulation</strong>. Nothing real is running, and a wrong click cannot break anything. You do not need to memorize commands; you only need to understand what happens at each step.',
+      zones:[
+        {dot:'w', name:'Working directory', alt:'工作區', desk:'your desk', desc:'Your desk. Files are created and edited here. These are the files you normally see in the folder.'},
+        {dot:'s', name:'Staging area', alt:'暫存區', desk:'the box before shipping', desc:'The box you pack before shipping. You decide what this version will include, put it in and arrange it. The box is not sealed yet.'},
+        {dot:'r', name:'Repository (repo)', alt:'版本庫', desk:'the filing cabinet', desc:'The filing cabinet. Every commit adds a drawer holding a complete snapshot of that moment, with a time and a message.'}
+      ],
+      simTitle:"Practice bench: a file's first journey",
+      simHint:'Only the button for the next step lights up. Just follow it.',
+      steps:['Create','Status','Stage','Commit','Edit','Diff','Commit again','History'],
+      sayEyebrow:'What just happened',
+      termEyebrow:'The commands behind it',
+      termNote:'You do not type these yourself. When you work with an AI, it types them for you; your job is to understand what it reports back.',
+      msgLabel:'A message for this version (the commit message)',
+      btnCommit:'Commit <span class="k">git commit</span>',
+      msgHint:'Say why you changed it, not just the file name. Three months from now, "update" will tell you nothing.',
+      ph1:'e.g. Create research notes, first version',
+      ph2:'e.g. Correct Table 2 coefficient to 0.96 (result after re-run)',
+      warnEmpty:'The message cannot be empty. Git also refuses a commit without a message.',
+      warnNudge:'Will this make sense in three months? Try saying why you changed it. If you really want this message, press once more to commit.',
+      pills:{untracked:'untracked', modified:'modified', staged:'staged', clean:'clean', 'staged+modified':'changed again'},
+      seed:['Research notes (fake data for practice)','The coefficient in Table 2 is currently 0.98','Re-run the robustness check next week'],
+      extraLine:'Extra line: added after the add',
+      emptyFile:'(empty file)',
+      editorAria:'Contents of notes.md',
+      emptyW:'(empty folder)<br><code>git init</code> has been run and the repository exists, but there is not a single file yet.',
+      emptyS:'(empty)<br>Nothing has been put in yet.',
+      emptyR:'(no versions yet)<br>The cabinet is empty.',
+      newest:'Newest at the top · click one to view that version',
+      verN:n=>`version ${n}`,
+      commitAria:(n,m)=>`Version ${n}: ${m}`,
+      snapTitle:(n,h,m,t)=>`Version ${n} <span class="mono">${h}</span>: "${m}" (${t})`,
+      snapLead:'This is the complete content of notes.md at that moment. However you edit the desk now, this drawer will not change.',
+      snapPill:n=>`Snapshot · version ${n}`,
+      snapDiffPill:'Diff from the previous version',
+      snapFirst:'This is the first version; there is nothing before it to compare with.',
+      close:'Close',
+      reset:'Start over',
+      bCreate:'Create notes.md', bDone:'Done', bEdited:'Done', bStatus:'Ask Git for a status report', bAdd:'Stage it', bToCommit:'Get ready to commit', bEdit:'Now edit the file', bDiff:'Show what changed', bLog:'Browse the history', bExp:'Small experiment: edit again after add. What happens?', bAuto:'Change it for me: 0.98 → 0.96', bAutoExp:'Add a line for me', bAdd3:'add once more',
+      s0:{t:'Start: an empty folder', b:'Git is already looking after this folder (<code>git init</code> has been run once), but there are no files in it yet, and no versions either.<br>Let\'s create a file and see how Git reacts.', w:'Git looks after one folder, not your whole computer. It only watches the folder you are working in.'},
+      s1e:{t:'You are creating notes.md', b:'Use the content as it is, or change a few words. This is fake data for practice. Do not put real research data or any personal information here.<br>When you are done, press "Done". That is the same as saving (Ctrl+S). <strong>Git can only see what has been saved to disk</strong>; unsaved text in the editor is invisible to it.', w:'Just like typing in Word: this step has nothing to do with Git yet. The folder simply has one more file.', term:'# You are typing in the editor. This step needs no Git command.'},
+      s1:{t:'The file exists. Has Git noticed?', b:'Yes. As soon as a file appears in the folder, Git can see it, but it labels it <strong>untracked</strong>: "there is something new here that I am not managing yet".<br>Press "Ask Git for a status report" to see what it says.', term:'# notes.md is saved. Now ask Git what the situation is.'},
+      s2:{t:'Git says: a new file, not managed yet', b:'Look at the report on the right: <code>Untracked files: notes.md</code>. This is Git\'s status report. <strong>It only looks; it changes nothing.</strong><br>It also tells you: to include this file in the next version, use <code>git add</code>.', w:'Make it a habit: ask for status after every action. It is free, and it never breaks anything.'},
+      s3:{t:'In the box, but the box is not sealed', b:'A copy of notes.md is now in the <strong>staging area</strong>, labelled staged. It means "the next version will include this content".<br>Note: <strong>no version has been created yet</strong>, and nothing has been uploaded. This step only lines up what the next version will include.', w:'Why the extra layer? Because you often edit five files but want only two of them in this version. The staging area is where you choose.'},
+      s4:{t:'Before sealing the box, write a message', b:'Every version carries a one-line message: what this version is, and why it changed. Type in the field above, then press "Commit".<br>The message stays with this version forever, and it is the only readable clue when you browse the history later.', w:'A good message reads like "Correct Table 2 coefficient"; a bad one reads like "update" or "small fix". In three months nobody will understand it.', term:'# Once your message is ready, this will run:', cmd:'git commit -m "your message"'},
+      s4d:{t:'The first version is in the cabinet', b:(h,m)=>`The repository now has its first drawer: ID <span class="mono">${h}</span>, message "${m}". The box is empty again, and notes.md on the desk is now <strong>clean</strong>: it matches the latest version exactly.<br>Git computes the ID automatically. You do not need to remember it; just know that every version has one.`, w:'Remember: the commit lives on <strong>your own computer</strong>. It is not on GitHub yet, and nobody else can see it.'},
+      s5e:{t:'Everyday work: edit the file', b:'Suppose you re-ran the analysis and the coefficient went from 0.98 to 0.96. Press "Change it for me" or edit a few words yourself, then press "Done".', w:'Again, this step has nothing to do with Git. It is ordinary editing and saving.', term:'# You are editing notes.md.'},
+      s5:{t:'Git notices the file differs from the latest version', b:'notes.md is now labelled <strong>modified</strong>. Git only knows that it changed; it has not yet told you where.<br>Before you commit, look at exactly what changed. This is the most important gate for supervising yourself (or an AI).'},
+      s6:{t:'Line by line: red is removed, green is added', b:'This is a diff. The <strong style="color:var(--del)">minus line</strong> was in the old version and is gone now; the <strong style="color:var(--add)">plus line</strong> is here now and was not in the old version. Changing one number shows up as "one line removed, one line added".<br>Confirm it is the change you meant, then stage it.', w:'The colours only mean "changed", not "right" or "wrong". Whether the change is correct is your judgment.'},
+      s7:{t:'Once more: write the message, commit', b:'Same as the first time. This time, try to include why. For example: "Correct Table 2 coefficient to 0.96 (result after re-run)".', w:'Edit, look, stage, commit. Repeat these four moves a few times and version control becomes routine rather than an event.'},
+      s7d:{t:'The second version is in the cabinet too', b:'Now there are two drawers. Notice that the old one <strong>is still there</strong>: the 0.98 you replaced has not vanished; it sits safely in version 1.<br>The desk is clean again.', w:'This is the biggest difference between version control and ordinary saving: saving overwrites the old; commit keeps it.'},
+      s8:{t:'History: which version, when, and why', b:'This is the version list (log), newest at the top. <strong>Click any drawer in the repository</strong> to see the full content of that version and how it differs from the one before.<br>Git\'s value is not just keeping things, but answering "what did that version look like?"', w:'This is why commit messages must be clear. Those few words are all you see in the list.'},
+      s9e:{t:'Small experiment: add first, then edit', b:'I have already staged the current notes.md for you (see the command on the right). Now <strong>edit the file on the desk again</strong>: press "Add a line for me" or edit it yourself, then press "Done".', term:'# Then you went back and edited notes.md again...'},
+      s9a:{t:'The two no longer match', b:'Look at the status: notes.md appears in <strong>both</strong> the "to be committed" and the "not staged" sections. The staging area holds the version from the moment you pressed add; the desk has the newer one.<br>If you commit now, what goes in is <strong>the older version in the box</strong>. The line you just added will not be there.', w:'Many people are startled the first time and think the file is broken. It is not. It is just a reminder that the box does not update itself.'},
+      s9b:{t:'Only another add brings the box up to date', b:'Now both sides match, and status shows only the "to be committed" section. Whether you commit is up to you; the point has been made.<br>To practise from the beginning, press "Start over".', w:'The rule of thumb: <strong>after editing, add; after add, commit; if you edit in between, add again.</strong>'},
+      done8:'<h3>You have completed a full round</h3><p>Two commits, one diff, one look at the history. Only one thing really needs remembering: <strong>saving is not versioning.</strong> The file on the desk can change at any time; the drawers in the repository never do.</p><p>In the real world the next step is <code>git push</code>: sending these versions to GitHub as a backup. That is another journey; step P5 on the quest page takes you there.</p>',
+      done9h:'Small experiment: editing after add',
+      done9:['First press "Add a line for me" below, or change a few words yourself, then press "Done".','See? <strong>The staging area still holds the old content</strong>, while the file on the desk has changed. A commit now would take the old version from the box.','Only after another add does the box catch up with the desk. This is why, when reading status, you must tell the "to be committed" and "not staged" sections apart.'],
+      statesEyebrow:'One table to remember',
+      statesTitle:"In Git's eyes a file has only four states",
+      statesLede:'The journey you just took was simply a move between these four boxes. When you see which word Git reports, you know which box you are in and what to do next.',
+      statesHead:['State','What you just did','What Git means','Usual next step'],
+      statesRows:[
+        ['untracked','untracked','未追蹤','You created a new file','"There is a new file; I am not managing it yet"','Stage it (add)'],
+        ['modified','modified','已修改','You edited a file that already has a version','"This file differs from the latest version"','Look at the diff first, make sure it is right, then add'],
+        ['staged','staged','已暫存','You ran add','"The next version will include this content"','Commit'],
+        ['clean','clean','乾淨（clean / committed）','You ran commit','"The desk matches the latest version; nothing to do"','Keep working; push when you want a backup on GitHub']
+      ],
+      mythEyebrow:'The five most common mix-ups',
+      mythTitle:'These are not the same thing',
+      myths:[
+        ['Save (Ctrl+S) = commit? No.','Saving only writes the content to disk. Git records a version of this moment only when you commit.'],
+        ['add = upload? No.','add only puts content into the box. Nothing has been sent anywhere, and no version exists yet.'],
+        ['commit = upload to GitHub? Also no.','A commit lives in the repository on your own computer. Getting it to GitHub takes one more step: push. This page does not cover push, because that is another journey.'],
+        ['If I edit the file later, is the old version gone? No.','Every commit stays. You can always go back and look at any version. That is exactly what version control is for.'],
+        ['If I edit after add, will commit take the newest content? No.','The box holds the content as it was when you pressed add. Later edits need another add to get in. The small experiment at the end of the practice bench lets you see it.']
+      ],
+      quizEyebrow:'Four questions to check yourself',
+      quizTitle:'Finished the walk? Test yourself',
+      quiz:[
+        {q:'You just edited notes.md and pressed save (Ctrl+S). Has Git recorded this version for you?', opts:['Yes, saving records a version','No, only a commit counts'], ans:1, fb:['Saving only writes to disk. Git has recorded nothing yet.','Right. Saving is the editor\'s job; recording a version is what commit does.']},
+        {q:'After git add, has the file been uploaded to GitHub?', opts:['Yes, add is upload','No, add only puts it in the staging area'], ans:1, fb:['add has not even created a version; upload is still two steps away: commit, then push.','Right. add goes to the staging area, commit goes to the local repository, and only push reaches GitHub.']},
+        {q:'Which of these is the better commit message?', opts:['update','notes.md','Correct Table 2 coefficient to 0.96 (result after re-run)'], ans:2, fb:['Three months from now, "update" will not remind you of anything.','Git already knows the file name; the message should say why you changed it.','Right. It says what changed and why.']},
+        {q:'You pressed add, then edited the same file again. Which content will commit take?', opts:['The newest content after the edit','The content as it was when you pressed add'], ans:1, fb:['The staging area does not update itself; you need another add.','Right. The box holds what you put in at that moment.']}
+      ],
+      right:'Correct.', wrong:'Not this one.',
+      foot1:'This is a simulator; no real Git is running on this page, and the terms match the rest of this site. To do it for real, open the <a href="quest.en.html">🎮 quest page</a> with all 15 steps; to read the ideas first, see <a href="material.en.html#concepts">📘 the material, section 03 Concept map</a>.',
+      foot2:'Material version: 2026-08-23 v5.6 (practice bench added 2026-09-09)｜© 2026 Wen-Sheng (Ted) Chen (Center for General Education, National Dong Hwa University) × the AI collaboration team (team lead Wailan 洄瀾)｜<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>: free to use for teaching and self-study; share adaptations under the same terms; no commercial use.'
+    }
+  };
+
+  /* ───────── 語言：網址 ?lang= 優先，其次上次選的，預設中文 ───────── */
+  let L = 'zh';
+  const t = (k, ...a)=>{ const v = (LANG[L] && LANG[L][k] !== undefined) ? LANG[L][k] : LANG.zh[k]; return typeof v === 'function' ? v(...a) : v; };
+  function pickLang(){
+    const q = new URLSearchParams(location.search).get('lang');
+    if(q === 'en' || q === 'zh') return q;
+    try{ const s = localStorage.getItem('gw-sim-lang'); if(s === 'en' || s === 'zh') return s; }catch(e){}
+    return 'zh';
+  }
+
+  /* ───────── 狀態 ───────── */
+  const FILE = 'notes.md';
+  const S = {
+    step: 0,            // 0 起點 … 8 翻歷史；9 小實驗
+    work: null,         // 工作區內容（陣列）或 null
+    index: null,        // 暫存區內容（陣列）或 null
+    commits: [],        // {hash,msg,lines,time}
+    editing: false,
+    selected: null,     // 被點開的 commit hash
+    exp: 0              // 小實驗階段 0 未開始 1 已改檔 2 已再 add
+  };
+
+  const $ = (id)=>document.getElementById(id);
+  const esc = (s)=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const same = (a,b)=> !!a && !!b && a.length===b.length && a.every((x,i)=>x===b[i]);
+
+  function fakeHash(str){
+    let h = 2166136261;
+    for (let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619)>>>0; }
+    return h.toString(16).padStart(8,'0').slice(0,7);
+  }
+  function nowStr(){
+    const d = new Date();
+    const p = (n)=>String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+
+  /* 逐行差異（最長共同子序列） */
+  function diffLines(a,b){
+    const n=a.length,m=b.length;
+    const dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+    for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)
+      dp[i][j]= a[i]===b[j] ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j],dp[i][j+1]);
+    const out=[]; let i=0,j=0;
+    while(i<n&&j<m){
+      if(a[i]===b[j]){out.push({t:' ',s:a[i]});i++;j++;}
+      else if(dp[i+1][j]>=dp[i][j+1]){out.push({t:'-',s:a[i]});i++;}
+      else{out.push({t:'+',s:b[j]});j++;}
+    }
+    while(i<n)out.push({t:'-',s:a[i++]});
+    while(j<m)out.push({t:'+',s:b[j++]});
+    return out;
+  }
+
+  /* ───────── 判斷檔案狀態 ───────── */
+  function fileState(){
+    const head = S.commits[0] ? S.commits[0].lines : null;
+    if(!S.work) return null;
+    if(!head && !S.index) return 'untracked';
+    if(S.index && same(S.index,S.work)) return 'staged';
+    if(S.index && !same(S.index,S.work)) return 'staged+modified';
+    if(head && same(head,S.work)) return 'clean';
+    return 'modified';
+  }
+  const PILL_CLASS = {untracked:'untracked', modified:'modified', staged:'staged', clean:'clean', 'staged+modified':'modified'};
+
+  /* ───────── 畫面：檔案卡 ───────── */
+  function fileCard(lines, pillKey, opts={}){
+    const known = PILL_CLASS[pillKey];
+    const cls = known || 'snap';
+    const label = known ? t('pills')[pillKey] : pillKey;
+    let body='';
+    if(opts.diff){
+      body = '<pre class="lines">' + opts.diff.map(d=>{
+        const c = d.t==='+'?'add':d.t==='-'?'del':'';
+        const sign = d.t===' '?'  ':d.t+' ';
+        return `<span class="ln ${c}">${esc(sign+d.s)}</span>`;
+      }).join('') + '</pre>';
+    } else {
+      body = '<pre class="lines">' + lines.map(l=>`<span class="ln">${esc(l)}</span>`).join('') + '</pre>';
+    }
+    let edit='';
+    if(opts.edit){
+      edit = `<textarea id="editor" aria-label="${esc(t('editorAria'))}" spellcheck="false">${esc(lines.join('\n'))}</textarea>
+      <div class="editbar">${opts.editbar||''}</div>`;
+      body = '';
+    }
+    return `<div class="file"><div class="fh"><span aria-hidden="true">📄</span><span class="fname">${FILE}</span><span class="pill ${cls}">${esc(label)}</span></div>${body}${edit}</div>`;
+  }
+
+  /* ───────── 每一步的內容 ───────── */
+  function statusOutput(){
+    const st = fileState();
+    const head = S.commits[0];
+    let o = 'On branch main\n';
+    if(!head) o += 'No commits yet\n';
+    if(!S.work) return o + '\nnothing to commit (create/copy files and use "git add" to track)';
+    if(st==='untracked') return o + '\nUntracked files:\n  (use "git add <file>..." to include in what will be committed)\n\t'+FILE+'\n\nnothing added to commit but untracked files present';
+    if(st==='staged') return o + '\nChanges to be committed:\n\t'+(head?'modified:   ':'new file:   ')+FILE;
+    if(st==='modified') return o + '\nChanges not staged for commit:\n  (use "git add <file>..." to update what will be committed)\n\tmodified:   '+FILE;
+    if(st==='staged+modified') return o + '\nChanges to be committed:\n\tmodified:   '+FILE+'\n\nChanges not staged for commit:\n\tmodified:   '+FILE;
+    return o + 'nothing to commit, working tree clean';
+  }
+  function diffText(a,b,header){
+    const d = diffLines(a,b);
+    const body = d.map(x=>{
+      const cls = x.t==='+'?'plus':x.t==='-'?'minus':'out';
+      const sign = x.t===' '?' ':x.t;
+      return `<span class="${cls}">${esc(sign+x.s)}</span>`;
+    }).join('\n');
+    return `<span class="dim">${esc(header)}</span>\n${body}`;
+  }
+  function term(lines){ // [{cmd},{out},{html}]
+    $('termOut').innerHTML = lines.map(l=>{
+      if(l.cmd!==undefined) return `<span class="cmd">${esc(l.cmd)}</span>`;
+      if(l.html!==undefined) return l.html;
+      return `<span class="out">${esc(l.out)}</span>`;
+    }).join('\n');
+  }
+  const dim = (s)=>({html:`<span class="dim">${esc(s)}</span>`});
+  function say(o, ...args){
+    $('sayTitle').textContent = o.t;
+    $('sayBody').innerHTML = typeof o.b === 'function' ? o.b(...args) : o.b;
+    const w = $('sayWhy');
+    if(o.w){ w.innerHTML = o.w; w.hidden=false; } else { w.hidden=true; }
+  }
+  function lit(which){ // 'w' 's' 'r' 可多個
+    ['W','S','R'].forEach(z=>$('zone'+z).classList.toggle('lit', which.includes(z.toLowerCase())));
+  }
+  function btn(label, key, id, primary=true){
+    return `<button class="btn ${primary?'primary':''}" id="${id}">${esc(label)}${key?` <span class="k">${esc(key)}</span>`:''}</button>`;
+  }
+
+  /* ───────── 主渲染 ───────── */
+  function render(){
+    // 進度
+    document.querySelectorAll('#stepper li').forEach(li=>{
+      const i = +li.dataset.i;
+      li.classList.toggle('done', i < S.step || S.step>=9);
+      li.classList.toggle('now', i === S.step);
+    });
+
+    // 工作區
+    const st = fileState();
+    let w='';
+    if(!S.work){
+      w = `<p class="empty">${t('emptyW')}</p>`;
+    } else if(S.editing){
+      const bar = S.step===5
+        ? btn(t('bAuto'),'','btnAuto',false) + btn(t('bEdited'),'','btnEditDone')
+        : S.step===9
+        ? btn(t('bAutoExp'),'','btnAutoExp',false) + btn(t('bEdited'),'','btnEditDone')
+        : btn(t('bDone'),'','btnEditDone');
+      w = fileCard(S.work, S.step===1?'untracked':'modified', {edit:true, editbar:bar});
+    } else if(S.step===6 && S.commits[0]){
+      w = fileCard(S.work, 'modified', {diff: diffLines(S.commits[0].lines, S.work)});
+    } else {
+      w = fileCard(S.work, st);
+    }
+    $('bodyW').innerHTML = w;
+
+    // 暫存區
+    $('bodyS').innerHTML = S.index
+      ? fileCard(S.index, 'staged')
+      : `<p class="empty">${t('emptyS')}</p>`;
+
+    // 版本庫
+    if(S.commits.length){
+      $('bodyR').innerHTML = `<div class="repo-list"><span class="newest">${t('newest')}</span>` +
+        S.commits.map((c,i)=>`<button class="commit ${S.selected===c.hash?'sel':''}" data-hash="${c.hash}" aria-label="${esc(t('commitAria', S.commits.length-i, c.msg))}">
+          <span class="node" aria-hidden="true"></span>
+          <span class="meta"><span class="msg">${esc(c.msg)}</span>
+          <span class="sub"><span class="hash">${c.hash}</span><span>${esc(t('verN', S.commits.length-i))}</span><span>${c.time}</span></span></span>
+        </button>`).join('') + '</div>';
+    } else {
+      $('bodyR').innerHTML = `<p class="empty">${t('emptyR')}</p>`;
+    }
+
+    // 快照檢視
+    const snap = $('snapshot');
+    if(S.selected){
+      const idx = S.commits.findIndex(c=>c.hash===S.selected);
+      const c = S.commits[idx]; const prev = S.commits[idx+1];
+      const verNo = S.commits.length - idx;
+      snap.hidden=false;
+      snap.innerHTML = `<h3>${t('snapTitle', verNo, c.hash, esc(c.msg), c.time)}</h3>
+        <p class="lead">${t('snapLead')}</p>
+        <div class="two">
+          ${fileCard(c.lines, t('snapPill', verNo))}
+          ${prev ? fileCard(c.lines, t('snapDiffPill'), {diff: diffLines(prev.lines, c.lines)}) : `<p class="empty" style="text-align:left">${t('snapFirst')}</p>`}
+        </div>
+        <button class="btn ghost close" id="btnCloseSnap">${esc(t('close'))}</button>`;
+    } else { snap.hidden=true; snap.innerHTML=''; }
+
+    // commit 表單
+    const cf = $('commitForm');
+    const showForm = (S.step===4 || S.step===7) && st==='staged' && !S.editing;
+    cf.hidden = !showForm;
+    if(showForm){
+      $('msg').placeholder = S.step===4 ? t('ph1') : t('ph2');
+    }
+
+    // 完成卡
+    const dc = $('doneCard');
+    if(S.step===8 || S.step===9){
+      dc.hidden=false;
+      dc.innerHTML = S.step===8
+        ? t('done8')
+        : `<h3>${t('done9h')}</h3><p>${t('done9')[S.exp]}</p>`;
+    } else { dc.hidden=true; dc.innerHTML=''; }
+
+    // 白話與指令與按鈕
+    renderStep(st);
+    bind();
+  }
+
+  function renderStep(st){
+    const A = $('actions');
+    const reset = btn(t('reset'), '', 'btnReset', false);
+    const head = S.commits[0];
+
+    switch(S.step){
+      case 0:
+        lit('w');
+        say(t('s0'));
+        term([{cmd:'git status'},{out:statusOutput()}]);
+        A.innerHTML = btn(t('bCreate'),'','btnCreate') + '<span class="spacer"></span>' + reset;
+        break;
+
+      case 1:
+        lit('w');
+        if(S.editing){
+          say(t('s1e'));
+          term([dim(t('s1e').term)]);
+          A.innerHTML = '<span class="spacer"></span>' + reset;
+        } else {
+          say(t('s1'));
+          term([dim(t('s1').term)]);
+          A.innerHTML = btn(t('bStatus'),'git status','btnStatus') + '<span class="spacer"></span>' + reset;
+        }
+        break;
+
+      case 2:
+        lit('w');
+        say(t('s2'));
+        term([{cmd:'git status'},{out:statusOutput()}]);
+        A.innerHTML = btn(t('bAdd'),'git add notes.md','btnAdd') + '<span class="spacer"></span>' + reset;
+        break;
+
+      case 3:
+        lit('s');
+        say(t('s3'));
+        term([{cmd:'git add notes.md'},{cmd:'git status'},{out:statusOutput()}]);
+        A.innerHTML = btn(t('bToCommit'),'git commit','btnToCommit') + '<span class="spacer"></span>' + reset;
+        break;
+
+      case 4:
+        lit('sr');
+        if(st==='staged'){
+          say(t('s4'));
+          term([dim(t('s4').term),{cmd:t('s4').cmd}]);
+          A.innerHTML = '<span class="spacer"></span>' + reset;
+        } else {
+          const c = S.commits[0];
+          say(t('s4d'), c.hash, esc(c.msg));
+          term([{cmd:`git commit -m "${c.msg}"`},{out:`[main (root-commit) ${c.hash}] ${c.msg}\n 1 file changed, ${c.lines.length} insertion${c.lines.length===1?'':'s'}(+)`},{cmd:'git status'},{out:statusOutput()}]);
+          A.innerHTML = btn(t('bEdit'),'','btnEdit') + '<span class="spacer"></span>' + reset;
+        }
+        break;
+
+      case 5:
+        lit('w');
+        if(S.editing){
+          say(t('s5e'));
+          term([dim(t('s5e').term)]);
+          A.innerHTML = '<span class="spacer"></span>' + reset;
+        } else {
+          say(t('s5'));
+          term([{cmd:'git status'},{out:statusOutput()}]);
+          A.innerHTML = btn(t('bDiff'),'git diff','btnDiff') + '<span class="spacer"></span>' + reset;
+        }
+        break;
+
+      case 6:
+        lit('w');
+        say(t('s6'));
+        term([{cmd:'git diff notes.md'},{html: diffText(head.lines, S.work, `diff --git a/${FILE} b/${FILE}\n--- a/${FILE}\n+++ b/${FILE}`)}]);
+        A.innerHTML = btn(t('bAdd'),'git add notes.md','btnAdd2') + '<span class="spacer"></span>' + reset;
+        break;
+
+      case 7:
+        lit('sr');
+        if(st==='staged'){
+          say(t('s7'));
+          term([{cmd:'git add notes.md'},{cmd:'git status'},{out:statusOutput()},dim(t('s4').term),{cmd:t('s4').cmd}]);
+          A.innerHTML = '<span class="spacer"></span>' + reset;
+        } else {
+          const c = S.commits[0]; const d = diffLines(S.commits[1].lines, c.lines);
+          const ins = d.filter(x=>x.t==='+').length, del = d.filter(x=>x.t==='-').length;
+          say(t('s7d'));
+          term([{cmd:`git commit -m "${c.msg}"`},{out:`[main ${c.hash}] ${c.msg}\n 1 file changed, ${ins} insertion${ins===1?'':'s'}(+), ${del} deletion${del===1?'':'s'}(-)`}]);
+          A.innerHTML = btn(t('bLog'),'git log','btnLog') + '<span class="spacer"></span>' + reset;
+        }
+        break;
+
+      case 8:
+        lit('r');
+        say(t('s8'));
+        term([{cmd:'git log --oneline'},{out:S.commits.map(c=>`${c.hash} ${c.msg}`).join('\n')}]);
+        A.innerHTML = btn(t('bExp'),'','btnExp', false) + '<span class="spacer"></span>' + reset;
+        break;
+
+      case 9:
+        if(S.exp===0){
+          lit('ws');
+          say(t('s9e'));
+          term([{cmd:'git add notes.md'},dim(t('s9e').term)]);
+          A.innerHTML = '<span class="spacer"></span>' + reset;
+        } else if(S.exp===1){
+          lit('ws');
+          say(t('s9a'));
+          term([{cmd:'git status'},{out:statusOutput()}]);
+          A.innerHTML = btn(t('bAdd3'),'git add notes.md','btnAdd3') + '<span class="spacer"></span>' + reset;
+        } else {
+          lit('s');
+          say(t('s9b'));
+          term([{cmd:'git add notes.md'},{cmd:'git status'},{out:statusOutput()}]);
+          A.innerHTML = '<span class="spacer"></span>' + reset;
+        }
+        break;
+    }
+  }
+
+  /* ───────── 事件 ───────── */
+  function readEditor(){
+    const ta = $('editor'); if(!ta) return;
+    const lines = ta.value.replace(/\r/g,'').split('\n');
+    while(lines.length && lines[lines.length-1].trim()==='') lines.pop();
+    S.work = lines.length ? lines : [t('emptyFile')];
+  }
+  function on(id, fn){ const el=$(id); if(el) el.addEventListener('click', fn); }
+
+  function bind(){
+    on('btnReset', ()=>{ Object.assign(S,{step:0,work:null,index:null,commits:[],editing:false,selected:null,exp:0}); $('msg').value=''; render(); });
+    on('btnCreate', ()=>{ S.step=1; S.editing=true; S.work=t('seed').slice(); render(); const e=$('editor'); if(e) e.focus(); });
+    on('btnEditDone', ()=>{
+      readEditor(); S.editing=false;
+      if(S.step===9){ S.exp = same(S.index,S.work) ? 0 : 1; if(S.exp===0){ S.editing=true; } }
+      render();
+    });
+    on('btnAuto', ()=>{ const ta=$('editor'); if(ta) ta.value = ta.value.replace('0.98','0.96'); });
+    on('btnAutoExp', ()=>{ const ta=$('editor'); if(ta && !/補一行|Extra line/.test(ta.value)) ta.value = ta.value.replace(/\s*$/,'') + '\n' + t('extraLine'); });
+    on('btnStatus', ()=>{ S.step=2; render(); });
+    on('btnAdd', ()=>{ S.index=S.work.slice(); S.step=3; render(); });
+    on('btnToCommit', ()=>{ S.step=4; render(); $('msg').focus(); });
+    on('btnEdit', ()=>{ S.step=5; S.editing=true; render(); const e=$('editor'); if(e) e.focus(); });
+    on('btnDiff', ()=>{ S.step=6; render(); });
+    on('btnAdd2', ()=>{ S.index=S.work.slice(); S.step=7; render(); $('msg').focus(); });
+    on('btnLog', ()=>{ S.step=8; render(); });
+    on('btnExp', ()=>{ S.step=9; S.exp=0; S.index=S.work.slice(); S.editing=true; S.selected=null; render(); const e=$('editor'); if(e) e.focus(); });
+    on('btnAdd3', ()=>{ S.index=S.work.slice(); S.exp=2; render(); });
+    on('btnCloseSnap', ()=>{ S.selected=null; render(); });
+    document.querySelectorAll('.commit[data-hash]').forEach(b=>b.addEventListener('click', ()=>{
+      S.selected = (S.selected===b.dataset.hash) ? null : b.dataset.hash; render();
+    }));
+  }
+
+  function doCommit(){
+    const raw = $('msg').value.trim();
+    const warn = $('msgWarn');
+    if(!raw){ warn.hidden=false; warn.textContent=t('warnEmpty'); $('msg').focus(); return; }
+    if(/^(update|updated|fix|fixes|changes|edit|wip|改一下|修改|更新|test|\.+|notes\.md)$/i.test(raw)){
+      if(!warn.dataset.nudged){ warn.hidden=false; warn.dataset.nudged='1'; warn.textContent=t('warnNudge'); return; }
+    }
+    warn.hidden=true; delete warn.dataset.nudged;
+    const lines = S.index.slice();
+    const hash = fakeHash(raw + lines.join('\n') + S.commits.length + Date.now());
+    S.commits.unshift({hash, msg:raw, lines, time: nowStr()});
+    S.index=null; $('msg').value='';
+    render();
+  }
+  $('btnDoCommit').addEventListener('click', doCommit);
+  $('msg').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doCommit(); } });
+
+  /* ───────── 靜態區塊：四種狀態表、五件事、四題自我檢查 ───────── */
+  function renderStatic(){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{ el.innerHTML = t(el.dataset.i18n); });
+
+    $('zonesIntro').innerHTML = t('zones').map(z=>`<div class="zone-card">
+      <div class="zname"><span class="dot ${z.dot}"></span>${esc(z.name)} <small>${esc(z.alt)}</small></div>
+      <p>${esc(z.desc)}</p></div>`).join('');
+    const zs = t('zones');
+    [['headW',0],['headS',1],['headR',2]].forEach(([id,i])=>{ $(id).innerHTML = `<span class="dot ${zs[i].dot}"></span>${esc(zs[i].name)} <small>${esc(zs[i].desk)}</small>`; });
+
+    $('stepper').innerHTML = t('steps').map((s,i)=>`<li data-i="${i+1}"><span class="bar"></span><span><span class="n">${i+1}</span>${esc(s)}</span></li>`).join('');
+
+    $('statesTable').innerHTML = `<table class="states"><thead><tr>${t('statesHead').map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${
+      t('statesRows').map(r=>`<tr><td><span class="pill ${r[0]}">${esc(r[1])}</span><span class="alt">${esc(r[2])}</span></td><td>${esc(r[3])}</td><td>${esc(r[4])}</td><td>${esc(r[5])}</td></tr>`).join('')
+    }</tbody></table>`;
+
+    $('myths').innerHTML = t('myths').map(m=>`<li><p class="no">${esc(m[0])}</p><p class="yes">${esc(m[1])}</p></li>`).join('');
+
+    const QUIZ = t('quiz');
+    const quizEl = $('quiz');
+    quizEl.innerHTML = QUIZ.map((it,qi)=>`<div class="q" data-q="${qi}">
+        <p class="qt">${qi+1}. ${esc(it.q)}</p>
+        <div class="opts">${it.opts.map((o,oi)=>`<button class="opt" data-o="${oi}"><span class="mark">${'ABC'[oi]}</span><span>${esc(o)}</span></button>`).join('')}</div>
+        <p class="fb" aria-live="polite"></p>
+      </div>`).join('');
+    quizEl.querySelectorAll('.q').forEach(q=>{
+      const qi = +q.dataset.q; const it = QUIZ[qi];
+      q.querySelectorAll('.opt').forEach(b=>b.addEventListener('click', ()=>{
+        const oi = +b.dataset.o;
+        q.querySelectorAll('.opt').forEach(x=>x.classList.remove('right','wrong'));
+        b.classList.add(oi===it.ans?'right':'wrong');
+        if(oi!==it.ans) q.querySelector(`.opt[data-o="${it.ans}"]`).classList.add('right');
+        const fb = q.querySelector('.fb');
+        fb.textContent = (oi===it.ans?t('right'):t('wrong')) + ' ' + it.fb[oi];
+        fb.className = 'fb ' + (oi===it.ans?'ok':'ng');
+      }));
+    });
+
+    const home = $('homeLink'); home.textContent = t('home'); home.href = t('homeHref');
+    const sw = $('langSwitch'); sw.textContent = t('switchLabel'); sw.href = t('switchHref'); sw.title = t('switchTitle');
+    sw.setAttribute('hreflang', L==='zh' ? 'en' : 'zh-Hant'); sw.setAttribute('lang', L==='zh' ? 'en' : 'zh-Hant-TW');
+    document.title = t('title');
+    document.documentElement.lang = L==='en' ? 'en' : 'zh-Hant-TW';
+    document.documentElement.dataset.lang = L;
+  }
+
+  function setLang(lang, pushUrl){
+    L = lang;
+    try{ localStorage.setItem('gw-sim-lang', L); }catch(e){}
+    if(pushUrl){
+      const url = L==='en' ? '?lang=en' : location.pathname;
+      history.replaceState(null, '', url + location.hash);
+    }
+    renderStatic();
+    render();
+  }
+  $('langSwitch').addEventListener('click', e=>{ e.preventDefault(); setLang(L==='zh' ? 'en' : 'zh', true); });
+
+  setLang(pickLang(), false);
+})();
+</script>
+
+</body>
+</html>

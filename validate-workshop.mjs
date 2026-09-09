@@ -99,8 +99,8 @@ for(const phrase of ['回報 PR 編號與網址','核對 repo、作者與來源�
 }
 if(!c6.prompt.includes('相關文獻將於正式研究中補齊'))fail('C6 缺少第二輪明確修改任務');
 
-const html={index:read('./index.html'),start:read('./start.html'),material:read('./material.html'),quest:read('./quest.html'),radar:read('./radar.html'),indexEn:read('./index.en.html'),startEn:read('./start.en.html'),materialEn:read('./material.en.html'),questEn:read('./quest.en.html')};
-const fileFor={index:'index.html',start:'start.html',material:'material.html',quest:'quest.html',radar:'radar.html',indexEn:'index.en.html',startEn:'start.en.html',materialEn:'material.en.html',questEn:'quest.en.html'};
+const html={index:read('./index.html'),start:read('./start.html'),material:read('./material.html'),quest:read('./quest.html'),radar:read('./radar.html'),sim:read('./sim.html'),indexEn:read('./index.en.html'),startEn:read('./start.en.html'),materialEn:read('./material.en.html'),questEn:read('./quest.en.html')};
+const fileFor={index:'index.html',start:'start.html',material:'material.html',quest:'quest.html',radar:'radar.html',sim:'sim.html',indexEn:'index.en.html',startEn:'start.en.html',materialEn:'material.en.html',questEn:'quest.en.html'};
 for(const [file,source] of [...Object.entries(html).map(([name,source])=>[fileFor[name],source]),['workflow-data.js',read('./workflow-data.js')]]){
   const informal=source.match(/開發|測試|測驗|提示/);
   if(informal)fail(`${file} 的對外文字仍有非正式成品措辭：${informal[0]}`);
@@ -124,7 +124,7 @@ for(const [name,source] of Object.entries(html)){
   for(const href of [...source.matchAll(/\bhref="([^"]+)"/g)].map(match=>match[1])){
     if(href.includes('${'))continue;
     if(/^(?:https?:|mailto:|tel:)/i.test(href))continue;
-    const [filePart,hashPart]=href.split('#'),targetFile=filePart||fileFor[name],targetName=pageFor[targetFile];
+    const [filePart,hashPart]=href.split('#'),targetFile=filePart.split('?')[0]||fileFor[name],targetName=pageFor[targetFile];
     if(!targetName)fail(`${fileFor[name]} 連到不存在的本機頁面：${href}`);
     if(hashPart&&!idsByPage[targetName].has(hashPart))fail(`${fileFor[name]} 連到不存在的錨點：${href}`);
   }
@@ -133,7 +133,7 @@ for(const name of ['material','quest','start','materialEn','questEn','startEn'])
   if(!html[name].includes('<script src="workflow-data.js"></script>'))fail(`${fileFor[name]} 未載入共用流程`);
 }
 if(html.radar.includes('<script src="workflow-data.js"></script>'))fail('講師雷達不應載入未使用的共用流程');
-for(const name of ['material','quest','radar','start']){
+for(const name of ['material','quest','radar','start','sim']){
   const inline=[...html[name].matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
   for(const [i,code] of inline.entries()){
     try{new Function(code)}catch(error){fail(`${name}.html 第 ${i+1} 段 inline script 語法錯誤：${error.message}`)}
@@ -174,7 +174,7 @@ if(!html.material.includes('id="flowGuide"')||!html.material.includes('id="troub
 }
 if(!Array.isArray(flow.phrases)||flow.phrases.length!==12)fail('共用資料缺少 12 句日常用語表（flow.phrases）');
 if(html.material.includes('const PHRASES=')||!html.material.includes('FLOW.phrases'))fail('教材的 12 句表應改用共用資料 FLOW.phrases，不得另存一份');
-for(const name of ['index','quest','radar']){
+for(const name of ['index','quest','radar','sim']){
   if(!html[name].includes(':root[data-theme="dark"]')||!html[name].includes("localStorage.getItem('gw-theme')"))fail(`${fileFor[name]} 未支援教材頁的主題切換（data-theme／gw-theme）`);
 }
 for(const removed of ['十二幕','id="story"','#story','SCENES','SCENE_QUEST','drawGraph','function go(','onclick="go(','copyStarter','scenebox','sceneDots','stepnav']){
@@ -256,6 +256,27 @@ for(const page of ['start','material','quest','radar','index']){
 
 for(const name of ['indexEn','startEn','materialEn','questEn']){
   if(!/<html[^>]*\blang="en"/.test(html[name]))fail(`${fileFor[name]} 應為 lang="en"`);
+}
+// 練習台 sim.html（2026-09-09）：單一頁面、兩套文字（LANG.zh／LANG.en）同一份邏輯；?lang=en 進英文
+{
+  const sim=html.sim;
+  if(!/<html[^>]*\blang="zh-Hant-TW"[^>]*data-lang="zh"/.test(sim))fail('sim.html 預設應為中文（lang="zh-Hant-TW" data-lang="zh"）');
+  for(const needle of ['zh: {','en: {',"new URLSearchParams(location.search).get('lang')","localStorage.setItem('gw-sim-lang'",'id="langSwitch"','href="quest.html"','href="quest.en.html"','href="material.html#concepts"','href="material.en.html#concepts"']){
+    if(!sim.includes(needle))fail(`sim.html 缺少雙語切換或回教材的連結：${needle}`);
+  }
+  const zhBlock=(sim.match(/\n    zh: \{([\s\S]*?)\n    \},\n    en: \{/)||['',''])[1];
+  const enBlock=(sim.match(/\n    en: \{([\s\S]*?)\n    \}\n  \};/)||['',''])[1];
+  const keysOf=block=>[...block.matchAll(/^\s{6}([A-Za-z0-9_]+):/gm)].map(m=>m[1]);
+  const zhKeys=keysOf(zhBlock),enKeys=keysOf(enBlock);
+  if(zhKeys.length<40||enKeys.length<40)fail(`sim.html 的語言字典抓不到（zh ${zhKeys.length} 鍵、en ${enKeys.length} 鍵）——結構改了就同步改這段守門`);
+  const missing=zhKeys.filter(k=>!enKeys.includes(k)),extra=enKeys.filter(k=>!zhKeys.includes(k));
+  if(missing.length||extra.length)fail(`sim.html 兩套語言的鍵不一致：英文缺 ${missing.join(',')||'無'}；英文多 ${extra.join(',')||'無'}`);
+  const enOnlyZh=[...enBlock.matchAll(/[一-鿿]+/g)].map(m=>m[0]).filter(w=>!['中文版','工作區','暫存區','版本庫','未追蹤','已修改','已暫存','乾淨','洄瀾'].includes(w));
+  if(enOnlyZh.length)fail(`sim.html 英文字典殘留非術語的中文：${enOnlyZh.slice(0,5).join('、')}`);
+  for(const [file,src] of [['index.html',html.index],['index.en.html',html.indexEn],['material.html',html.material],['material.en.html',html.materialEn]]){
+    if(!src.includes('href="sim.html'))fail(`${file} 沒有連到練習台 sim.html`);
+  }
+  if(!html.indexEn.includes('href="sim.html?lang=en"')||!html.materialEn.includes('href="sim.html?lang=en"'))fail('英文頁連練習台要帶 ?lang=en');
 }
 for(const name of ['materialEn','questEn','startEn']){
   const zhTag=html[name].indexOf('<script src="workflow-data.js"></script>');

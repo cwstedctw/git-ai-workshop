@@ -12,6 +12,7 @@
 | [start.html](start.html) | 〈開始之前〉導覽頁：適合誰、兩種走法、15 關全景與最低門檻 |
 | [material.html](material.html) | 完整教材＋行前準備包＋課後手冊（自學從這裡開始） |
 | [quest.html](quest.html) | 15 關闖關頁：可複製給 AI 的操作文字、Git 儀表板就地驗收（Chrome／Edge） |
+| [sim.html](sim.html) | 練習台〈從建檔到 commit〉：工作區／暫存區／版本庫互動模擬，5 分鐘暖身；中英同一頁（右上角切換，或 `sim.html?lang=en`） |
 | [radar.html](radar.html) | 講師救援雷達：只讀 GitHub 公開證據的課堂儀表板（學員不必開） |
 | [workflow-data.js](workflow-data.js) | 15 關課程內容的唯一資料來源（教材與闖關共用） |
 | [validate-workshop.mjs](validate-workshop.mjs) | 內容守門腳本：`node validate-workshop.mjs`（push 時也由 GitHub Actions 自動跑） |
